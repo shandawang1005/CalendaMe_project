@@ -1,4 +1,4 @@
-# Flask React Project
+# Flask React Project (Bottom is the total full backend/frontend route detail per features)
 
 This is the starter for the Flask React project.
 
@@ -129,3 +129,107 @@ main, always keeping it up to date.
 
 [Render.com]: https://render.com/
 [Dashboard]: https://dashboard.render.com/
+
+
+# Starting Feature routes
+
+
+# Calendar Scheduling App
+
+## Project Overview
+
+This Calendar Scheduling App allows users to create and manage events, schedule appointments, and communicate via live chat. Features include friend management, recurring events, file sharing, and private/public event settings.
+
+## Features
+
+### 1. Friend System
+Users can add friends and share calendars. Only friends can schedule appointments with each other.
+
+**Backend Routes**
+- `GET /api/friends`: Retrieve list of friends.
+- `POST /api/friends/request`: Send a friend request.
+- `PUT /api/friends/request/:id`: Accept/decline a friend request.
+- `DELETE /api/friends/:id`: Remove a friend.
+
+**Frontend Routes**
+- `/friends`: Manage friends and friend requests.
+- `/friends/search`: Search for friends.
+
+### 2. Appointment and Scheduling
+Users can assign time slots for appointments, and others can request to book that time. Users can accept/decline requests.
+
+**Backend Routes**
+- `POST /api/appointments`: Create a new appointment request.
+- `PUT /api/appointments/:id`: Accept/decline an appointment request.
+- `GET /api/appointments`: Get scheduled appointments.
+
+**Frontend Routes**
+- `/appointments`: View/manage appointment requests.
+
+### 3. Calendar/Event CRUD
+Users can create, edit, delete, and view events. Events can be public or private.
+
+**Backend Routes**
+- `GET /api/events`: Get all user events.
+- `POST /api/events`: Create a new event.
+- `PUT /api/events/:id`: Update an event.
+- `DELETE /api/events/:id`: Delete an event.
+
+**Frontend Routes**
+- `/calendar`: View the calendar in various formats.
+- `/calendar/new`: Create a new event.
+- `/calendar/edit/:id`: Edit an event.
+
+### 4. Recurring Events
+Users can create recurring events.
+
+**Backend Routes**
+- `POST /api/events/:id/recurring`: Create a recurring event.
+
+**Frontend Routes**
+- `/calendar/recurring`: Manage recurring events.
+
+### 5. Notifications
+Users receive notifications regarding event updates and appointments.
+
+**Backend Routes**
+- `GET /api/notifications`: Retrieve user notifications.
+- `PUT /api/notifications/:id/read`: Mark a notification as read.
+
+**Frontend Routes**
+- `/notifications`: View notifications.
+
+### 6. Event Live Chat (Bonus Feature)
+Real-time chat for users to communicate during events.
+
+**Backend Routes**
+- `GET /api/events/:id/chat`: Fetch chat history.
+- `POST /api/events/:id/chat`: Send a chat message.
+
+**Frontend Routes**
+- `/events/:id/chat`: Access live chat.
+
+### 7. File Sharing (Bonus Feature)
+Users can upload and share files related to events.
+
+**Backend Routes**
+- `POST /api/files`: Upload a file for an event.
+- `GET /api/files/:id`: Retrieve a file.
+- `DELETE /api/files/:id`: Delete a file.
+
+**Frontend Routes**
+- `/events/:id/files`: Manage event files.
+
+## Installation and Setup
+
+### Prerequisites
+- Python 3.8+
+- Node.js 14+
+- SQLite3
+
+### Backend Setup
+
+1. Clone the repository and navigate to the backend directory:
+   ```bash
+   git clone https://github.com/your-repo/calendar-app.git
+   cd backend

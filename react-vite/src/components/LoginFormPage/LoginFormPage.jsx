@@ -10,7 +10,7 @@ function LoginFormPage() {
   const sessionUser = useSelector((state) => state.session.user);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState([]);
 
   if (sessionUser) return <Navigate to="/" replace={true} />;
 
@@ -31,11 +31,49 @@ function LoginFormPage() {
     }
   };
 
+  const handleDemo1Submit = async (e) => {
+    e.preventDefault();
+
+    const serverResponse = await dispatch(
+      thunkLogin({
+        email: "demo@aa.io",
+        password: "password",
+      })
+    );
+
+    if (!serverResponse) {
+      navigate("/");
+    }
+  };
+
+  const handleDemo3Submit = async (e) => {
+    e.preventDefault();
+
+    const serverResponse = await dispatch(
+      thunkLogin({
+        email: "bobbie@aa.io",
+        password: "password",
+      })
+    );
+
+    if (!serverResponse) {
+      navigate("/");
+    }
+  };
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    navigate("/signup");
+  };
+
   return (
     <>
       <h1>Log In</h1>
+      <span>
+        <button onClick={handleSignup}>Sign Up</button>
+      </span>
       {errors.length > 0 &&
-        errors.map((message) => <p key={message}>{message}</p>)}
+        errors.map((message, index) => <p key={index}>{message}</p>)}
       <form onSubmit={handleSubmit}>
         <label>
           Email
@@ -59,6 +97,9 @@ function LoginFormPage() {
         {errors.password && <p>{errors.password}</p>}
         <button type="submit">Log In</button>
       </form>
+
+      <button onClick={handleDemo1Submit}>Log in as Demo User 1</button>
+      <button onClick={handleDemo3Submit}>Log in as Demo User 2</button>
     </>
   );
 }

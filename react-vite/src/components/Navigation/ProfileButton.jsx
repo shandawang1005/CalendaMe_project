@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { FaUserCircle } from 'react-icons/fa';
+import { FaUserCircle } from "react-icons/fa";
 import { thunkLogout } from "../../redux/session";
 import OpenModalMenuItem from "./OpenModalMenuItem";
-import LoginFormModal from "../LoginFormModal";
+import LoginFormPage from "../LoginFormPage";
 import SignupFormModal from "../SignupFormModal";
 
 function ProfileButton() {
@@ -59,7 +59,7 @@ function ProfileButton() {
               <OpenModalMenuItem
                 itemText="Log In"
                 onItemClick={closeMenu}
-                modalComponent={<LoginFormModal />}
+                modalComponent={<LoginFormPage />}
               />
               <OpenModalMenuItem
                 itemText="Sign Up"
