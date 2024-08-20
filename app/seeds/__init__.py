@@ -23,33 +23,33 @@ def seed():
         # Make sure to add all your other model's undo functions below
         db.session.execute(f"TRUNCATE table {SCHEMA}.users RESTART IDENTITY CASCADE;")
         db.session.commit()
-        undo_users()
-        undo_events()
-        undo_friends()
-        undo_participants()
-        undo_messages()
-        undo_appointments()
         undo_notifications()
-    seed_notifications()
-    seed_appointments()
-    seed_participants()
-    seed_messages()
-    seed_friends()
-    seed_events()
+        undo_appointments()
+        undo_messages()
+        undo_participants()
+        undo_friends()
+        undo_events()
+        undo_users()
     seed_users()
+    seed_events()
+    seed_friends()
+    seed_participants()
+    seed_appointments()
+    seed_messages()
+    seed_notifications()
     # Add other seed functions here
 
 
 # Creates the `flask seed undo` command
 @seed_commands.command("undo")
 def undo():
-    undo_users()
-    undo_events()
-    undo_friends()
-    undo_participants()
-    undo_messages()
-    undo_appointments()
     undo_notifications()
+    undo_appointments()
+    undo_messages()
+    undo_participants()
+    undo_friends()
+    undo_events()
+    undo_users()
     # Add other undo functions here
 
 
