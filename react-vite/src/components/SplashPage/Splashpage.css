@@ -1,0 +1,27 @@
+.splash-container {
+  text-align: center;
+}
+
+.splash-container button {
+  background-color: #ffeead;
+  color: #a02334;
+  padding: 15px 30px;
+  border: none;
+  border-radius: 25px;
+  font-size: 18px;
+  cursor: pointer;
+  margin: 10px 0;
+  width: 150px;
+}
+
+.splash-container button:hover {
+  background-color: #ffad60;
+}
+
+.splash-container button:focus {
+  outline: none;
+}
+
+.splash-container button:not(:last-child) {
+  margin-right: 20px;
+}

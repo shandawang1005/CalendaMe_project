@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate, useNavigate } from "react-router-dom";
 import { thunkSignup } from "../../redux/session";
+import "./SignupForm.css";
 
 function SignupFormPage() {
   const dispatch = useDispatch();
@@ -41,53 +42,72 @@ function SignupFormPage() {
   };
 
   return (
-    <>
-      <h1>Sign Up</h1>
+    <div className="signup-container">
+      <h1 className="signup-title">Sign-Up</h1>
+
       {errors.server && <p>{errors.server}</p>}
-      <form onSubmit={handleSubmit}>
-        <label>
-          Email
+
+      <form onSubmit={handleSubmit} className="signup-form">
+        <div className="input-container">
           <input
             type="text"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            className="signup-input"
+            placeholder=" "
           />
-        </label>
-        {errors.email && <p>{errors.email}</p>}
-        <label>
-          Username
+          <label className="floating-label">Email</label>
+        </div>
+
+        <div className="input-container">
           <input
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
+            className="signup-input"
+            placeholder=" "
           />
-        </label>
-        {errors.username && <p>{errors.username}</p>}
-        <label>
-          Password
+          <label className="floating-label">Username</label>
+        </div>
+
+        <div className="input-container">
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            className="signup-input"
+            placeholder=" "
           />
-        </label>
-        {errors.password && <p>{errors.password}</p>}
-        <label>
-          Confirm Password
+          <label className="floating-label">Password</label>
+        </div>
+
+        <div className="input-container">
           <input
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
+            className="signup-input"
+            placeholder=" "
           />
-        </label>
-        {errors.confirmPassword && <p>{errors.confirmPassword}</p>}
-        <button type="submit">Sign Up</button>
+          <label className="floating-label">Confirm Password</label>
+        </div>
+
+        <button type="submit" className="signup-button">
+          Sign Up
+        </button>
       </form>
-    </>
+
+      <div className="auth-links">
+        Already have an account?{" "}
+        <a href="/login" className="login-link">
+          Login
+        </a>
+      </div>
+    </div>
   );
 }
 

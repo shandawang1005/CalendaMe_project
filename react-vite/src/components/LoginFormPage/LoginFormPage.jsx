@@ -67,40 +67,63 @@ function LoginFormPage() {
   };
 
   return (
-    <>
-      <h1>Log In</h1>
-      <span>
-        <button onClick={handleSignup}>Sign Up</button>
-      </span>
-      {errors.length > 0 &&
-        errors.map((message, index) => <p key={index}>{message}</p>)}
-      <form onSubmit={handleSubmit}>
-        <label>
-          Email
+    <div className="login-container">
+      <h1 className="login-title">Log In</h1>
+
+      <form onSubmit={handleSubmit} className="login-form">
+        {errors.length > 0 &&
+          errors.map((message, index) => (
+            <p key={index} className="error">
+              {message}
+            </p>
+          ))}
+
+        <div className="input-container">
           <input
             type="text"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            className="login-input"
+            placeholder=" "
           />
-        </label>
-        {errors.email && <p>{errors.email}</p>}
-        <label>
-          Password
+          <label className="floating-label">Email</label>
+        </div>
+
+        <div className="input-container">
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            className="login-input"
+            placeholder=" "
           />
-        </label>
-        {errors.password && <p>{errors.password}</p>}
-        <button type="submit">Log In</button>
+          <label className="floating-label">Password</label>
+        </div>
+
+        <button type="submit" className="login-button">
+          Log In
+        </button>
       </form>
 
-      <button onClick={handleDemo1Submit}>Log in as Demo User 1</button>
-      <button onClick={handleDemo3Submit}>Log in as Demo User 2</button>
-    </>
+      <div className="login-demo-buttons">
+        <div>
+          <button onClick={handleDemo1Submit} className="demo-button">
+            Log in as Demo User 1
+          </button>
+        </div>
+        <div>
+          <button onClick={handleDemo3Submit} className="demo-button">
+            Log in as Demo User 2
+          </button>
+        </div>
+      </div>
+
+      <div className="signup-link">
+        Don't have an account? <button onClick={handleSignup}>Sign Up</button>
+      </div>
+    </div>
   );
 }
 
