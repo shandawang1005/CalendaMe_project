@@ -31,9 +31,20 @@ class User(db.Model, UserMixin):
 
     # Self-referential relationship: a user can have many friends
     friends = db.relationship(
-        "Friend", foreign_keys=[Friend.user_id], back_populates="user"
+        "Friend",
+        foreign_keys=[Friend.user_id],
+        back_populates="user",
+        cascade="all, delete-orphan",
     )
-    events = db.relationship("Event", back_populates="creator")
-    appointments = db.relationship("Appointment", back_populates="user")
-    messages_sent = db.relationship("Message", back_populates="sender")
-    notifications = db.relationship("Notification", back_populates="user")
+    events = db.relationship(
+        "Event", back_populates="creator", cascade="all, delete-orphan"
+    )
+    appointments = db.relationship(
+        "Appointment", back_populates="user", cascade="all, delete-orphan"
+    )
+    messages_sent = db.relationship(
+        "Message", back_populates="sender", cascade="all, delete-orphan"
+    )
+    notifications = db.relationship(
+        "Notification", back_populates="user", cascade="all, delete-orphan"
+    )
