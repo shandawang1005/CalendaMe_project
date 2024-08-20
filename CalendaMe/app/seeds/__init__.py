@@ -4,8 +4,9 @@ from .events import seed_events, undo_events
 from .friends import seed_friends, undo_friends
 from .participants import seed_participants, undo_participants
 from .messages import seed_messages, undo_messages
+from .appointments import seed_appointments, undo_appointments
+from .notifications import seed_notifications, undo_notifications
 from app.models.db import db, environment, SCHEMA
-
 
 # Creates a seed group to hold our commands
 # So we can type `flask seed --help`
@@ -20,16 +21,22 @@ def seed():
         # command, which will  truncate all tables prefixed with
         # the schema name (see comment in users.py undo_users function).
         # Make sure to add all your other model's undo functions below
+        db.session.execute(f"TRUNCATE table {SCHEMA}.users RESTART IDENTITY CASCADE;")
+        db.session.commit()
         undo_users()
         undo_events()
         undo_friends()
         undo_participants()
         undo_messages()
-    seed_users()
-    seed_events()
-    seed_friends()
+        undo_appointments()
+        undo_notifications()
+    seed_notifications()
+    seed_appointments()
     seed_participants()
     seed_messages()
+    seed_friends()
+    seed_events()
+    seed_users()
     # Add other seed functions here
 
 
@@ -41,6 +48,8 @@ def undo():
     undo_friends()
     undo_participants()
     undo_messages()
+    undo_appointments()
+    undo_notifications()
     # Add other undo functions here
 
 

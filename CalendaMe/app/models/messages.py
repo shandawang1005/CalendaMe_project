@@ -1,12 +1,33 @@
-from .db import db
+from .db import db, SCHEMA, environment, add_prefix_for_prod
+
+# from sqlalchemy.schema import ForeignKey #type: ignore
+from sqlalchemy.orm import relationship  # type: ignore
+from sqlalchemy.sql import func
 from datetime import datetime
 
-class Message(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    event_id = db.Column(db.Integer, db.ForeignKey("event.id"), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    content = db.Column(db.Text, nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
+class Message(db.Model):
+    __tablename__ = "messages"
+
+    if environment == "production":
+        __table_args__ = {"schema": SCHEMA}
+
+    id = db.Column(db.Integer, primary_key=True)
+    event_id = db.Column(
+        db.Integer, db.ForeignKey(add_prefix_for_prod("events.id")), nullable=False
+    )
+    sender_id = db.Column(
+        db.Integer, db.ForeignKey(add_prefix_for_prod("users.id")), nullable=False
+    )
+    appointment_id = db.Column(
+        db.Integer,
+        db.ForeignKey(add_prefix_for_prod("appointments.id")),
+        nullable=False,
+    )
+    content = db.Column(db.Text, nullable=False)
+    sent_at = db.Column(db.DateTime, default=func.now())
+
+    # Relationships
     event = db.relationship("Event", back_populates="messages")
-    user = db.relationship("User")
+    sender = db.relationship("User", back_populates="messages_sent")
+    appointment = db.relationship("Appointment", back_populates="messages")

@@ -1,6 +1,7 @@
 from .db import db, environment, SCHEMA, add_prefix_for_prod
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
+from .friends import Friend
 
 
 class User(db.Model, UserMixin):
@@ -28,5 +29,11 @@ class User(db.Model, UserMixin):
     def to_dict(self):
         return {"id": self.id, "username": self.username, "email": self.email}
 
-    friends = db.relationship("Friend", back_populates="user")
+    # Self-referential relationship: a user can have many friends
+    friends = db.relationship(
+        "Friend", foreign_keys=[Friend.user_id], back_populates="user"
+    )
     events = db.relationship("Event", back_populates="creator")
+    appointments = db.relationship("Appointment", back_populates="user")
+    messages_sent = db.relationship("Message", back_populates="sender")
+    notifications = db.relationship("Notification", back_populates="user")

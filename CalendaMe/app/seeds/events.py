@@ -5,16 +5,16 @@ from datetime import datetime, timedelta
 def seed_events():
     event1 = Event(
         title="Meeting",
-        start_time=datetime.utcnow(),
-        end_time=datetime.utcnow() + timedelta(hours=1),
+        start_time=datetime.utcnow() + timedelta(weeks=4),
+        end_time=datetime.utcnow() + timedelta(weeks=4) + timedelta(hours=1),
         location="Office",
         visibility="public",
         creator_id=1,
     )
     event2 = Event(
         title="Lunch",
-        start_time=datetime.utcnow() + timedelta(days=1),
-        end_time=datetime.utcnow() + timedelta(days=1, hours=1),
+        start_time=datetime.utcnow() + timedelta(weeks=4) + timedelta(days=1),
+        end_time=datetime.utcnow() + timedelta(weeks=4) + timedelta(days=1, hours=1),
         location="Cafe",
         visibility="private",
         creator_id=2,

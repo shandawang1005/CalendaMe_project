@@ -1,36 +1,36 @@
-from app.models import db, Message, environment, SCHEMA
-from datetime import datetime
+from app.models import db, Message
+from datetime import datetime, timedelta
 
 
 def seed_messages():
+    # Example: Messages tied to specific appointments
     message1 = Message(
+        content="Looking forward to our appointment!",
+        sent_at=datetime.now(),
+        appointment_id=1,
+        sender_id=1,
         event_id=1,
-        user_id=1,
-        content="Looking forward to our meeting!",
-        timestamp=datetime.utcnow(),
     )
     message2 = Message(
+        content="See you then!",
+        sent_at=datetime.now(),
+        appointment_id=1,
+        sender_id=2,
         event_id=1,
-        user_id=2,
-        content="Same here, see you then!",
-        timestamp=datetime.utcnow(),
     )
     message3 = Message(
+        content="Can we reschedule?",
+        sent_at=datetime.now(),
+        appointment_id=2,
+        sender_id=2,
         event_id=2,
-        user_id=2,
-        content="Let's meet at the cafe tomorrow.",
-        timestamp=datetime.utcnow(),
     )
 
+    # Add the messages to the session
     db.session.add_all([message1, message2, message3])
     db.session.commit()
 
 
 def undo_messages():
-    if environment == "production":
-        db.session.execute(
-            f"TRUNCATE table {SCHEMA}.messages RESTART IDENTITY CASCADE;"
-        )
-    else:
-        db.session.execute("DELETE FROM messages")
+    db.session.execute("DELETE FROM messages")
     db.session.commit()
