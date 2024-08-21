@@ -17,25 +17,33 @@ const FriendsPage = () => {
   const pendingFriends = useSelector((state) => state.friends.pending || []);
   const error = useSelector((state) => state.friends.error);
 
+  // Fetch the list of friends when the component mounts
   useEffect(() => {
     dispatch(fetchFriendsListThunk());
   }, [dispatch]);
 
+  // Handle removing a friend
   const handleRemoveFriend = async (friendId) => {
     await dispatch(removeFriendThunk(friendId));
     dispatch(fetchFriendsListThunk()); // Re-fetch friends after removal
   };
 
+  // Handle canceling a friend request
   const handleCancelRequest = async (friendId) => {
     await dispatch(cancelFriendRequestThunk(friendId));
     dispatch(fetchFriendsListThunk()); // Re-fetch friends after cancelling request
   };
 
+  // Handle responding to a friend request
   const handleRespondToRequest = async (friendId, response) => {
+    console.log(
+      `Responding to friend request: ${friendId}, response: ${response}`
+    );
     await dispatch(respondToFriendRequestThunk(friendId, response));
     dispatch(fetchFriendsListThunk()); // Re-fetch friends after responding to request
   };
 
+  // Open and close the search modal
   const openSearchModal = () => {
     setIsModalOpen(true);
   };

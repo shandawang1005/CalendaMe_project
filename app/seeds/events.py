@@ -1,5 +1,6 @@
 from app.models import db, Event, environment, SCHEMA
 from datetime import datetime, timedelta
+from sqlalchemy.sql import text
 
 
 def seed_events():
@@ -28,5 +29,5 @@ def undo_events():
     if environment == "production":
         db.session.execute(f"TRUNCATE table {SCHEMA}.events RESTART IDENTITY CASCADE;")
     else:
-        db.session.execute("DELETE FROM events")
+        db.session.execute(text("DELETE FROM events"))
     db.session.commit()

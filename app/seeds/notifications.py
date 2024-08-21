@@ -1,5 +1,7 @@
 # app/notifications.py
-from app.models import db, Notification
+
+from app.models import db, Notification, environment, SCHEMA
+from sqlalchemy.sql import text
 
 
 def seed_notifications():
@@ -21,5 +23,11 @@ def seed_notifications():
 
 
 def undo_notifications():
-    db.session.execute("DELETE FROM notifications")
+    if environment == "production":
+        db.session.execute(
+            f"TRUNCATE table {SCHEMA}.notifications RESTART IDENTITY CASCADE;"
+        )
+    else:
+        db.session.execute(text("DELETE FROM notifications"))
+
     db.session.commit()

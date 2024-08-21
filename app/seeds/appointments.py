@@ -1,5 +1,6 @@
-from app.models import db, Appointment
+from app.models import db, Appointment, environment, SCHEMA
 from datetime import datetime, timedelta
+from sqlalchemy.sql import text
 
 
 def seed_appointments():
@@ -32,5 +33,11 @@ def seed_appointments():
 
 
 def undo_appointments():
-    db.session.execute("DELETE FROM appointments")
+    if environment == "production":
+        db.session.execute(
+            f"TRUNCATE table {SCHEMA}.appointments RESTART IDENTITY CASCADE;"
+        )
+    else:
+        db.session.execute(text("DELETE FROM appointments"))
+
     db.session.commit()

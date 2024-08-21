@@ -41,7 +41,7 @@ def send_friend_request():
     new_friendship = Friend(
         user_id=current_user.id,
         friend_id=friend_id,
-        accepted=0,  # 0 indicates pending
+        accepted=False,  # False indicates pending
     )
     db.session.add(new_friendship)
     db.session.commit()
@@ -65,13 +65,13 @@ def respond_to_friend_request(friendship_id):
     if not friendship or friendship.friend_id != current_user.id:
         return jsonify({"error": "Friend request not found"}), 404
 
-    # Ensure the friendship is still pending (accepted == 0)
-    if friendship.accepted != 0:
+    # Ensure the friendship is still pending (accepted == False)
+    if friendship.accepted != False:
         return jsonify({"error": "This friend request has already been processed"}), 400
 
     # Process the response
     if response == "accept":
-        friendship.accepted = 1  # Accept the friend request
+        friendship.accepted = True  # Accept the friend request
     elif response == "reject":
         db.session.delete(friendship)  # Reject and delete the friend request
     else:
@@ -96,7 +96,7 @@ def get_friends():
 
     for f in friendships:
         # Determine whether the current user is the friend or the requester
-        if f.accepted == 1:  # Friendship accepted
+        if f.accepted == True:  # Friendship accepted
             friend_user = (
                 User.query.get(f.friend_id)
                 if f.user_id == current_user.id

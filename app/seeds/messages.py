@@ -1,5 +1,6 @@
-from app.models import db, Message
+from app.models import db, Message, environment, SCHEMA
 from datetime import datetime, timedelta
+from sqlalchemy.sql import text
 
 
 def seed_messages():
@@ -32,5 +33,11 @@ def seed_messages():
 
 
 def undo_messages():
-    db.session.execute("DELETE FROM messages")
+    if environment == "production":
+        db.session.execute(
+            f"TRUNCATE table {SCHEMA}.messages RESTART IDENTITY CASCADE;"
+        )
+    else:
+        db.session.execute(text("DELETE FROM messages"))
+
     db.session.commit()
