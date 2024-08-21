@@ -147,9 +147,56 @@ Users can add friends and share calendars. Only friends can schedule appointment
 
 **Backend Routes**
 - `GET /api/friends`: Retrieve list of friends.
+  - **Response**:
+    ```json
+    [
+      {
+        "id": 1,
+        "username": "friend1"
+      },
+      {
+        "id": 2,
+        "username": "friend2"
+      }
+    ]
+    ```
+
 - `POST /api/friends/request`: Send a friend request.
+  - **Request**:
+    ```json
+    {
+      "sender_id": 1,
+      "receiver_id": 2
+    }
+    ```
+  - **Response**:
+    ```json
+    {
+      "message": "Friend request sent"
+    }
+    ```
+
 - `PUT /api/friends/request/:id`: Accept/decline a friend request.
+  - **Request**:
+    ```json
+    {
+      "status": "accepted"
+    }
+    ```
+  - **Response**:
+    ```json
+    {
+      "message": "Friend request accepted"
+    }
+    ```
+
 - `DELETE /api/friends/:id`: Remove a friend.
+  - **Response**:
+    ```json
+    {
+      "message": "Friend removed"
+    }
+    ```
 
 **Frontend Routes**
 - `/friends`: Manage friends and friend requests.
@@ -160,8 +207,47 @@ Users can assign time slots for appointments, and others can request to book tha
 
 **Backend Routes**
 - `POST /api/appointments`: Create a new appointment request.
+  - **Request**:
+    ```json
+    {
+      "user_id": 1,
+      "appointment_time": "2024-09-01T10:00:00",
+      "description": "Meeting with friend"
+    }
+    ```
+  - **Response**:
+    ```json
+    {
+      "message": "Appointment request sent"
+    }
+    ```
+
 - `PUT /api/appointments/:id`: Accept/decline an appointment request.
+  - **Request**:
+    ```json
+    {
+      "status": "accepted"
+    }
+    ```
+  - **Response**:
+    ```json
+    {
+      "message": "Appointment accepted"
+    }
+    ```
+
 - `GET /api/appointments`: Get scheduled appointments.
+  - **Response**:
+    ```json
+    [
+      {
+        "id": 1,
+        "user_id": 1,
+        "appointment_time": "2024-09-01T10:00:00",
+        "description": "Meeting with friend"
+      }
+    ]
+    ```
 
 **Frontend Routes**
 - `/appointments`: View/manage appointment requests.
@@ -171,9 +257,58 @@ Users can create, edit, delete, and view events. Events can be public or private
 
 **Backend Routes**
 - `GET /api/events`: Get all user events.
+  - **Response**:
+    ```json
+    [
+      {
+        "id": 1,
+        "title": "Event 1",
+        "date": "2024-09-01",
+        "is_private": false
+      }
+    ]
+    ```
+
 - `POST /api/events`: Create a new event.
+  - **Request**:
+    ```json
+    {
+      "user_id": 1,
+      "title": "Event 1",
+      "date": "2024-09-01",
+      "is_private": false
+    }
+    ```
+  - **Response**:
+    ```json
+    {
+      "message": "Event created"
+    }
+    ```
+
 - `PUT /api/events/:id`: Update an event.
+  - **Request**:
+    ```json
+    {
+      "title": "Updated Event 1",
+      "date": "2024-09-02",
+      "is_private": true
+    }
+    ```
+  - **Response**:
+    ```json
+    {
+      "message": "Event updated"
+    }
+    ```
+
 - `DELETE /api/events/:id`: Delete an event.
+  - **Response**:
+    ```json
+    {
+      "message": "Event deleted"
+    }
+    ```
 
 **Frontend Routes**
 - `/calendar`: View the calendar in various formats.
@@ -185,6 +320,19 @@ Users can create recurring events.
 
 **Backend Routes**
 - `POST /api/events/:id/recurring`: Create a recurring event.
+  - **Request**:
+    ```json
+    {
+      "recurrence": "weekly",
+      "end_date": "2024-12-01"
+    }
+    ```
+  - **Response**:
+    ```json
+    {
+      "message": "Recurring event created"
+    }
+    ```
 
 **Frontend Routes**
 - `/calendar/recurring`: Manage recurring events.
@@ -194,7 +342,24 @@ Users receive notifications regarding event updates and appointments.
 
 **Backend Routes**
 - `GET /api/notifications`: Retrieve user notifications.
+  - **Response**:
+    ```json
+    [
+      {
+        "id": 1,
+        "message": "Your event has been updated",
+        "is_read": false
+      }
+    ]
+    ```
+
 - `PUT /api/notifications/:id/read`: Mark a notification as read.
+  - **Response**:
+    ```json
+    {
+      "message": "Notification marked as read"
+    }
+    ```
 
 **Frontend Routes**
 - `/notifications`: View notifications.
@@ -204,7 +369,32 @@ Real-time chat for users to communicate during events.
 
 **Backend Routes**
 - `GET /api/events/:id/chat`: Fetch chat history.
+  - **Response**:
+    ```json
+    [
+      {
+        "id": 1,
+        "user_id": 1,
+        "message": "Hello, how are you?",
+        "timestamp": "2024-09-01T10:00:00"
+      }
+    ]
+    ```
+
 - `POST /api/events/:id/chat`: Send a chat message.
+  - **Request**:
+    ```json
+    {
+      "user_id": 1,
+      "message": "Hello, how are you?"
+    }
+    ```
+  - **Response**:
+    ```json
+    {
+      "message": "Message sent"
+    }
+    ```
 
 **Frontend Routes**
 - `/events/:id/chat`: Access live chat.
@@ -214,8 +404,35 @@ Users can upload and share files related to events.
 
 **Backend Routes**
 - `POST /api/files`: Upload a file for an event.
+  - **Request**:
+    ```json
+    {
+      "event_id": 1,
+      "file": "file_data_here"
+    }
+    ```
+  - **Response**:
+    ```json
+    {
+      "message": "File uploaded"
+    }
+    ```
+
 - `GET /api/files/:id`: Retrieve a file.
+  - **Response**:
+    ```json
+    {
+      "file_data": "file_data_here"
+    }
+    ```
+
 - `DELETE /api/files/:id`: Delete a file.
+  - **Response**:
+    ```json
+    {
+      "message": "File deleted"
+    }
+    ```
 
 **Frontend Routes**
 - `/events/:id/files`: Manage event files.
@@ -229,7 +446,7 @@ Users can upload and share files related to events.
 
 ### Backend Setup
 
+```bash
 1. Clone the repository and navigate to the backend directory:
-   ```bash
    git clone https://github.com/your-repo/calendar-app.git
    cd backend

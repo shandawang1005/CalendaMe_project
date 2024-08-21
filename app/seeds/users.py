@@ -8,15 +8,11 @@ def seed_users():
     demo = User(username="Demo", email="demo@aa.io", password="password")
     marnie = User(username="marnie", email="marnie@aa.io", password="password")
     bobbie = User(username="bobbie", email="bobbie@aa.io", password="password")
-
+    lydia = User(username="lydia", email="lydia@aa.io", password="password")
     db.session.add(demo)
     db.session.add(marnie)
     db.session.add(bobbie)
-    db.session.commit()
-
-    friend1 = Friend(user_id=demo.id, friend_id=marnie.id, accepted=True)
-    friend2 = Friend(user_id=marnie.id, friend_id=bobbie.id, accepted=True)
-    db.session.add_all([friend1, friend2])
+    db.session.add(lydia)
     db.session.commit()
 
 

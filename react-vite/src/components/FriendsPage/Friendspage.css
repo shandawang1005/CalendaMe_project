@@ -1,0 +1,32 @@
+/* FriendsPage.css */
+.friend-button {
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  margin-left: 10px;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.friend-button:hover {
+  background-color: #0056b3;
+}
+
+.cancel-button {
+  background-color: #dc3545;
+}
+
+.cancel-button:hover {
+  background-color: #c82333;
+}
+
+.remove-button {
+  background-color: #ffc107;
+}
+
+.remove-button:hover {
+  background-color: #e0a800;
+}

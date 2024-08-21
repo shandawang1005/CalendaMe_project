@@ -12,7 +12,13 @@ body {
   background-position: center; /* Centers the background image */
   background-repeat: no-repeat; /* Prevents the image from repeating */
   display: flex;
-  justify-content: center;
-  align-items: center;
+  /* justify-content: center;
+  align-items: center; */
   height: 100vh;
 }
+
+/* color: 
+#A02334;
+ #FFAD60;
+  #FFEEAD;
+  #96CEB4; */
