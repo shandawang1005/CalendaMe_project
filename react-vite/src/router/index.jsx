@@ -5,9 +5,10 @@ import Layout from "./Layout";
 import Home from "../components/Home";
 import Calendarpage from "../components/CalendarPage";
 import FriendsPage from "../components/FriendsPage";
-import Messagespage from "../components/MessagesPage";
+import MessagesPage from "../components/MessagesPage";
 import Notificationpage from "../components/NotificationPage";
 import NotFoundPage from "../components/NotFoundPage";
+import InvitationsPage from "../components/MessagesPage/Invitation";
 export const router = createBrowserRouter([
   {
     element: <Layout />,
@@ -34,12 +35,17 @@ export const router = createBrowserRouter([
       },
       {
         path: "messages",
-        element: <Messagespage />,
+        element: <MessagesPage />,
       },
       {
         path: "notification",
         element: <Notificationpage />,
       },
+      {
+        path: "invitation",
+        element: <InvitationsPage />,
+      },
+
       {
         path: "*",
         element: <NotFoundPage />,

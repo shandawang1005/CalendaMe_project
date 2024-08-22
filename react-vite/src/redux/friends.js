@@ -197,12 +197,20 @@ const friendsReducer = (state = initialState, action) => {
       };
 
     case SEND_FRIEND_REQUEST:
-      return {
+      // return {
+      //   ...state,
+      //   pending: [...state.pending, action.payload], // Add new friend to pending
+      //   requestMessage: "Friend request sent successfully",
+      //   error: null,
+      // };
+      action.payload["isRequestSentByYou"] = true;
+      const newState = {
         ...state,
-        pending: [...state.pending, action.payload], // Add new friend to pending
-        requestMessage: "Friend request sent successfully",
+        pending: [...state.pending, action.payload],
+        requestMessage: "Friend request send successfully",
         error: null,
       };
+      return newState;
 
     case SET_FRIEND_REQUEST_ERROR:
       return {

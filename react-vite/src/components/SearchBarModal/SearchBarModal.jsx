@@ -40,13 +40,13 @@ const SearchBarModal = ({ isOpen, onClose, triggerFetch }) => {
   const handleSendRequest = async (friendId) => {
     await dispatch(sendFriendRequestThunk(friendId));
     dispatch(searchUsersThunk(query.trim())); // Re-fetch search results after sending request
-    triggerFetch(); // Trigger a re-fetch of the friends list on the parent page
+    // triggerFetch(); // Trigger a re-fetch of the friends list on the parent page
   };
 
   const handleCancelRequest = async (friendId) => {
     await dispatch(cancelFriendRequestThunk(friendId));
     dispatch(searchUsersThunk(query.trim())); // Re-fetch search results after cancelling request
-    triggerFetch();
+    // triggerFetch();
   };
 
   const handleRemoveFriend = async (friendId) => {
@@ -127,7 +127,9 @@ const SearchBarModal = ({ isOpen, onClose, triggerFetch }) => {
               </li>
             ))}
           </ul>
-        ) : hasSearched && query && <p>No results found</p>}
+        ) : (
+          hasSearched && query && <p>No results found</p>
+        )}
 
         <button onClick={onClose}>Close</button>
       </div>

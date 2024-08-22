@@ -6,6 +6,7 @@ from .participants import seed_participants, undo_participants
 from .messages import seed_messages, undo_messages
 from .appointments import seed_appointments, undo_appointments
 from .notifications import seed_notifications, undo_notifications
+from .invitations import seed_invitations, undo_invitations
 from app.models.db import db, environment, SCHEMA
 
 # Creates a seed group to hold our commands
@@ -23,6 +24,7 @@ def seed():
         # Make sure to add all your other model's undo functions below
         db.session.execute(f"TRUNCATE table {SCHEMA}.users RESTART IDENTITY CASCADE;")
         db.session.commit()
+        undo_invitations()
         undo_notifications()
         undo_appointments()
         undo_messages()
@@ -36,13 +38,16 @@ def seed():
     seed_participants()
     seed_appointments()
     seed_messages()
+
     seed_notifications()
+    seed_invitations()
     # Add other seed functions here
 
 
 # Creates the `flask seed undo` command
 @seed_commands.command("undo")
 def undo():
+    undo_invitations()
     undo_notifications()
     undo_appointments()
     undo_messages()

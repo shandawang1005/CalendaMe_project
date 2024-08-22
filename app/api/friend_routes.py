@@ -59,7 +59,7 @@ def send_friend_request():
 @login_required
 def respond_to_friend_request(friendship_id):
     response = request.json.get("response")
-    friendship = Friend.query.get(friendship_id)
+    friendship = Friend.query.filter(Friend.friend_id == current_user.id).filter(Friend.user_id == friendship_id).first()
 
     # Ensure the friendship exists and the current user is the recipient
     if not friendship or friendship.friend_id != current_user.id:

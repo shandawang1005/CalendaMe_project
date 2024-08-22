@@ -36,9 +36,17 @@ class User(db.Model, UserMixin):
         back_populates="user",
         cascade="all, delete-orphan",
     )
+
+    # Relationship for events the user has created
     events = db.relationship(
         "Event", back_populates="creator", cascade="all, delete-orphan"
     )
+
+    # New relationship: events the user is participating in
+    events_participating = db.relationship(
+        "Participant", back_populates="user", cascade="all, delete-orphan"
+    )
+
     appointments = db.relationship(
         "Appointment", back_populates="user", cascade="all, delete-orphan"
     )

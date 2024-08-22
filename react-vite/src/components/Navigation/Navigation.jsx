@@ -37,6 +37,11 @@ function Navigation() {
               </NavLink>
             </li>
             <li>
+              <NavLink to="/invitation" activeClassName="active">
+                Invitation
+              </NavLink>
+            </li>
+            <li>
               <ProfileButton />
             </li>
           </>

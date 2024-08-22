@@ -1,3 +1,3 @@
-import Messagespage from "./Messagespage";
-
-export default Messagespage;
+import MessagesPage from "./MessagesPage";
+import InvitationsPage from "./Invitation";
+export default MessagesPage;
