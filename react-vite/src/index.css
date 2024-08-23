@@ -7,11 +7,8 @@
 
 body {
   font-family: "Arial", sans-serif;
-  background-image: url("../../../public//images/Background.jpg");
-  background-size: cover; /* Ensures the background image covers the entire viewport */
-  background-position: center; /* Centers the background image */
-  background-repeat: no-repeat; /* Prevents the image from repeating */
   display: flex;
+  background-color: lightblue;
   /* justify-content: center;
   align-items: center; */
   height: 100vh;
@@ -19,6 +16,10 @@ body {
 
 /* color: 
 #A02334;
- #FFAD60;
-  #FFEEAD;
-  #96CEB4; */
+#FFAD60;
+#FFEEAD;
+#96CEB4; 
+background-image: url("../../../public//images/Background.jpg");
+background-size: cover; /* Ensures the background image covers the entire viewport 
+background-position: center; /* Centers the background image 
+background-repeat: no-repeat; Prevents the image from repeating */

@@ -1,15 +1,23 @@
-from .db import db
+from .db import db, SCHEMA, environment, add_prefix_for_prod
 from .events import Event
 from .participants import Participant
 from sqlalchemy.orm import relationship
 
+
 class Invitation(db.Model):
     __tablename__ = "invitations"
-
+    if environment == "production":
+        __table_args__ = {"schema": SCHEMA}
     id = db.Column(db.Integer, primary_key=True)
-    event_id = db.Column(db.Integer, db.ForeignKey("events.id"), nullable=False)
-    inviter_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    invitee_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    event_id = db.Column(
+        db.Integer, db.ForeignKey(add_prefix_for_prod("events.id")), nullable=False
+    )
+    inviter_id = db.Column(
+        db.Integer, db.ForeignKey(add_prefix_for_prod("users.id")), nullable=False
+    )
+    invitee_id = db.Column(
+        db.Integer, db.ForeignKey(add_prefix_for_prod("users.id")), nullable=False
+    )
     status = db.Column(
         db.String(20), default="pending"
     )  # 'pending', 'accepted', 'declined'
@@ -26,7 +34,9 @@ class Invitation(db.Model):
             "event_title": self.event.title,
             "event_start_time": self.event.start_time.strftime("%Y-%m-%d %H:%M:%S"),
             "event_end_time": self.event.end_time.strftime("%Y-%m-%d %H:%M:%S"),
-            "event_duration": round((self.event.end_time - self.event.start_time).total_seconds() / 60),  # duration in minutes, rounded
+            "event_duration": round(
+                (self.event.end_time - self.event.start_time).total_seconds() / 60
+            ),  # duration in minutes, rounded
             "location": self.event.location or "N/A",
             "status": self.status,
             "inviter_id": self.inviter_id,
