@@ -14,10 +14,10 @@ const removeInvitation = (invitationId) => ({
   invitationId,
 });
 
-const sendInvitationsSuccess = (message) => ({
-  type: SEND_INVITATIONS_SUCCESS,
-  message,
-});
+// const sendInvitationsSuccess = (message) => ({
+//   type: SEND_INVITATIONS_SUCCESS,
+//   message,
+// });
 
 // Thunk: Fetch Invitations (both as inviter and invitee)
 export const fetchReceivedInvitations = () => async (dispatch) => {
@@ -47,7 +47,7 @@ export const fetchReceivedInvitations = () => async (dispatch) => {
   }
 };
 // Thunk: Send Invitations
-export const sendInvitations = (eventId, inviteeIds) => async (dispatch) => {
+export const sendInvitations = (eventId, inviteeIds) => async () => {
   try {
     const res = await fetch("/api/invitation/send", {
       method: "POST",

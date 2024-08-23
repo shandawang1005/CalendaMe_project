@@ -1,11 +1,11 @@
 import "./Splashpage.css";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 function Splashpage() {
   const navigate = useNavigate();
 
-  const user = useSelector((state) => state.session.user);
+  // const user = useSelector((state) => state.session.user);
 
   const handleLogin = async (e) => {
     e.preventDefault();

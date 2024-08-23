@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { searchFriendsForEvent, clearSearchResults } from "../../redux/friends"; // Adjust based on your redux actions
 import "./SearchBar.css"; // Add your custom CSS here

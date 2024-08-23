@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -18,7 +18,7 @@ const SearchBarModal = ({ isOpen, onClose, triggerFetch }) => {
   const modalRef = useRef(null);
 
   const results = useSelector((state) => state.friends.searchResults || []);
-  const searchError = useSelector((state) => state.friends.searchError);
+  // const searchError = useSelector((state) => state.friends.searchError);
 
   // Reset search input and results every time the modal is opened
   useEffect(() => {

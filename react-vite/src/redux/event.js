@@ -111,7 +111,7 @@ export const deleteEvent = (eventId) => async (dispatch) => {
 };
 
 // Thunk: Send Invitations
-export const sendInvitations = (eventId, inviteeIds) => async (dispatch) => {
+export const sendInvitations = (eventId, inviteeIds) => async () => {
   const response = await fetch("/api/invitation/send", {
     method: "POST",
     headers: {

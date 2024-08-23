@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import  { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchEvents, deleteEvent, removeParticipant } from "../../redux/event"; // Import your event thunks
 import CreateEditEventModal from "../CreateEditEventModal/CreateEditEventModal"; // Import your modal

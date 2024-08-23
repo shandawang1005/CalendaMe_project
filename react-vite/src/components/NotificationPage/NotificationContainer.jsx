@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext, useContext } from "react";
+import { useState, createContext, useContext } from "react";
 import { Notification } from "./NotificationPage";
 
 const NotificationContext = createContext();

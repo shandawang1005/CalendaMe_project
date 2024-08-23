@@ -121,7 +121,7 @@ function LoginFormPage() {
       </div>
 
       <div className="signup-link">
-        Don't have an account? <button onClick={handleSignup}>Sign Up</button>
+        Don&apos;t have an account? <button onClick={handleSignup}>Sign Up</button>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "react";
 import "./Notificationpage.css"; // Import any styles for notification
 
 const Notification = ({ message, type }) => {
