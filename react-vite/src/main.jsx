@@ -6,7 +6,7 @@ import configureStore from "./redux/store";
 import { router } from "./router";
 import * as sessionActions from "./redux/session";
 import "./index.css";
-
+import { ThemeProvider } from "./context/ThemeContext/ThemeContext"; // Import ThemeProvider
 import NotificationContainer from "./components/NotificationPage/NotificationContainer";
 
 const store = configureStore();
@@ -19,9 +19,11 @@ if (import.meta.env.MODE !== "production") {
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <ReduxProvider store={store}>
-      <NotificationContainer>
-        <RouterProvider router={router} />
-      </NotificationContainer>
+      <ThemeProvider>
+        <NotificationContainer>
+          <RouterProvider router={router} />
+        </NotificationContainer>
+      </ThemeProvider>
     </ReduxProvider>
   </React.StrictMode>
 );

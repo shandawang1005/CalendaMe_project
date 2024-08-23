@@ -1,5 +1,5 @@
 import { useState, createContext, useContext } from "react";
-import { Notification } from "./NotificationPage";
+import { Notification } from "./NotificationPage"; // Assuming you have this component to display individual notifications
 
 const NotificationContext = createContext();
 

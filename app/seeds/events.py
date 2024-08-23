@@ -26,18 +26,6 @@ def seed_events():
     db.session.add_all([event1, event2])
     db.session.commit()
 
-    # Add participants for event1
-    add_participants(
-        event1.id, 1, [2]
-    )  # Creator is user 1, add user 2 if they are friends
-
-    # Add participants for event2
-    add_participants(
-        event2.id, 2, [3]
-    )  # Creator is user 2, add user 3 if they are friends
-
-    db.session.commit()
-
 
 def add_participants(event_id, participant_ids, creator_id):
     # Check if participant_ids is an integer, and convert it to a list
@@ -64,7 +52,7 @@ def are_friends_with_someone_in_event(user_id, friend_id):
     friendship = Friend.query.filter(
         (Friend.user_id == user_id) & (Friend.friend_id == friend_id)
         | (Friend.user_id == friend_id) & (Friend.friend_id == user_id),
-        Friend.accepted == 1,
+        Friend.accepted == True,
     ).first()
 
     return friendship is not None

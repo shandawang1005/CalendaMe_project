@@ -7,11 +7,14 @@ import {
   respondToFriendRequestThunk,
 } from "../../redux/friends";
 import SearchBarModal from "../SearchBarModal/SearchBarModal";
-import "./Friendspage.css"; // Assuming you will add your CSS here
+import ConfirmationModal from "../FriendsPage/ConfirmRemove";
+import "./Friendspage.css";
 
 const FriendsPage = () => {
   const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [friendToRemove, setFriendToRemove] = useState(null);
+  const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
 
   const acceptedFriends = useSelector((state) => state.friends.accepted || []);
   const pendingFriends = useSelector((state) => state.friends.pending || []);
@@ -22,10 +25,24 @@ const FriendsPage = () => {
     dispatch(fetchFriendsListThunk());
   }, [dispatch]);
 
-  // Handle removing a friend
-  const handleRemoveFriend = async (friendId) => {
-    await dispatch(removeFriendThunk(friendId));
-    dispatch(fetchFriendsListThunk()); // Re-fetch friends after removal
+  // Handle confirming the removal of a friend
+  const handleConfirmRemove = async () => {
+    if (friendToRemove) {
+      await dispatch(removeFriendThunk(friendToRemove.id));
+      dispatch(fetchFriendsListThunk()); // Re-fetch friends after removal
+      setConfirmationModalOpen(false); // Close modal after action
+    }
+  };
+
+  // Open and close the confirmation modal
+  const openConfirmationModal = (friend) => {
+    setFriendToRemove(friend); // Store the friend to be removed
+    setConfirmationModalOpen(true); // Open the confirmation modal
+  };
+
+  const closeConfirmationModal = () => {
+    setFriendToRemove(null); // Clear the selected friend
+    setConfirmationModalOpen(false); // Close the confirmation modal
   };
 
   // Handle canceling a friend request
@@ -64,7 +81,7 @@ const FriendsPage = () => {
               {friend.username} ({friend.email})
               <button
                 className="friend-button remove-button"
-                onClick={() => handleRemoveFriend(friend.id)}
+                onClick={() => openConfirmationModal(friend)}
               >
                 Remove Friend
               </button>
@@ -121,6 +138,14 @@ const FriendsPage = () => {
         isOpen={isModalOpen}
         onClose={closeSearchModal}
         triggerFetch={() => dispatch(fetchFriendsListThunk())}
+      />
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={confirmationModalOpen}
+        onClose={closeConfirmationModal}
+        onConfirm={handleConfirmRemove}
+        message={`Are you sure you want to remove ${friendToRemove?.username}?`}
       />
     </div>
   );

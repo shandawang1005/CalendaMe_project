@@ -1,25 +1,57 @@
-/* TODO: Add sitewide styles */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+:root {
+  --background-color: #070717;
+  --text-primary-color: #e5e5e7;
+  --text-secondary-color: #8e8e93;
+  --button-background-color: #3a3a3c;
+  --button-text-color: #e5e5e7;
+  --border-color: #2c2c2e;
+  --card-background-color: #1c1c1e;
+  --highlight-color: #14e853;
+  --inactive-color: #454545;
 }
 
-body {
-  font-family: "Arial", sans-serif;
+body.dark-theme {
+  background-color: var(--background-color);
+  color: var(--text-primary-color);
+}
+
+button {
+  background-color: var(--button-background-color);
+  color: var(--button-text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 12px; /* Circle shape */
+  width: fit-content; /* Ensure width and height are equal for the circular shape */
+  height: fit-content;
   display: flex;
-  background-color: lightblue;
-  /* justify-content: center;
-  align-items: center; */
-  height: 100vh;
+  align-items: center;
+  justify-content: center;
 }
 
-/* color: 
-#A02334;
-#FFAD60;
-#FFEEAD;
-#96CEB4; 
-background-image: url("../../../public//images/Background.jpg");
-background-size: cover; /* Ensures the background image covers the entire viewport 
-background-position: center; /* Centers the background image 
-background-repeat: no-repeat; Prevents the image from repeating */
+button:hover {
+  background-color: var(--highlight-color);
+}
+
+.card {
+  background-color: var(--card-background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 15px; /* Optional: You can have rounded cards as well */
+}
+
+.inactive {
+  color: var(--inactive-color);
+}
+
+h1,
+h2,
+h3,
+p {
+  color: var(--text-primary-color);
+}
+
+a {
+  color: var(--highlight-color);
+}
+
+a:hover {
+  opacity: 0.8;
+}

@@ -1,12 +1,6 @@
 // import React from "react";
-import "./Notificationpage.css"; // Import any styles for notification
+import "./Notificationpage.css";
 
-const Notification = ({ message, type }) => {
-  return (
-    <div className={`notification ${type}`}>
-      <p>{message}</p>
-    </div>
-  );
+export const Notification = ({ message, type }) => {
+  return <div className={`notification ${type}`}>{message}</div>;
 };
-
-export { Notification };

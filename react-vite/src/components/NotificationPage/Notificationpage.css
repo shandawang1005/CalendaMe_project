@@ -1,29 +1,40 @@
 .notification-container {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 300px;
+  bottom: 10px;
+  right: 10px;
   z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 10000;
 }
 
 .notification {
-  background-color: #323232;
-  color: #fff;
-  padding: 15px;
-  margin-bottom: 10px;
+  background-color: #333;
+  color: white;
+  padding: 10px 20px;
   border-radius: 5px;
   opacity: 0.9;
-  transition: transform 0.5s, opacity 0.5s;
+  transition: all 0.5s ease;
 }
 
 .notification.success {
-  background-color: #4caf50;
+  background-color: #28a745;
 }
 
 .notification.error {
-  background-color: #f44336;
+  background-color: #dc3545;
 }
 
-.notification p {
-  margin: 0;
+.notification.info {
+  background-color: #17a2b8;
+}
+
+.notification.warn {
+  background-color: #ffc107;
+}
+
+.notification.fade-out {
+  opacity: 0;
+  transition: opacity 0.5s ease;
 }

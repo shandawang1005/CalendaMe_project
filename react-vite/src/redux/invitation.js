@@ -14,11 +14,6 @@ const removeInvitation = (invitationId) => ({
   invitationId,
 });
 
-// const sendInvitationsSuccess = (message) => ({
-//   type: SEND_INVITATIONS_SUCCESS,
-//   message,
-// });
-
 // Thunk: Fetch Invitations (both as inviter and invitee)
 export const fetchReceivedInvitations = () => async (dispatch) => {
   try {
@@ -34,20 +29,30 @@ export const fetchReceivedInvitations = () => async (dispatch) => {
         dispatch(setReceivedInvitations(invitations)); // Dispatch action to set invitations in Redux
       } catch (jsonError) {
         console.error("Failed to parse JSON:", jsonError);
-        alert("Received invalid JSON. Please try again later.");
+        dispatch({
+          type: SEND_INVITATIONS_SUCCESS,
+          message: "Received invalid JSON. Please try again later.",
+        });
       }
     } else {
       const errorText = await response.text(); // Fetch error response as text (in case it's HTML)
       console.error("Error fetching invitations:", errorText);
-      alert("Failed to fetch invitations.");
+      dispatch({
+        type: SEND_INVITATIONS_SUCCESS,
+        message: "Failed to fetch invitations.",
+      });
     }
   } catch (err) {
     console.error("Failed to fetch received invitations", err);
-    alert("An error occurred while fetching invitations.");
+    dispatch({
+      type: SEND_INVITATIONS_SUCCESS,
+      message: "An error occurred while fetching invitations.",
+    });
   }
 };
+
 // Thunk: Send Invitations
-export const sendInvitations = (eventId, inviteeIds) => async () => {
+export const sendInvitations = (eventId, inviteeIds) => async (dispatch) => {
   try {
     const res = await fetch("/api/invitation/send", {
       method: "POST",
@@ -62,19 +67,32 @@ export const sendInvitations = (eventId, inviteeIds) => async () => {
 
     if (res.ok) {
       const data = await res.json();
-      alert(data.message);
-      // Optionally refetch invitations or events after sending invitations
+      dispatch({
+        type: SEND_INVITATIONS_SUCCESS,
+        message: data.message,
+      });
     } else if (res.status === 409) {
       const error = await res.json();
-      alert(error.error); // Notify the user about the conflict
+      dispatch({
+        type: SEND_INVITATIONS_SUCCESS,
+        message: error.error, // Notify the user about the conflict
+      });
     } else {
       const error = await res.json();
-      alert(error.error);
+      dispatch({
+        type: SEND_INVITATIONS_SUCCESS,
+        message: error.error,
+      });
     }
   } catch (err) {
     console.error("Failed to send invitations", err);
+    dispatch({
+      type: SEND_INVITATIONS_SUCCESS,
+      message: "An error occurred while sending invitations.",
+    });
   }
 };
+
 // Thunk: Respond to an Invitation
 export const respondToInvitation =
   (invitationId, response) => async (dispatch) => {
@@ -89,14 +107,24 @@ export const respondToInvitation =
 
       if (res.ok) {
         const data = await res.json();
-        alert(data.message); // Notify the user that their response was recorded
+        dispatch({
+          type: SEND_INVITATIONS_SUCCESS,
+          message: data.message, // Notify the user that their response was recorded
+        });
         dispatch(fetchReceivedInvitations()); // Optionally refetch invitations to update the UI
       } else {
         const error = await res.json();
-        alert(error.error);
+        dispatch({
+          type: SEND_INVITATIONS_SUCCESS,
+          message: error.error,
+        });
       }
     } catch (err) {
       console.error("Failed to respond to invitation", err);
+      dispatch({
+        type: SEND_INVITATIONS_SUCCESS,
+        message: "Failed to respond to invitation.",
+      });
     }
   };
 
@@ -112,14 +140,24 @@ export const cancelInvitation = (invitationId) => async (dispatch) => {
 
     if (response.ok) {
       const data = await response.json();
-      alert(data.message); // Notify the user that the invitation was canceled
+      dispatch({
+        type: SEND_INVITATIONS_SUCCESS,
+        message: data.message, // Notify the user that the invitation was canceled
+      });
       dispatch(removeInvitation(invitationId)); // Dispatch action to remove the invitation from Redux
     } else {
       const error = await response.json();
-      alert(error.error);
+      dispatch({
+        type: SEND_INVITATIONS_SUCCESS,
+        message: error.error, // Notify the user about the error
+      });
     }
   } catch (err) {
     console.error("Failed to cancel invitation", err);
+    dispatch({
+      type: SEND_INVITATIONS_SUCCESS,
+      message: "Failed to cancel invitation.",
+    });
   }
 };
 
@@ -147,7 +185,7 @@ export default function invitationReducer(state = initialState, action) {
     case SEND_INVITATIONS_SUCCESS:
       return {
         ...state,
-        message: action.message,
+        message: action.message, // Update the message in the state
       };
     default:
       return state;

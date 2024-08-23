@@ -5,6 +5,7 @@ import {
   respondToInvitation,
   cancelInvitation,
 } from "../../redux/invitation";
+import { useNotification } from "../NotificationPage/NotificationContainer"; // Import useNotification hook
 
 const InvitationsPage = () => {
   const dispatch = useDispatch();
@@ -12,6 +13,7 @@ const InvitationsPage = () => {
     (state) => state.invitations.receivedInvitations
   );
   const currentUser = useSelector((state) => state.session.user); // Assuming the current user is stored in session
+  const { addNotification } = useNotification(); // Use the notification hook
 
   useEffect(() => {
     dispatch(fetchReceivedInvitations());
@@ -19,10 +21,12 @@ const InvitationsPage = () => {
 
   const handleResponse = (invitationId, response) => {
     dispatch(respondToInvitation(invitationId, response));
+    addNotification(`Invitation ${response} successfully.`, "success", 3000);
   };
 
   const handleCancel = (invitationId) => {
     dispatch(cancelInvitation(invitationId)); // Dispatch to cancel the invitation
+    addNotification("Invitation canceled successfully.", "success", 3000);
   };
 
   const calculateDurationInMinutes = (startTime, endTime) => {
@@ -36,6 +40,7 @@ const InvitationsPage = () => {
   return (
     <div>
       <h2>Your Invitations</h2>
+
       <ul>
         {invitations.map((invitation) => (
           <li key={invitation.id}>

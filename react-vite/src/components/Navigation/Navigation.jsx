@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import ProfileButton from "./ProfileButton";
 import { useSelector } from "react-redux";
+import ThemeToggleButton from "../ThemeToggleButton/ThemeToggleButton"; // Adjust the path as needed
 import "./Navigation.css";
 
 function Navigation() {
@@ -38,6 +39,9 @@ function Navigation() {
             </li>
             <li>
               <ProfileButton />
+            </li>
+            <li>
+              <ThemeToggleButton /> {/* Theme toggle button */}
             </li>
           </>
         )}

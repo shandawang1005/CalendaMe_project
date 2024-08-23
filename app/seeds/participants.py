@@ -2,9 +2,7 @@ from app.models import db, Participant, environment, SCHEMA
 
 
 def seed_participants():
-    # Clear all participants before seeding
-    db.session.execute("DELETE FROM participants")
-    db.session.commit()
+    
 
     # Seed participants with accepted status
     participants = [
