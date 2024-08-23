@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: acb891b82835
+Revision ID: 82c64a7c277b
 Revises:
-Create Date: 2024-08-22 16:50:22.345296
+Create Date: 2024-08-23 09:02:06.731392
 
 """
 
@@ -14,7 +14,7 @@ environment = os.getenv("FLASK_ENV")
 SCHEMA = os.environ.get("SCHEMA")
 
 # revision identifiers, used by Alembic.
-revision = "acb891b82835"
+revision = "82c64a7c277b"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -147,7 +147,6 @@ def upgrade():
     )
     if environment == "production":
         op.execute(f"ALTER TABLE participants SET SCHEMA {SCHEMA};")
-
     op.create_table(
         "messages",
         sa.Column("id", sa.Integer(), nullable=False),
@@ -170,7 +169,6 @@ def upgrade():
         ),
         sa.PrimaryKeyConstraint("id"),
     )
-
     if environment == "production":
         op.execute(f"ALTER TABLE messages SET SCHEMA {SCHEMA};")
     # ### end Alembic commands ###
