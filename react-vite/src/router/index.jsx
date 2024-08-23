@@ -6,7 +6,7 @@ import Home from "../components/Home";
 import Calendarpage from "../components/CalendarPage";
 import FriendsPage from "../components/FriendsPage";
 import MessagesPage from "../components/MessagesPage";
-import Notificationpage from "../components/NotificationPage";
+
 import NotFoundPage from "../components/NotFoundPage";
 import InvitationsPage from "../components/MessagesPage/Invitation";
 export const router = createBrowserRouter([
@@ -37,10 +37,7 @@ export const router = createBrowserRouter([
         path: "messages",
         element: <MessagesPage />,
       },
-      {
-        path: "notification",
-        element: <Notificationpage />,
-      },
+
       {
         path: "invitation",
         element: <InvitationsPage />,

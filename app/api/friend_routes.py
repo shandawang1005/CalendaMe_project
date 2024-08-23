@@ -59,7 +59,11 @@ def send_friend_request():
 @login_required
 def respond_to_friend_request(friendship_id):
     response = request.json.get("response")
-    friendship = Friend.query.filter(Friend.friend_id == current_user.id).filter(Friend.user_id == friendship_id).first()
+    friendship = (
+        Friend.query.filter(Friend.friend_id == current_user.id)
+        .filter(Friend.user_id == friendship_id)
+        .first()
+    )
 
     # Ensure the friendship exists and the current user is the recipient
     if not friendship or friendship.friend_id != current_user.id:
@@ -160,3 +164,38 @@ def remove_friend(friend_id):
     return jsonify(
         {"message": "Friend removed", "friend": serialize_friend(friend_user)}
     ), 200
+
+
+@friend_routes.route("/search", methods=["GET"])
+@login_required
+def search_friends():
+    query = request.args.get("query", "")
+
+    if not query:
+        return jsonify({"error": "Search query is required"}), 400
+
+    try:
+        # Find all accepted friends of the current user
+        friendships = Friend.query.filter(
+            (
+                (Friend.user_id == current_user.id)
+                | (Friend.friend_id == current_user.id)
+            )
+            & (Friend.accepted == True)
+        ).all()
+
+        # Extract friend IDs
+        friend_ids = [
+            f.friend_id if f.user_id == current_user.id else f.user_id
+            for f in friendships
+        ]
+
+        # Search for friends who match the query and are in the friend list
+        results = User.query.filter(
+            ((User.username.ilike(f"%{query}%")) | (User.email.ilike(f"%{query}%")))
+            & (User.id.in_(friend_ids))  # Only include accepted friends
+        ).all()
+
+        return jsonify([serialize_friend(user) for user in results]), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

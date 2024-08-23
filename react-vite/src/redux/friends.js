@@ -7,6 +7,8 @@ const SET_SEARCH_ERROR = "friends/SET_SEARCH_ERROR";
 const CANCEL_FRIEND_REQUEST = "friends/CANCEL_FRIEND_REQUEST";
 const RESPOND_TO_FRIEND_REQUEST = "friends/RESPOND_TO_FRIEND_REQUEST";
 const REMOVE_FRIEND = "friends/REMOVE_FRIEND";
+const CLEAR_SEARCH_RESULTS = "friends/CLEAR_SEARCH_RESULTS";
+const SET_EVENT_FRIEND_SEARCH_RESULTS = "friends/SET_EVENT_FRIEND_SEARCH_RESULTS";
 
 // Action Creators
 export const fetchFriendsList = (friends) => ({
@@ -47,6 +49,15 @@ export const respondToFriendRequestSuccess = (friendshipId, status) => ({
 export const removeFriendSuccess = (friendId) => ({
   type: REMOVE_FRIEND,
   payload: friendId,
+});
+
+export const clearSearchResults = () => ({
+  type: CLEAR_SEARCH_RESULTS,
+});
+
+export const setEventFriendSearchResults = (results) => ({
+  type: SET_EVENT_FRIEND_SEARCH_RESULTS,
+  payload: results,
 });
 
 // Thunks
@@ -110,6 +121,26 @@ export const searchUsersThunk = (query) => async (dispatch) => {
     dispatch(setSearchResults(data));
   } catch (error) {
     console.error("Error searching users:", error.message);
+    dispatch(setSearchError(error.message));
+  }
+};
+
+// Search friends specifically for event invitations
+export const searchFriendsForEvent = (query) => async (dispatch) => {
+  try {
+    const response = await fetch(`/api/friends/search?query=${query}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) throw new Error("Failed to fetch search results");
+
+    const data = await response.json();
+    dispatch(setEventFriendSearchResults(data));
+  } catch (error) {
+    console.error("Error searching friends for event:", error.message);
     dispatch(setSearchError(error.message));
   }
 };
@@ -182,7 +213,8 @@ const initialState = {
   pending: [],
   requestMessage: null,
   error: null,
-  searchResults: [],
+  searchResults: [], // For regular friend search
+  eventSearchResults: [], // NEW: For event friend search
   searchError: null,
 };
 
@@ -197,20 +229,13 @@ const friendsReducer = (state = initialState, action) => {
       };
 
     case SEND_FRIEND_REQUEST:
-      // return {
-      //   ...state,
-      //   pending: [...state.pending, action.payload], // Add new friend to pending
-      //   requestMessage: "Friend request sent successfully",
-      //   error: null,
-      // };
       action.payload["isRequestSentByYou"] = true;
-      const newState = {
+      return {
         ...state,
         pending: [...state.pending, action.payload],
-        requestMessage: "Friend request send successfully",
+        requestMessage: "Friend request sent successfully",
         error: null,
       };
-      return newState;
 
     case SET_FRIEND_REQUEST_ERROR:
       return {
@@ -234,7 +259,7 @@ const friendsReducer = (state = initialState, action) => {
     case CANCEL_FRIEND_REQUEST:
       return {
         ...state,
-        pending: state.pending.filter((friend) => friend.id !== action.payload), // Remove from pending
+        pending: state.pending.filter((friend) => friend.id !== action.payload),
         requestMessage: "Friend request canceled",
       };
 
@@ -243,7 +268,7 @@ const friendsReducer = (state = initialState, action) => {
         ...state,
         pending: state.pending.filter(
           (friend) => friend.id !== action.payload.friendshipId
-        ), // Remove from pending when responded
+        ),
         accepted:
           action.payload.status === "accept"
             ? [
@@ -252,7 +277,7 @@ const friendsReducer = (state = initialState, action) => {
                   (friend) => friend.id === action.payload.friendshipId
                 ),
               ]
-            : state.accepted, // Add to accepted if accepted
+            : state.accepted,
       };
 
     case REMOVE_FRIEND:
@@ -260,7 +285,20 @@ const friendsReducer = (state = initialState, action) => {
         ...state,
         accepted: state.accepted.filter(
           (friend) => friend.id !== action.payload
-        ), // Remove from accepted
+        ),
+      };
+
+    case CLEAR_SEARCH_RESULTS:
+      return {
+        ...state,
+        searchResults: [],
+      };
+
+    case SET_EVENT_FRIEND_SEARCH_RESULTS: // NEW: Handle event friend search results
+      return {
+        ...state,
+        eventSearchResults: action.payload,
+        searchError: null,
       };
 
     default:

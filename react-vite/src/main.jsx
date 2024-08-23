@@ -7,6 +7,8 @@ import { router } from "./router";
 import * as sessionActions from "./redux/session";
 import "./index.css";
 
+import NotificationContainer from "./components/NotificationPage/NotificationContainer";
+
 const store = configureStore();
 
 if (import.meta.env.MODE !== "production") {
@@ -17,7 +19,9 @@ if (import.meta.env.MODE !== "production") {
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <ReduxProvider store={store}>
-      <RouterProvider router={router} />
+      <NotificationContainer>
+        <RouterProvider router={router} />
+      </NotificationContainer>
     </ReduxProvider>
   </React.StrictMode>
 );

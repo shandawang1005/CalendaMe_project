@@ -1,0 +1,47 @@
+.notification-container {
+  position: fixed;
+  top: 20px; /* Move to the top */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10000; /* Ensure it's above everything else */
+}
+
+.notification {
+  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black */
+  color: white;
+  padding: 15px 30px;
+  border-radius: 5px;
+  margin: 10px 0;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  animation: fadeInOut 3s ease forwards;
+  z-index: 9999;
+}
+
+.notification.success {
+  background-color: green;
+}
+
+.notification.error {
+  background-color: red;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  90% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}

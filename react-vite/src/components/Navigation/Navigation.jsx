@@ -32,11 +32,6 @@ function Navigation() {
               </NavLink>
             </li>
             <li>
-              <NavLink to="/notification" activeClassName="active">
-                Notification
-              </NavLink>
-            </li>
-            <li>
               <NavLink to="/invitation" activeClassName="active">
                 Invitation
               </NavLink>

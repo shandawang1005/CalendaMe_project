@@ -1,3 +1,3 @@
-import Notificationpage from "./NotificationPage";
+import NotificationContainer from "./NotificationContainer";
 
-export default Notificationpage;
+export default NotificationContainer;

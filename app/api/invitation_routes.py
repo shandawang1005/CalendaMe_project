@@ -5,6 +5,7 @@ from app.models import db, Event, User, Invitation, Participant
 
 invitation_routes = Blueprint("invitations", __name__)
 
+
 # Fetch received invitations
 @invitation_routes.route("/received", methods=["GET"])
 @login_required
@@ -36,10 +37,10 @@ def view_received_invitations():
 def send_invitations():
     data = request.json
     event_id = data.get("event_id")
-    invitee_ids = data.get("invitee_ids")
+    invitee_ids = data.get("invitee_ids")  # List of invitee IDs
 
     if not event_id or not invitee_ids or not isinstance(invitee_ids, list):
-        return jsonify({"error": "Missing or invalid event ID or invitee IDs."}), 400
+        return jsonify({"error": "Invalid event ID or invitee IDs."}), 400
 
     event = Event.query.get(event_id)
 
@@ -49,22 +50,25 @@ def send_invitations():
     if event.creator_id != current_user.id:
         return jsonify({"error": "Unauthorized to invite users to this event."}), 403
 
-    # Send invitations
+    invitations = []
+
+    # Loop over invitee_ids and create invitations for each
     for invitee_id in invitee_ids:
-        # Avoid inviting the same user twice or someone who is already a participant
+        if Invitation.check_time_conflict_for_invitee(
+            invitee_id, event.start_time, event.end_time
+        ):
+            return jsonify(
+                {"error": f"Invitee with ID {invitee_id} has a scheduling conflict."}
+            ), 409
+
+        # Avoid inviting the same user twice
         existing_invitation = Invitation.query.filter_by(
             event_id=event_id, invitee_id=invitee_id
         ).first()
-
         if existing_invitation:
             continue
 
-        # Ensure the invitee exists
-        invitee = User.query.get(invitee_id)
-        if not invitee:
-            return jsonify({"error": f"Invitee with ID {invitee_id} not found."}), 404
-
-        # Create and add the invitation
+        # Create a new invitation
         invitation = Invitation(
             event_id=event_id,
             inviter_id=current_user.id,
@@ -72,13 +76,21 @@ def send_invitations():
             status="pending",
         )
         db.session.add(invitation)
+        invitations.append(invitation)
 
     try:
         db.session.commit()
-        return jsonify({"message": "Invitations sent successfully."}), 200
-    except SQLAlchemyError as e:
-        print(f"Error committing invitations: {e}")
-        return jsonify({"error": "Error saving invitations."}), 500
+        return jsonify(
+            {
+                "message": "Invitations sent successfully.",
+                "invitations": [
+                    inv.to_dict_with_event_details() for inv in invitations
+                ],
+            }
+        ), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Error while sending invitations."}), 500
 
 
 # Respond to an invitation
