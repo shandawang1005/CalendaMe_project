@@ -46,11 +46,14 @@ def get_events():
         db.session.query(Event)
         .join(Participant)
         .filter(
-            (Participant.user_id == current_user.id)
-            & (Participant.status == "accepted")
+            Participant.user_id == current_user.id, Participant.status == "accepted"
         )
         .all()
     )
+
+    # Print statements for debugging
+    print(f"User ID: {current_user.id}")
+    print(f"Events for User: {[event.title for event in events]}")
 
     return jsonify([event.to_dict() for event in events]), 200
 
@@ -109,12 +112,18 @@ def add_event():
     db.session.add(new_event)
     db.session.commit()
 
-    # Add the current user as a participant
-    participant = Participant(
-        user_id=current_user.id, event_id=new_event.id, status="accepted"
-    )
-    db.session.add(participant)
-    db.session.commit()
+    # Check if the current user is already a participant
+    existing_participant = Participant.query.filter_by(
+        event_id=new_event.id, user_id=current_user.id
+    ).first()
+
+    if not existing_participant:
+        # Add the current user as a participant
+        participant = Participant(
+            user_id=current_user.id, event_id=new_event.id, status="accepted"
+        )
+        db.session.add(participant)
+        db.session.commit()
 
     return jsonify(
         {"message": "Event added successfully!", "event": new_event.to_dict()}

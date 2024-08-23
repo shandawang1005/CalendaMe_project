@@ -6,16 +6,16 @@ def seed_invitations():
     # Invite Bob Brown to the first event (Weekly Standup)
     invitation1 = Invitation(
         event_id=1,
-        inviter_id=1,  # John Doe is the inviter
-        invitee_id=3,  # Bob Brown is the invitee
+        inviter_id=1,  # Demo is the inviter
+        invitee_id=3,  # Bobbie is the invitee
         status="pending",  # Pending invitation
     )
 
     # Invite Jane Smith to the first event (Weekly Standup)
     invitation2 = Invitation(
         event_id=1,
-        inviter_id=1,  # John Doe is the inviter
-        invitee_id=2,  # Jane Smith is the invitee
+        inviter_id=1,  # Demo is the inviter
+        invitee_id=2,  # marine is the invitee
         status="accepted",  # Jane has already accepted
     )
 

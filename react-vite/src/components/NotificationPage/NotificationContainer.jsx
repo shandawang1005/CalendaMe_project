@@ -22,7 +22,7 @@ const NotificationContainer = ({ children }) => {
   };
 
   return (
-    <NotificationContext.Provider value={addNotification}>
+    <NotificationContext.Provider value={{ addNotification }}>
       {children}
       <div className="notification-container">
         {notifications.map((notification) => (

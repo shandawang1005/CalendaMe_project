@@ -2,14 +2,16 @@ import { useState, useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { clearSearchResults, searchFriendsForEvent } from "../../redux/friends";
-import { createEvent, editEvent } from "../../redux/event";
+import { createEvent, editEvent, sendInvitations } from "../../redux/event";
 import { useNotification } from "../NotificationPage/NotificationContainer"; // Import useNotification hook
 import "./CreateEditEventModal.css";
 
 const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
   const dispatch = useDispatch();
-  const addNotification = useNotification(); // Hook to trigger notifications
-  const friends = useSelector((state) => state.friends.eventSearchResults || []);
+  const { addNotification } = useNotification(); // Hook to trigger notifications
+  const friends = useSelector(
+    (state) => state.friends.eventSearchResults || []
+  );
 
   const [formData, setFormData] = useState({
     title: "",
@@ -132,10 +134,16 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
               : "Event created successfully!",
             "success"
           );
+          if (inviteeIds.length > 0) {
+            dispatch(sendInvitations(response.event.id, inviteeIds));
+          }
           onClose();
         }
       } catch (error) {
-        addNotification("An error occurred while processing the request", "error");
+        addNotification(
+          "An error occurred while processing the request",
+          "error"
+        );
       }
     }
   };

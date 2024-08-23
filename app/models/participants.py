@@ -1,15 +1,20 @@
 from .db import db, SCHEMA, environment, add_prefix_for_prod
-
-# from sqlalchemy.schema import ForeignKey #type: ignore
 from sqlalchemy.orm import relationship  # type: ignore
-from sqlalchemy.sql import func
+from sqlalchemy.schema import UniqueConstraint  # For unique constraints
 
 
 class Participant(db.Model):
     __tablename__ = "participants"
 
     if environment == "production":
-        __table_args__ = {"schema": SCHEMA}
+        __table_args__ = (
+            UniqueConstraint("user_id", "event_id", name="unique_user_event"),
+            {"schema": SCHEMA},
+        )
+    else:
+        __table_args__ = (
+            UniqueConstraint("user_id", "event_id", name="unique_user_event"),
+        )
 
     id = db.Column(db.Integer, primary_key=True)
     event_id = db.Column(
@@ -22,14 +27,17 @@ class Participant(db.Model):
         db.String(20), nullable=False
     )  # 'pending', 'accepted', 'declined'
 
+    # Relationships
     event = db.relationship("Event", back_populates="participants")
     user = db.relationship("User")
 
     def to_dict(self):
         return {
-        "id": self.id,
-        "user_id": self.user_id,
-        "username": self.user.username if self.user else None,  # Add null check for user relationship
-        "event_id": self.event_id,
-        "status": self.status,
-    }
+            "id": self.id,
+            "user_id": self.user_id,
+            "username": self.user.username
+            if self.user
+            else None,  # Add null check for user relationship
+            "event_id": self.event_id,
+            "status": self.status,
+        }
