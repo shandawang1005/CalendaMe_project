@@ -45,5 +45,7 @@ class Event(db.Model):
             "visibility": self.visibility,
             "recurring": self.recurring,
             "creator_id": self.creator_id,
-            # You may also add participants if needed, but you would need to convert them to a dict format
+            "participants": [
+                participant.to_dict() for participant in self.participants
+            ],
         }

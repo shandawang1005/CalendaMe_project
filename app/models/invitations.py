@@ -1,4 +1,5 @@
 from .db import db
+from .events import Event
 
 
 class Invitation(db.Model):
@@ -17,16 +18,21 @@ class Invitation(db.Model):
     inviter = db.relationship("User", foreign_keys=[inviter_id])
     invitee = db.relationship("User", foreign_keys=[invitee_id])
 
-    def to_dict(self):
+    def to_dict_with_event_details(self):
         return {
             "id": self.id,
             "event_id": self.event_id,
-            "inviter_id": self.inviter_id,
-            "invitee_id": self.invitee_id,
+            "event_title": self.event.title,
+            "event_start_time": self.event.start_time.strftime("%Y-%m-%d %H:%M:%S"),
+            "event_end_time": self.event.end_time.strftime("%Y-%m-%d %H:%M:%S"),
+            "event_duration": (
+                self.event.end_time - self.event.start_time
+            ).total_seconds()
+            / 60,  # duration in minutes
+            "location": self.event.location or "N/A",
             "status": self.status,
-            "event_title": self.event.title
-            if self.event
-            else None,  # Optional, depending on your relationship
+            "inviter_id": self.inviter_id,
             "inviter_name": self.inviter.username if self.inviter else None,
+            "invitee_id": self.invitee_id,
             "invitee_name": self.invitee.username if self.invitee else None,
         }

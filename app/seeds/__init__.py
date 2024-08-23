@@ -38,7 +38,6 @@ def seed():
     seed_participants()
     seed_appointments()
     seed_messages()
-
     seed_notifications()
     seed_invitations()
     # Add other seed functions here

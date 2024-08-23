@@ -1,46 +1,70 @@
 from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
-from app.models import db, Event, User, Invitation
+from sqlalchemy.exc import SQLAlchemyError
+from app.models import db, Event, User, Invitation, Participant
 
 invitation_routes = Blueprint("invitations", __name__)
 
-
+# Fetch received invitations
 @invitation_routes.route("/received", methods=["GET"])
 @login_required
 def view_received_invitations():
     try:
+        # Fetch invitations where the current user is either the invitee or the inviter
         invitations = Invitation.query.filter(
             (Invitation.invitee_id == current_user.id)
             | (Invitation.inviter_id == current_user.id)
         ).all()
 
-        # Convert invitations to JSON using the to_dict method
-        return jsonify([invitation.to_dict() for invitation in invitations]), 200
-    except Exception as e:
-        # Log the error on the server for debugging
+        # Add event details to each invitation's response
+        invitations_data = [
+            invitation.to_dict_with_event_details() for invitation in invitations
+        ]
+
+        return jsonify(invitations_data), 200
+
+    except SQLAlchemyError as e:
         print(f"Error fetching invitations: {e}")
-        return jsonify({"error": "Something went wrong"}), 500
+        return jsonify(
+            {"error": "Database error occurred while fetching invitations."}
+        ), 500
 
 
+# Send invitations to users
 @invitation_routes.route("/send", methods=["POST"])
 @login_required
 def send_invitations():
     data = request.json
     event_id = data.get("event_id")
-    invitee_ids = data.get("invitee_ids")  # List of user IDs to invite
+    invitee_ids = data.get("invitee_ids")
+
+    if not event_id or not invitee_ids or not isinstance(invitee_ids, list):
+        return jsonify({"error": "Missing or invalid event ID or invitee IDs."}), 400
 
     event = Event.query.get(event_id)
 
     # Check if the event exists and if the current user is authorized to invite others
-    if not event or event.creator_id != current_user.id:
+    if not event:
+        return jsonify({"error": "Event not found."}), 404
+    if event.creator_id != current_user.id:
         return jsonify({"error": "Unauthorized to invite users to this event."}), 403
 
     # Send invitations
     for invitee_id in invitee_ids:
-        # Avoid inviting the same user twice
-        if Invitation.query.filter_by(event_id=event_id, invitee_id=invitee_id).first():
+        # Avoid inviting the same user twice or someone who is already a participant
+        existing_invitation = Invitation.query.filter_by(
+            event_id=event_id, invitee_id=invitee_id
+        ).first()
+
+        if existing_invitation:
             continue
 
+        # Ensure the invitee exists
+        invitee = User.query.get(invitee_id)
+        if not invitee:
+            return jsonify({"error": f"Invitee with ID {invitee_id} not found."}), 404
+
+        # Create and add the invitation
         invitation = Invitation(
             event_id=event_id,
             inviter_id=current_user.id,
@@ -49,11 +73,15 @@ def send_invitations():
         )
         db.session.add(invitation)
 
-    db.session.commit()
-    return jsonify({"message": "Invitations sent successfully."}), 200
+    try:
+        db.session.commit()
+        return jsonify({"message": "Invitations sent successfully."}), 200
+    except SQLAlchemyError as e:
+        print(f"Error committing invitations: {e}")
+        return jsonify({"error": "Error saving invitations."}), 500
 
 
-##response to invitation
+# Respond to an invitation
 @invitation_routes.route("/respond", methods=["POST"])
 @login_required
 def respond_to_invitation():
@@ -61,33 +89,58 @@ def respond_to_invitation():
     invitation_id = data.get("invitation_id")
     response = data.get("response")  # 'accepted' or 'declined'
 
+    if not invitation_id or response not in ["accepted", "declined"]:
+        return jsonify({"error": "Missing or invalid invitation ID or response."}), 400
+
     invitation = Invitation.query.get(invitation_id)
 
     # Check if the invitation exists and is meant for the current user
-    if not invitation or invitation.invitee_id != current_user.id:
-        return jsonify({"error": "Invalid invitation."}), 403
+    if not invitation:
+        return jsonify({"error": "Invitation not found."}), 404
+
+    if invitation.invitee_id != current_user.id:
+        return jsonify({"error": "Unauthorized to respond to this invitation."}), 403
 
     # Update the invitation status
-    if response not in ["accepted", "declined"]:
-        return jsonify({"error": "Invalid response."}), 400
-
     invitation.status = response
+
+    # If the user accepts the invitation, add them as a participant to the event
+    if response == "accepted":
+        # Ensure the participant isn't already in the event
+        existing_participant = Participant.query.filter_by(
+            event_id=invitation.event_id, user_id=current_user.id
+        ).first()
+
+        if not existing_participant:
+            new_participant = Participant(
+                user_id=current_user.id,
+                event_id=invitation.event_id,
+                status="accepted",
+            )
+            db.session.add(new_participant)
+
     db.session.commit()
 
     return jsonify({"message": f"Invitation {response} successfully."}), 200
 
 
-##cancel invitation/ delete
+# Cancel an invitation
 @invitation_routes.route("/cancel/<int:invitation_id>", methods=["DELETE"])
 @login_required
 def cancel_invitation(invitation_id):
     invitation = Invitation.query.get(invitation_id)
 
+    if not invitation:
+        return jsonify({"error": "Invitation not found."}), 404
+
     # Ensure the current user is the inviter
     if invitation.inviter_id != current_user.id:
         return jsonify({"error": "Unauthorized to cancel this invitation."}), 403
 
-    db.session.delete(invitation)
-    db.session.commit()
-
-    return jsonify({"message": "Invitation canceled successfully."}), 200
+    try:
+        db.session.delete(invitation)
+        db.session.commit()
+        return jsonify({"message": "Invitation canceled successfully."}), 200
+    except SQLAlchemyError as e:
+        print(f"Error deleting invitation: {e}")
+        return jsonify({"error": "Error canceling invitation."}), 500

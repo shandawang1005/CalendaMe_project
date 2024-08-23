@@ -1,6 +1,7 @@
 // Actions
 const SET_RECEIVED_INVITATIONS = "invitations/SET_RECEIVED_INVITATIONS";
 const REMOVE_INVITATION = "invitations/REMOVE_INVITATION";
+const SEND_INVITATIONS_SUCCESS = "invitations/SEND_INVITATIONS_SUCCESS";
 
 // Action Creators
 const setReceivedInvitations = (invitations) => ({
@@ -13,10 +14,42 @@ const removeInvitation = (invitationId) => ({
   invitationId,
 });
 
+const sendInvitationsSuccess = (message) => ({
+  type: SEND_INVITATIONS_SUCCESS,
+  message,
+});
+
+// Thunk: Fetch Invitations (both as inviter and invitee)
+export const fetchReceivedInvitations = () => async (dispatch) => {
+  try {
+    const response = await fetch("/api/invitation/received", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.ok) {
+      try {
+        const invitations = await response.json();
+        dispatch(setReceivedInvitations(invitations)); // Dispatch action to set invitations in Redux
+      } catch (jsonError) {
+        console.error("Failed to parse JSON:", jsonError);
+        alert("Received invalid JSON. Please try again later.");
+      }
+    } else {
+      const errorText = await response.text(); // Fetch error response as text (in case it's HTML)
+      console.error("Error fetching invitations:", errorText);
+      alert("Failed to fetch invitations.");
+    }
+  } catch (err) {
+    console.error("Failed to fetch received invitations", err);
+    alert("An error occurred while fetching invitations.");
+  }
+};
 // Thunk: Send Invitations
 export const sendInvitations = (eventId, inviteeIds) => async (dispatch) => {
   try {
-    const response = await fetch("/api/invitations/send", {
+    const response = await fetch("/api/invitation/send", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -26,7 +59,8 @@ export const sendInvitations = (eventId, inviteeIds) => async (dispatch) => {
 
     if (response.ok) {
       const data = await response.json();
-      alert(data.message); // Notify the user that invitations were sent
+      dispatch(sendInvitationsSuccess(data.message));
+      alert("Invitations sent successfully!");
     } else {
       const error = await response.json();
       alert(error.error);
@@ -35,33 +69,11 @@ export const sendInvitations = (eventId, inviteeIds) => async (dispatch) => {
     console.error("Failed to send invitations", err);
   }
 };
-
-// Thunk: Fetch Received Invitations
-export const fetchReceivedInvitations = () => async (dispatch) => {
-  try {
-    const response = await fetch("/api/invitations/received", {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (response.ok) {
-      const invitations = await response.json();
-      dispatch(setReceivedInvitations(invitations)); // Dispatch action to set invitations in Redux
-    } else {
-      const error = await response.json();
-      alert(error.error);
-    }
-  } catch (err) {
-    console.error("Failed to fetch received invitations", err);
-  }
-};
-
 // Thunk: Respond to an Invitation
 export const respondToInvitation =
   (invitationId, response) => async (dispatch) => {
     try {
-      const res = await fetch("/api/invitations/respond", {
+      const res = await fetch("/api/invitation/respond", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -85,7 +97,7 @@ export const respondToInvitation =
 // Thunk: Cancel an Invitation
 export const cancelInvitation = (invitationId) => async (dispatch) => {
   try {
-    const response = await fetch(`/api/invitations/cancel/${invitationId}`, {
+    const response = await fetch(`/api/invitation/cancel/${invitationId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -108,6 +120,7 @@ export const cancelInvitation = (invitationId) => async (dispatch) => {
 // Initial State
 const initialState = {
   receivedInvitations: [],
+  message: null,
 };
 
 // Reducer
@@ -124,6 +137,11 @@ export default function invitationReducer(state = initialState, action) {
         receivedInvitations: state.receivedInvitations.filter(
           (invitation) => invitation.id !== action.invitationId
         ),
+      };
+    case SEND_INVITATIONS_SUCCESS:
+      return {
+        ...state,
+        message: action.message,
       };
     default:
       return state;

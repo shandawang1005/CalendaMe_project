@@ -4,7 +4,7 @@ import {
   fetchReceivedInvitations,
   respondToInvitation,
   cancelInvitation,
-} from "../../redux/invitation"; // Adjust path if needed
+} from "../../redux/invitation";
 
 const InvitationsPage = () => {
   const dispatch = useDispatch();
@@ -25,6 +25,14 @@ const InvitationsPage = () => {
     dispatch(cancelInvitation(invitationId)); // Dispatch to cancel the invitation
   };
 
+  const calculateDurationInMinutes = (startTime, endTime) => {
+    const start = new Date(startTime);
+    const end = new Date(endTime);
+    const durationMs = end - start;
+    const durationMinutes = Math.round(durationMs / 60000); // Convert milliseconds to minutes and round
+    return durationMinutes;
+  };
+
   return (
     <div>
       <h2>Your Invitations</h2>
@@ -32,8 +40,18 @@ const InvitationsPage = () => {
         {invitations.map((invitation) => (
           <li key={invitation.id}>
             <p>
-              Event: {invitation.event_title} <br />
-              Status: {invitation.status} <br />
+              <strong>Event:</strong> {invitation.event_title} <br />
+              <strong>Status:</strong> {invitation.status} <br />
+              <strong>Start Time:</strong>{" "}
+              {new Date(invitation.event_start_time).toLocaleString()} <br />
+              <strong>Duration:</strong>{" "}
+              {calculateDurationInMinutes(
+                invitation.event_start_time,
+                invitation.event_end_time
+              )}{" "}
+              minutes <br />
+              <strong>Location:</strong> {invitation.event_location || "N/A"}{" "}
+              <br />
               {invitation.inviter_id === currentUser.id
                 ? `You sent this invitation to ${invitation.invitee_name}`
                 : `You were invited by ${invitation.inviter_name}`}

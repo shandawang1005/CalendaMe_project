@@ -24,3 +24,12 @@ class Participant(db.Model):
 
     event = db.relationship("Event", back_populates="participants")
     user = db.relationship("User")
+
+    def to_dict(self):
+        return {
+        "id": self.id,
+        "user_id": self.user_id,
+        "username": self.user.username if self.user else None,  # Add null check for user relationship
+        "event_id": self.event_id,
+        "status": self.status,
+    }

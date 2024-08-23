@@ -5,14 +5,17 @@ import {
   createEvent,
   editEvent,
   deleteEvent,
-} from "../../redux/event"; // Import your thunks
+  sendInvitations,
+  removeParticipant,
+} from "../../redux/event"; // Import your event thunks
+import { fetchFriendsListThunk } from "../../redux/friends"; // Thunk to fetch friends
 
-const Calendar = () => {
+const CalendarPage = () => {
   const dispatch = useDispatch();
   const events = useSelector((state) => state.events); // Get events from Redux store
-  const currentUser = useSelector((state) => state.session.user); // Assuming you have current user info in your session slice
+  const currentUser = useSelector((state) => state.session.user); // Get the logged-in user info
+  const friends = useSelector((state) => state.friends.accepted); // Get the list of accepted friends
 
-  // Form data state
   const [formData, setFormData] = useState({
     title: "",
     start_time: "",
@@ -22,13 +25,14 @@ const Calendar = () => {
     recurring: false,
   });
 
+  const [inviteeIds, setInviteeIds] = useState([]); // Manage invited friend IDs
   const [editingEventId, setEditingEventId] = useState(null); // Track if we're editing an event
 
   useEffect(() => {
     dispatch(fetchEvents()); // Fetch events on component mount
+    dispatch(fetchFriendsListThunk()); // Fetch the list of friends on component mount
   }, [dispatch]);
 
-  // Handle input changes in the form
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -37,21 +41,34 @@ const Calendar = () => {
     }));
   };
 
-  // Handle form submission for adding or editing events
+  const handleInviteeChange = (e) => {
+    const selectedOptions = Array.from(e.target.selectedOptions);
+    const selectedIds = selectedOptions.map((option) => parseInt(option.value));
+    setInviteeIds(selectedIds);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if (editingEventId) {
-      // Edit event
-      dispatch(editEvent(editingEventId, formData)).then(() => {
-        setEditingEventId(null); // Clear editing state after submission
+      // Edit existing event
+      dispatch(editEvent(editingEventId, formData)).then((response) => {
+        const updatedEvent = response?.event || response;
+        if (inviteeIds.length > 0 && updatedEvent?.id) {
+          dispatch(sendInvitations(updatedEvent.id, inviteeIds)); // Send invitations after editing
+        }
+        setEditingEventId(null);
       });
     } else {
-      // Add new event
-      dispatch(createEvent(formData));
+      // Create new event
+      dispatch(createEvent(formData)).then((response) => {
+        const newEvent = response?.event || response;
+        if (inviteeIds.length > 0 && newEvent?.id) {
+          dispatch(sendInvitations(newEvent.id, inviteeIds)); // Send invitations after creating event
+        }
+      });
     }
 
-    // Reset the form after submission
     setFormData({
       title: "",
       start_time: "",
@@ -60,11 +77,11 @@ const Calendar = () => {
       visibility: "private",
       recurring: false,
     });
+    setInviteeIds([]); // Reset invitee selection
   };
 
-  // Handle clicking on an "Edit" button
   const handleEditClick = (event) => {
-    setEditingEventId(event.id); // Set the event ID to indicate editing mode
+    setEditingEventId(event.id);
     setFormData({
       title: event.title,
       start_time: event.start_time,
@@ -73,39 +90,91 @@ const Calendar = () => {
       visibility: event.visibility || "private",
       recurring: event.recurring || false,
     });
+    setInviteeIds([]); // Clear previous invites when editing
   };
 
-  // Handle clicking on a "Delete" button
   const handleDeleteClick = (eventId) => {
-    console.log(`Deleting event with ID: ${eventId}`);
     dispatch(deleteEvent(eventId));
+  };
+
+  const handleRemoveParticipant = (eventId, participantId) => {
+    dispatch(removeParticipant(eventId, participantId)).then(() => {
+      dispatch(fetchEvents()); // Refetch events to rerender the updated participants list
+    });
+  };
+
+  // Function to calculate event duration in minutes
+  const calculateDurationInMinutes = (startTime, endTime) => {
+    const start = new Date(startTime);
+    const end = new Date(endTime);
+    const duration = Math.round((end - start) / 60000); // Convert milliseconds to minutes and round
+    return duration;
   };
 
   return (
     <div>
       <h2>Your Events</h2>
 
-      {/* Display list of events */}
       <ul>
         {events.map((event) => (
           <li key={event.id}>
             <div>
-              {event.title} - {new Date(event.start_time).toLocaleString()} to{" "}
+              <strong>{event.title}</strong> -{" "}
+              {new Date(event.start_time).toLocaleString()} to{" "}
               {new Date(event.end_time).toLocaleString()}
             </div>
-            <button onClick={() => handleEditClick(event)}>Edit</button>
+            <div>
+              Duration:{" "}
+              {calculateDurationInMinutes(event.start_time, event.end_time)}{" "}
+              minutes
+            </div>
+            <div>Location: {event.location || "N/A"}</div>
 
-            {/* Show delete button only if the logged-in user is the creator */}
+            {/* Display Participants */}
+            <div>
+              <strong>Participants:</strong>
+              <ul>
+                {event.participants && event.participants.length > 0 ? (
+                  event.participants.map((participant) => (
+                    <li key={participant.id}>
+                      {participant.username}
+                      {participant.user_id === event.creator_id ? (
+                        <span> (Host)</span> // Show "Host" label if the participant is the event creator
+                      ) : (
+                        currentUser.id === event.creator_id && (
+                          <button
+                            onClick={() =>
+                              handleRemoveParticipant(
+                                event.id,
+                                participant.user_id
+                              )
+                            }
+                          >
+                            Remove
+                          </button>
+                        )
+                      )}
+                    </li>
+                  ))
+                ) : (
+                  <li>No participants</li>
+                )}
+              </ul>
+            </div>
+
+            {/* Show edit and delete buttons only for event creators */}
             {currentUser && event.creator_id === currentUser.id && (
-              <button onClick={() => handleDeleteClick(event.id)}>
-                Delete
-              </button>
+              <>
+                <button onClick={() => handleEditClick(event)}>Edit</button>
+                <button onClick={() => handleDeleteClick(event.id)}>
+                  Delete
+                </button>
+              </>
             )}
           </li>
         ))}
       </ul>
 
-      {/* Form for adding or editing events */}
       <h3>{editingEventId ? "Edit Event" : "Add a New Event"}</h3>
       <form onSubmit={handleSubmit}>
         <div>
@@ -169,6 +238,24 @@ const Calendar = () => {
             }
           />
         </div>
+
+        {/* Invite Friends */}
+        <div>
+          <label>Invite Friends:</label>
+          <select multiple onChange={handleInviteeChange}>
+            {friends.map((friend) => (
+              <option key={friend.id} value={friend.id}>
+                {friend.username}
+              </option>
+            ))}
+          </select>
+          <ul>
+            {inviteeIds.map((id) => (
+              <li key={id}>Friend ID: {id}</li>
+            ))}
+          </ul>
+        </div>
+
         <button type="submit">
           {editingEventId ? "Update Event" : "Add Event"}
         </button>
@@ -177,4 +264,4 @@ const Calendar = () => {
   );
 };
 
-export default Calendar;
+export default CalendarPage;

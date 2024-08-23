@@ -30,5 +30,5 @@ def undo_invitations():
             f"TRUNCATE table {SCHEMA}.invitations RESTART IDENTITY CASCADE;"
         )
     else:
-        db.session.execute(text("DELETE FROM friends"))
+        db.session.execute(text("DELETE FROM invitations"))
     db.session.commit()

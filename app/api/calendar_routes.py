@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
-from ..models import db, Event, Participant
+from ..models import db, Event, Participant, Invitation
 from datetime import datetime
 
 calendar_routes = Blueprint("calendar", __name__)
@@ -23,7 +23,7 @@ def has_time_conflict(user_id, start_time, end_time, event_id=None):
     return conflicts > 0
 
 
-## Get all events for the logged-in user
+## Get events for the logged-in user, either as a participant or as a creator
 @calendar_routes.route("/", methods=["GET"])
 @login_required
 def get_events():
@@ -31,12 +31,12 @@ def get_events():
         db.session.query(Event)
         .join(Participant)
         .filter(
-            Participant.user_id == current_user.id, Participant.status == "accepted"
+            (Participant.user_id == current_user.id) & (Participant.status == "accepted")
         )
         .all()
     )
 
-    return jsonify([event.to_dict() for event in events])
+    return jsonify([event.to_dict() for event in events]), 200
 
 
 ## Add an event with conflict and validation checks
@@ -54,9 +54,7 @@ def add_event():
 
     # Validate required fields
     if not title or not start_time or not end_time:
-        return jsonify(
-            {"error": "Title, start time, and end time are required fields."}
-        ), 400
+        return jsonify({"error": "Title, start time, and end time are required fields."}), 400
 
     # Validate start and end times
     try:
@@ -93,9 +91,7 @@ def add_event():
     db.session.add(participant)
     db.session.commit()
 
-    return jsonify(
-        {"message": "Event added successfully!", "event": new_event.to_dict()}
-    ), 201
+    return jsonify({"message": "Event added successfully!", "event": new_event.to_dict()}), 201
 
 
 ## Edit an event with conflict and validation checks
@@ -142,12 +138,10 @@ def edit_event(event_id):
 
     db.session.commit()
 
-    return jsonify(
-        {"message": "Event updated successfully!", "event": event.to_dict()}
-    ), 200
+    return jsonify({"message": "Event updated successfully!", "event": event.to_dict()}), 200
 
 
-##delete event
+## Delete event
 @calendar_routes.route("/delete/<int:event_id>", methods=["DELETE"])
 @login_required
 def delete_event(event_id):
@@ -158,12 +152,46 @@ def delete_event(event_id):
 
     # Check if the logged-in user is the creator
     if event.creator_id != current_user.id:
-        return jsonify(
-            {"error": "Unauthorized. Only the event creator can delete the event."}
-        ), 403
+        return jsonify({"error": "Unauthorized. Only the event creator can delete the event."}), 403
 
     # Delete the event
     db.session.delete(event)
     db.session.commit()
 
     return jsonify({"message": "Event deleted successfully!"}), 200
+
+
+## Remove participant if host
+@calendar_routes.route("/<int:event_id>/remove-participant/<int:participant_id>", methods=["DELETE"])
+@login_required
+def remove_participant(event_id, participant_id):
+    event = Event.query.get(event_id)
+
+    if event is None:
+        return jsonify({"error": "Event not found"}), 404
+
+    # Ensure the current user is the creator of the event
+    if event.creator_id != current_user.id:
+        return jsonify({"error": "Unauthorized"}), 403
+
+    # Prevent the event creator from removing themselves
+    if event.creator_id == participant_id:
+        return jsonify({"error": "You cannot remove yourself as the creator of the event."}), 403
+
+    # Find the participant to remove
+    participant = Participant.query.filter_by(event_id=event_id, user_id=participant_id).first()
+
+    if not participant:
+        return jsonify({"error": "Participant not found"}), 404
+
+    # Remove the participant
+    db.session.delete(participant)
+
+    # Also remove the corresponding invitation, if it exists
+    invitation = Invitation.query.filter_by(event_id=event_id, invitee_id=participant_id).first()
+    if invitation:
+        db.session.delete(invitation)
+
+    db.session.commit()
+
+    return jsonify({"message": "Participant and corresponding invitation removed successfully!"}), 200
