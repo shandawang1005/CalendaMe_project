@@ -49,20 +49,26 @@ export const fetchReceivedInvitations = () => async (dispatch) => {
 // Thunk: Send Invitations
 export const sendInvitations = (eventId, inviteeIds) => async (dispatch) => {
   try {
-    const response = await fetch("/api/invitation/send", {
+    const res = await fetch("/api/invitation/send", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ event_id: eventId, invitee_ids: inviteeIds }),
+      body: JSON.stringify({
+        event_id: eventId,
+        invitee_ids: inviteeIds,
+      }),
     });
 
-    if (response.ok) {
-      const data = await response.json();
-      dispatch(sendInvitationsSuccess(data.message));
-      alert("Invitations sent successfully!");
+    if (res.ok) {
+      const data = await res.json();
+      alert(data.message);
+      // Optionally refetch invitations or events after sending invitations
+    } else if (res.status === 409) {
+      const error = await res.json();
+      alert(error.error); // Notify the user about the conflict
     } else {
-      const error = await response.json();
+      const error = await res.json();
       alert(error.error);
     }
   } catch (err) {

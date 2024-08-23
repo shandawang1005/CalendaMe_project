@@ -1,6 +1,7 @@
 from .db import db
 from .events import Event
-
+from .participants import Participant
+from sqlalchemy.orm import relationship
 
 class Invitation(db.Model):
     __tablename__ = "invitations"
@@ -25,10 +26,7 @@ class Invitation(db.Model):
             "event_title": self.event.title,
             "event_start_time": self.event.start_time.strftime("%Y-%m-%d %H:%M:%S"),
             "event_end_time": self.event.end_time.strftime("%Y-%m-%d %H:%M:%S"),
-            "event_duration": (
-                self.event.end_time - self.event.start_time
-            ).total_seconds()
-            / 60,  # duration in minutes
+            "event_duration": round((self.event.end_time - self.event.start_time).total_seconds() / 60),  # duration in minutes, rounded
             "location": self.event.location or "N/A",
             "status": self.status,
             "inviter_id": self.inviter_id,
@@ -36,3 +34,18 @@ class Invitation(db.Model):
             "invitee_id": self.invitee_id,
             "invitee_name": self.invitee.username if self.invitee else None,
         }
+
+    @classmethod
+    def check_time_conflict_for_invitee(cls, invitee_id, start_time, end_time):
+        conflicts = (
+            db.session.query(Event)
+            .join(Participant)
+            .filter(
+                Participant.user_id == invitee_id,
+                Participant.status == "accepted",
+                Event.start_time < end_time,
+                Event.end_time > start_time,
+            )
+            .count()
+        )
+        return conflicts > 0
