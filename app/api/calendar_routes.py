@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
 from ..models import db, Event, Participant, Invitation
-from datetime import datetime
+from datetime import datetime, timedelta
 
 calendar_routes = Blueprint("calendar", __name__)
 
@@ -54,6 +54,64 @@ def get_events():
     # Print statements for debugging
     print(f"User ID: {current_user.id}")
     print(f"Events for User: {[event.title for event in events]}")
+
+    return jsonify([event.to_dict() for event in events]), 200
+
+
+@calendar_routes.route("/events/day", methods=["GET"])
+@login_required
+def get_events_for_day():
+    date_str = request.args.get("date")
+    try:
+        date = datetime.strptime(date_str, "%Y-%m-%d")
+    except ValueError:
+        return jsonify({"error": "Invalid date format"}), 400
+
+    events = (
+        db.session.query(Event)
+        .join(Participant)
+        .filter(
+            Participant.user_id == current_user.id,
+            Participant.status == "accepted",
+            Event.start_time >= date,
+            Event.start_time < date + timedelta(days=1),
+        )
+        .all()
+    )
+
+    return jsonify([event.to_dict() for event in events]), 200
+
+
+@calendar_routes.route("/events/month", methods=["GET"])
+@login_required
+def get_events_for_month():
+    try:
+        year = int(request.args.get("year"))
+        month = int(request.args.get("month"))
+    except (TypeError, ValueError):
+        return jsonify({"error": "Invalid or missing year/month parameters."}), 400
+
+    # Start of the month
+    start_date = datetime(year, month, 1)
+
+    # Calculate the end of the month
+    if month == 12:
+        end_date = datetime(year + 1, 1, 1)
+    else:
+        end_date = datetime(year, month + 1, 1)
+
+    # Fetch events between start_date and end_date for the current user
+    events = (
+        db.session.query(Event)
+        .join(Participant)
+        .filter(
+            Participant.user_id == current_user.id,
+            Participant.status == "accepted",
+            Event.start_time >= start_date,
+            Event.start_time < end_date,
+        )
+        .all()
+    )
 
     return jsonify([event.to_dict() for event in events]), 200
 

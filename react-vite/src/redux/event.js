@@ -4,13 +4,17 @@ const ADD_EVENT = "events/ADD_EVENT";
 const EDIT_EVENT = "events/EDIT_EVENT";
 const DELETE_EVENT = "events/DELETE_EVENT";
 const REMOVE_PARTICIPANT = "events/REMOVE_PARTICIPANT";
+const SET_DAY_EVENTS = "events/SET_DAY_EVENTS";
 
 // Action Creators
 const setEvents = (events) => ({
   type: SET_EVENTS,
   events,
 });
-
+const setDayEvents = (events) => ({
+  type: SET_DAY_EVENTS,
+  events,
+});
 const addEvent = (event) => ({
   type: ADD_EVENT,
   event,
@@ -46,6 +50,51 @@ export const fetchEvents = () => async (dispatch) => {
   } else {
     const errorData = await response.json();
     return { error: errorData.error || "Failed to fetch events" };
+  }
+};
+// Thunk: Fetch Events for a Specific day
+export const fetchEventsForDay = (date) => async (dispatch) => {
+  try {
+    const response = await fetch(`/api/calendar/events/day?date=${date}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Failed to fetch events for the day");
+    }
+
+    const data = await response.json();
+    dispatch(setDayEvents(data)); // Dispatch the events for the selected day
+  } catch (error) {
+    console.error("Error fetching events for the day:", error);
+  }
+};
+// Thunk: Fetch Events for a Specific Month
+export const fetchEventsForMonth = (year, month) => async (dispatch) => {
+  try {
+    const response = await fetch(
+      `/api/calendar/events/month?year=${year}&month=${month}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(
+        errorData.error || "Failed to fetch events for the selected month"
+      );
+    }
+
+    const data = await response.json();
+    dispatch(setEvents(data)); // Dispatch the events for the selected month
+  } catch (error) {
+    console.error("Error fetching events for the month:", error);
   }
 };
 
@@ -160,6 +209,8 @@ export default function eventsReducer(state = initialState, action) {
   switch (action.type) {
     case SET_EVENTS:
       return action.events;
+    case SET_DAY_EVENTS:
+      return action.events; // Replace or merge with existing events based on your needs
     case ADD_EVENT:
       return [...state, action.event];
     case EDIT_EVENT:

@@ -1,13 +1,30 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { fetchEventsForMonth } from "../../redux/event";
 import "./Calendar.css";
 
 function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const dispatch = useDispatch();
+  const events = useSelector((state) => state.events);
+  const navigate = useNavigate();
+
+  // Fetch events whenever the month changes
+  useEffect(() => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth() + 1; // getMonth() is zero-indexed
+
+    dispatch(fetchEventsForMonth(year, month));
+  }, [currentDate, dispatch]);
 
   // Handle moving to the next month
   const handleNextMonth = () => {
     setCurrentDate((prevDate) => {
-      const nextMonth = new Date(prevDate.getFullYear(), prevDate.getMonth() + 1);
+      const nextMonth = new Date(
+        prevDate.getFullYear(),
+        prevDate.getMonth() + 1
+      );
       return nextMonth;
     });
   };
@@ -15,43 +32,67 @@ function Calendar() {
   // Handle moving to the previous month
   const handlePrevMonth = () => {
     setCurrentDate((prevDate) => {
-      const prevMonth = new Date(prevDate.getFullYear(), prevDate.getMonth() - 1);
+      const prevMonth = new Date(
+        prevDate.getFullYear(),
+        prevDate.getMonth() - 1
+      );
       return prevMonth;
     });
   };
 
-  // Helper function to format the month and year
-  const formatMonthYear = (date) => {
-    const options = { year: "numeric", month: "long" };
-    return new Intl.DateTimeFormat("en-US", options).format(date);
+  const handleDayClick = (year, month, day) => {
+    const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(
+      day
+    ).padStart(2, "0")}`;
+    navigate(`/timeline/${dateStr}`);
   };
 
-  // Function to get the number of days in a month
-  const getDaysInMonth = (year, month) => {
-    return new Date(year, month + 1, 0).getDate();
+  const getEventsForDay = (year, month, day) => {
+    return events.filter((event) => {
+      const eventDate = new Date(event.start_time);
+      return (
+        eventDate.getFullYear() === year &&
+        eventDate.getMonth() === month &&
+        eventDate.getDate() === day
+      );
+    });
   };
 
-  // Render the calendar days
   const renderDays = () => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
-    const daysInMonth = getDaysInMonth(year, month);
-    const firstDay = new Date(year, month, 1).getDay(); // Get the starting day of the week
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const firstDay = new Date(year, month, 1).getDay();
 
-    // Create an array of empty spots for the days before the 1st of the month
     const blanks = Array(firstDay).fill(null);
-
-    // Create an array of days in the month
     const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
-
-    // Combine blanks and days for rendering
     const calendarDays = [...blanks, ...days];
 
-    return calendarDays.map((day, index) => (
-      <div key={index} className="calendar-day">
-        {day || ""}
-      </div>
-    ));
+    return calendarDays.map((day, index) => {
+      const eventsForDay = day ? getEventsForDay(year, month, day) : [];
+
+      return (
+        <div
+          key={index}
+          className={`calendar-day ${
+            eventsForDay.length > 0 ? "clickable" : ""
+          }`}
+          onClick={() => {
+            if (eventsForDay.length > 0) handleDayClick(year, month, day);
+          }}
+        >
+          <div className="calendar-date">{day || ""}</div>
+          {eventsForDay.length > 0 && (
+            <div className="calendar-event-indicator">•</div> // Style this indicator
+          )}
+        </div>
+      );
+    });
+  };
+
+  const formatMonthYear = (date) => {
+    const options = { year: "numeric", month: "long" };
+    return new Intl.DateTimeFormat("en-US", options).format(date);
   };
 
   return (

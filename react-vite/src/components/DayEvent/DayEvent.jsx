@@ -4,33 +4,27 @@ import {
   fetchEventsForDay,
   deleteEvent,
   removeParticipant,
-} from "../../redux/event"; // Import your event thunks
-import CreateEditEventModal from "../CreateEditEventModal/CreateEditEventModal"; // Import your modal
+} from "../../redux/event";
+import CreateEditEventModal from "../CreateEditEventModal/CreateEditEventModal";
 import NotificationContainer, {
   useNotification,
-} from "../NotificationPage/NotificationContainer"; // Import notification
-import { useParams } from "react-router-dom"; // Use to get the date from the URL
-import "../DayEvent/DayEvent.css"; // Custom CSS for the timeline
+} from "../NotificationPage/NotificationContainer";
+import { useParams } from "react-router-dom";
+import "./DayEvent.css"; // Custom CSS for the timeline
 
-const CalendarPage = () => {
-  const dateString = "Sat Aug 24 2024 05:35:20 GMT-0700";
-  const dateObject = new Date(dateString);
-
-  // Convert the date object to YYYY-MM-DD format
-  const date = dateObject.toISOString().split("T")[0];
-
+const DayEvent = () => {
+  const { date } = useParams();
   const dispatch = useDispatch();
-  const events = useSelector((state) => state.events); // Get events from Redux store
-  const currentUser = useSelector((state) => state.session.user); // Get the logged-in user info
+  const events = useSelector((state) => state.events);
+  const currentUser = useSelector((state) => state.session.user);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingEvent, setEditingEvent] = useState(null); // Track event being edited
+  const [editingEvent, setEditingEvent] = useState(null);
 
-  // Notification system hook
   const { addNotification } = useNotification();
 
   useEffect(() => {
-    dispatch(fetchEventsForDay(date)); // Fetch events for the specific day
+    dispatch(fetchEventsForDay(date));
   }, [dispatch, date]);
 
   const openCreateEventModal = () => {
@@ -50,7 +44,7 @@ const CalendarPage = () => {
   const handleDeleteClick = (eventId) => {
     dispatch(deleteEvent(eventId))
       .then(() => {
-        dispatch(fetchEventsForDay(date)); // Refresh events after deletion
+        dispatch(fetchEventsForDay(date));
         addNotification("Event deleted successfully!", "success");
       })
       .catch(() => {
@@ -61,7 +55,7 @@ const CalendarPage = () => {
   const handleRemoveParticipant = (eventId, participantId) => {
     dispatch(removeParticipant(eventId, participantId))
       .then(() => {
-        dispatch(fetchEventsForDay(date)); // Refresh events after removing participant
+        dispatch(fetchEventsForDay(date));
         addNotification("Participant removed successfully!", "info");
       })
       .catch(() => {
@@ -76,30 +70,46 @@ const CalendarPage = () => {
       return (
         <div key={hour} className="timeline-hour">
           <div className="timeline-hour-label">
-            {hour === 24 ? "00:00" : `${hour.toString().padStart(2, "0")}:00`}
+            {`${hour.toString().padStart(2, "0")}:00`}
           </div>
           <div className="timeline-hour-events">
             {events
-              .filter((event) => new Date(event.start_time).getHours() === hour)
+              .filter(
+                (event) =>
+                  new Date(event.start_time).getHours() === hour ||
+                  (new Date(event.start_time).getHours() < hour &&
+                    new Date(event.end_time).getHours() >= hour)
+              ) // Check for events that cross over into the next hour
               .map((event) => {
                 const startDateTime = new Date(event.start_time);
                 const endDateTime = new Date(event.end_time);
 
-                // Calculate the duration of the event in minutes
+                // Cap the event at 23:59:59 to prevent overflow into the next day
+                const endOfDay = new Date(startDateTime);
+                endOfDay.setHours(23, 59, 59, 999);
+
+                const eventEndTime =
+                  endDateTime > endOfDay ? endOfDay : endDateTime;
                 const durationMinutes =
-                  (endDateTime.getTime() - startDateTime.getTime()) / 60000;
+                  (eventEndTime.getTime() - startDateTime.getTime()) / 60000; // Duration in minutes
 
-                // Define the height per minute (based on 50px per hour, or 50/60 per minute)
                 const heightPerMinute = 50 / 60; // 50px per hour, 60 minutes per hour
-
-                // Calculate the height of the event box based on the duration
                 const eventHeight = durationMinutes * heightPerMinute;
+
+                // Calculate the top offset based on the event's exact start time within the hour
+                const startMinutes = startDateTime.getMinutes();
+                const topOffset =
+                  (startDateTime.getHours() - hour) * 50 +
+                  (startMinutes / 60) * 50; // Convert minutes into pixels
 
                 return (
                   <div
                     key={event.id}
                     className="timeline-event"
-                    style={{ height: `${eventHeight}px` }} // Set the height dynamically
+                    style={{
+                      height: `${eventHeight}px`,
+                      top: `${topOffset}px`,
+                    }} // Set the height and position dynamically
                   >
                     <div className="event-main">
                       <div className="event-details">
@@ -113,7 +123,7 @@ const CalendarPage = () => {
                             minute: "2-digit",
                           })}{" "}
                           -{" "}
-                          {endDateTime.toLocaleTimeString([], {
+                          {eventEndTime.toLocaleTimeString([], {
                             hour: "2-digit",
                             minute: "2-digit",
                           })}
@@ -123,8 +133,7 @@ const CalendarPage = () => {
                           {event.visibility === "private"
                             ? "Private"
                             : "Public"}
-                        </div>{" "}
-                        {/* Added visibility */}
+                        </div>
                       </div>
 
                       {currentUser && event.creator_id === currentUser.id && (
@@ -207,4 +216,4 @@ const CalendarPage = () => {
   );
 };
 
-export default CalendarPage;
+export default DayEvent;

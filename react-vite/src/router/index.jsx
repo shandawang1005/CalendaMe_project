@@ -6,7 +6,7 @@ import Home from "../components/Home";
 import Calendarpage from "../components/CalendarPage";
 import FriendsPage from "../components/FriendsPage";
 import MessagesPage from "../components/MessagesPage";
-
+import DayEvent from "../components/DayEvent";
 import NotFoundPage from "../components/NotFoundPage";
 import InvitationsPage from "../components/MessagesPage/Invitation";
 import ChangePasswordPage from "../components/ChangePasswordPage/ChangePasswordPage";
@@ -28,7 +28,7 @@ export const router = createBrowserRouter([
         element: <SignupFormPage />,
       },
       {
-        path: "calendar",
+        path: "today",
         element: <Calendarpage />,
       },
       {
@@ -52,6 +52,11 @@ export const router = createBrowserRouter([
         path: "profile",
         element: <Profile />,
       },
+      {
+        path: "timeline/:date",
+        element: <DayEvent />,
+      },
+
       {
         path: "*",
         element: <NotFoundPage />,

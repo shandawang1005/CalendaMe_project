@@ -1,0 +1,137 @@
+.day-event-container {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 100%;
+  max-height: 100vh;
+  overflow-y: auto;
+}
+
+.timeline-container {
+  display: grid;
+  grid-template-rows: repeat(24, 52px); /* Increased to 52px per hour */
+  gap: 2px;
+  border: 1px solid #ddd;
+  width: 100%;
+  position: relative;
+}
+
+.timeline-hour {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  align-items: center;
+  background-color: #f9f9f9;
+  position: relative;
+}
+
+.timeline-hour-label {
+  font-weight: bold;
+  text-align: left;
+  padding-left: 10px;
+  z-index: 15;
+  position: relative;
+}
+
+.timeline-hour-events {
+  position: relative;
+}
+
+.timeline-event {
+  background-color: lightblue;
+  padding: 15px;
+  border-radius: 8px;
+  margin-right: 5px;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  z-index: 10;
+  position: absolute;
+  left: 90px;
+  width: 50%;
+}
+
+.event-main {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.event-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.event-title {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.event-location {
+  font-size: 14px;
+}
+
+.event-time {
+  font-size: 14px;
+}
+
+.event-actions-container {
+  display: flex;
+  gap: 10px;
+}
+
+.edit-event-button {
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.edit-event-button:hover {
+  background-color: #0056b3;
+}
+
+.delete-event-button {
+  padding: 5px 10px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.delete-event-button:hover {
+  background-color: #c82333;
+}
+
+.participants-sidebar {
+  padding: 10px;
+  background-color: #e9ecef;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+
+.participants-list {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.participant-item {
+  margin-bottom: 5px;
+}
+
+.remove-participant-button {
+  padding: 3px 6px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.remove-participant-button:hover {
+  background-color: #c82333;
+}

@@ -32,7 +32,7 @@ function Navigation() {
               </li>
               <li>
                 <NavLink
-                  to="/calendar"
+                  to="/today"
                   activeClassName="active"
                   className="NavLink"
                 >
