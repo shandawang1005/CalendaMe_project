@@ -9,6 +9,7 @@ import MessagesPage from "../components/MessagesPage";
 
 import NotFoundPage from "../components/NotFoundPage";
 import InvitationsPage from "../components/MessagesPage/Invitation";
+import ChangePasswordPage from "../components/ChangePasswordPage/ChangePasswordPage";
 export const router = createBrowserRouter([
   {
     element: <Layout />,
@@ -41,6 +42,10 @@ export const router = createBrowserRouter([
       {
         path: "invitation",
         element: <InvitationsPage />,
+      },
+      {
+        path: "profile/change-password",
+        element: <ChangePasswordPage />,
       },
 
       {

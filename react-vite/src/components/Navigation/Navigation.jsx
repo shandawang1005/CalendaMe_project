@@ -67,7 +67,7 @@ function Navigation() {
                 </NavLink>
               </li>
               <li>
-                <ProfileButton />
+                <ProfileButton className="profile-button" />
               </li>
               <li>
                 <ThemeToggleButton /> {/* Theme toggle button */}

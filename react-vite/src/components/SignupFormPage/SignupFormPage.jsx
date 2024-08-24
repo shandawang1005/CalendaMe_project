@@ -15,6 +15,10 @@ function SignupFormPage() {
   const [errors, setErrors] = useState({});
 
   if (sessionUser) return <Navigate to="/" replace={true} />;
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    navigate("/login");
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,70 +46,71 @@ function SignupFormPage() {
   };
 
   return (
-    <div className="signup-container">
-      <h1 className="signup-title">Sign-Up</h1>
+    <div className="centered-container">
+      <div className="login-container">
+        <h1 className="login-title">Sign-Up</h1>
 
-      {errors.server && <p>{errors.server}</p>}
+        {errors.server && <p>{errors.server}</p>}
 
-      <form onSubmit={handleSubmit} className="signup-form">
-        <div className="input-container">
-          <input
-            type="text"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="signup-input"
-            placeholder=" "
-          />
-          <label className="floating-label">Email</label>
+        <form onSubmit={handleSubmit} className="login-form">
+          <div className="input-container">
+            <input
+              type="text"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="login-input"
+              placeholder=" "
+            />
+            <label className="floating-label">Email</label>
+          </div>
+
+          <div className="input-container">
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              className="login-input"
+              placeholder=" "
+            />
+            <label className="floating-label">Username</label>
+          </div>
+
+          <div className="input-container">
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="login-input"
+              placeholder=" "
+            />
+            <label className="floating-label">Password</label>
+          </div>
+
+          <div className="input-container">
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              className="login-input"
+              placeholder=" "
+            />
+            <label className="floating-label">Confirm Password</label>
+          </div>
+
+          <button type="submit" className="login-button">
+            Sign Up
+          </button>
+        </form>
+
+        <div className="signup-link">
+          {" "}
+          Already have an account?
+          <button onClick={handleLogin}>Log in</button>
         </div>
-
-        <div className="input-container">
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            className="signup-input"
-            placeholder=" "
-          />
-          <label className="floating-label">Username</label>
-        </div>
-
-        <div className="input-container">
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="signup-input"
-            placeholder=" "
-          />
-          <label className="floating-label">Password</label>
-        </div>
-
-        <div className="input-container">
-          <input
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-            className="signup-input"
-            placeholder=" "
-          />
-          <label className="floating-label">Confirm Password</label>
-        </div>
-
-        <button type="submit" className="signup-button">
-          Sign Up
-        </button>
-      </form>
-
-      <div className="auth-links">
-        Already have an account?{" "}
-        <a href="/login" className="login-link">
-          Login
-        </a>
       </div>
     </div>
   );

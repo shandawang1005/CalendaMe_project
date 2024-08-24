@@ -14,7 +14,7 @@ body {
 /* Night Theme - Cold */
 :root {
   --background-color: #0b1120;
-  --text-primary-color: #f0f6fc;
+  --text-primary-color: RGB(251, 206, 61);
   --text-secondary-color: #9aa5b1;
   --button-background-color: #1e2a38;
   --button-text-color: #f0f6fc;
@@ -33,7 +33,7 @@ body.dark-theme {
 body.light-theme {
   --background-color: #f3f4f6;
   --text-primary-color: #111827;
-  --text-secondary-color: #6b7280;
+  --text-secondary-color: #7f806b;
   --button-background-color: #e5e7eb;
   --button-text-color: #111827;
   --border-color: #d1d5db;

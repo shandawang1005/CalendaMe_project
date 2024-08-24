@@ -1,71 +1,89 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from app.models import User, db
 from app.forms import LoginForm
 from app.forms import SignUpForm
 from flask_login import current_user, login_user, logout_user, login_required
+from werkzeug.security import generate_password_hash, check_password_hash
 
-auth_routes = Blueprint('auth', __name__)
+auth_routes = Blueprint("auth", __name__)
 
 
-@auth_routes.route('/')
+@auth_routes.route("/")
 def authenticate():
-    """
-    Authenticates a user.
-    """
     if current_user.is_authenticated:
         return current_user.to_dict()
-    return {'errors': {'message': 'Unauthorized'}}, 401
+    return {"errors": {"message": "Unauthorized"}}, 401
 
 
-@auth_routes.route('/login', methods=['POST'])
+@auth_routes.route("/login", methods=["POST"])
 def login():
-    """
-    Logs a user in
-    """
     form = LoginForm()
-    # Get the csrf_token from the request cookie and put it into the
-    # form manually to validate_on_submit can be used
-    form['csrf_token'].data = request.cookies['csrf_token']
+    form["csrf_token"].data = request.cookies["csrf_token"]
+    
     if form.validate_on_submit():
-        # Add the user to the session, we are logged in!
-        user = User.query.filter(User.email == form.data['email']).first()
+        user = User.query.filter(User.email == form.data["email"]).first()
+
+        # Debugging
+        print("Do we get here?")
+        print(f"Stored hashed password: {user.hashed_password}")
+        print(f"Entered password: {form.data['password']}")
+
         login_user(user)
         return user.to_dict()
+    
+    print(f"Form validation failed. Errors: {form.errors}")
     return form.errors, 401
 
 
-@auth_routes.route('/logout')
+@auth_routes.route("/logout")
 def logout():
-    """
-    Logs a user out
-    """
     logout_user()
-    return {'message': 'User logged out'}
+    return {"message": "User logged out"}
 
 
-@auth_routes.route('/signup', methods=['POST'])
+@auth_routes.route("/signup", methods=["POST"])
 def sign_up():
-    """
-    Creates a new user and logs them in
-    """
     form = SignUpForm()
-    form['csrf_token'].data = request.cookies['csrf_token']
+    form["csrf_token"].data = request.cookies["csrf_token"]
+    
     if form.validate_on_submit():
         user = User(
-            username=form.data['username'],
-            email=form.data['email'],
-            password=form.data['password']
+            username=form.data["username"],
+            email=form.data["email"],
+            password=form.data["password"],
         )
         db.session.add(user)
         db.session.commit()
         login_user(user)
         return user.to_dict()
+    
     return form.errors, 401
 
 
-@auth_routes.route('/unauthorized')
+@auth_routes.route("/change-password", methods=["POST"])
+@login_required
+def change_password():
+    data = request.get_json()
+    old_password = data.get("old_password")
+    new_password = data.get("new_password")
+    confirm_password = data.get("confirm_password")
+    
+    print(f"Old password (plain): {old_password}")
+    print(f"Stored hashed password: {current_user.hashed_password}")
+
+    if new_password != confirm_password:
+        return jsonify({"error": "New passwords do not match."}), 400
+
+    if not check_password_hash(current_user.hashed_password, old_password):
+        return jsonify({"error": "Current password is incorrect."}), 400
+
+    current_user.hashed_password = generate_password_hash(new_password)
+    db.session.commit()
+
+    print(f"Updated hashed password: {current_user.hashed_password}")
+    return jsonify({"message": "Password changed successfully."}), 200
+
+
+@auth_routes.route("/unauthorized")
 def unauthorized():
-    """
-    Returns unauthorized JSON when flask-login authentication fails
-    """
-    return {'errors': {'message': 'Unauthorized'}}, 401
+    return {"errors": {"message": "Unauthorized"}}, 401

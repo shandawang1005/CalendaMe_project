@@ -55,3 +55,15 @@ button.theme-toggle-button:hover {
   align-items: center;
   padding: 10px;
 }
+.profile-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%; /* Fully round */
+  width: 40px;
+  height: 40px;
+  background-color: #f3f4f6; /* Neutral background */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  cursor: pointer;
+  transition: box-shadow 0.3s ease;
+}
