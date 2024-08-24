@@ -3,19 +3,27 @@
   padding: 10px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: end;
+  width: 100%;
+  box-sizing: border-box; /* Ensure padding doesn't affect the width */
 }
 
 .navbar-links {
   display: flex;
   list-style: none;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin: 0;
+  padding-inline-start: 0;
 }
 
-.navbar-links li {
-  margin-right: 20px;
+.Logo {
+  width: 100px;
+  height: 100px;
+  margin: 0;
 }
-
-.navbar-links a {
+.NavLink {
   text-decoration: none;
   color: var(--navbar-link-color);
 }
@@ -33,8 +41,17 @@
   border: none;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin: 0;
 }
 
 button.theme-toggle-button:hover {
   background-color: var(--button-hover-background-color);
+}
+
+.Logged-out-theme-button {
+  display: flex;
+  list-style: none;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
 }

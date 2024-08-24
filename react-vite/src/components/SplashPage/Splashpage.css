@@ -1,10 +1,15 @@
 .splash-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px; /* Full viewport height */
   text-align: center;
+  flex-direction: column; /* Ensure content stacks vertically */
 }
 
 .splash-container button {
   background-color: #ffeead;
-  color: #a02334;
+  /* color: #a02334; */
   padding: 15px 30px;
   border: none;
   border-radius: 25px;
@@ -15,7 +20,7 @@
 }
 
 .splash-container button:hover {
-  background-color: #ffad60;
+  /* background-color: #ffad60; */
 }
 
 .splash-container button:focus {

@@ -21,6 +21,7 @@ function Splashpage() {
     <div className="splash-container">
       <button onClick={handleLogin}>Log In</button>
       <button onClick={handleSignUp}>Sign Up</button>
+      <p>Please Join us to see Full Features!</p>
     </div>
   );
 }

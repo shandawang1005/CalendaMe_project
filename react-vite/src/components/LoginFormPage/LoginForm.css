@@ -1,3 +1,10 @@
+.centered-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px; /* Ensures the container takes full height of the viewport */
+}
+
 .login-container {
   background-color: #fff;
   padding: 20px;
@@ -18,15 +25,19 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  justify-content: center;
+  align-items: left;
 }
 
 .input-container {
   position: relative;
   margin-bottom: 20px;
+  margin-left: 0;
+  padding: 0;
 }
 
 .login-input {
-  width: 100%;
+  width: 90%;
   padding: 15px;
   border: 2px solid #ddd;
   border-radius: 25px;
@@ -62,22 +73,19 @@
 }
 
 .login-button {
-  background-color: #ffeead;
-  color: #a02334;
   padding: 15px;
   border: none;
   border-radius: 25px;
   font-size: 18px;
   cursor: pointer;
   margin-top: 20px;
-}
-
-.login-button:hover {
-  background-color: #ffad60;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 
 .error {
-  color: red;
   font-size: 14px;
   margin-top: -10px;
 }
@@ -86,6 +94,9 @@
   margin-top: 30px;
   font-size: 16px;
   margin-bottom: 30px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
 }
 
 .signup-link button {
@@ -98,26 +109,25 @@
 
 .signup-link button:hover {
   text-decoration: underline;
+  background: none;
 }
 
 .login-demo-buttons {
   margin-top: 20px;
   display: flex;
-  justify-content: space-around;
   flex-direction: column;
   gap: 10px;
+  justify-content: center;
+  align-items: center;
+  width: 100%; /* Take up full width */
 }
 
 .demo-button {
-  background-color: #a02334;
-  color: #ffeead;
-  padding: 10px 20px;
+  padding: 15px;
   border: none;
-  border-radius: 20px;
-  font-size: 14px;
+  border-radius: 25px;
+  font-size: 18px;
   cursor: pointer;
-}
-
-.demo-button:hover {
-  background-color: #ffad60;
+  width: 100%; /* Take up full width */
+  text-align: center;
 }

@@ -1,13 +1,27 @@
+/* Import the Anton font from Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Anton&display=swap");
+
+/* Set the Anton font for everything */
+html,
+body {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  height: 100%;
+  margin: 0;
+}
+
+/* Night Theme - Cold */
 :root {
-  --background-color: #070717;
-  --text-primary-color: #e5e5e7;
-  --text-secondary-color: #8e8e93;
-  --button-background-color: #3a3a3c;
-  --button-text-color: #e5e5e7;
-  --border-color: #2c2c2e;
-  --card-background-color: #1c1c1e;
-  --highlight-color: #14e853;
-  --inactive-color: #454545;
+  --background-color: #0b1120;
+  --text-primary-color: #f0f6fc;
+  --text-secondary-color: #9aa5b1;
+  --button-background-color: #1e2a38;
+  --button-text-color: #f0f6fc;
+  --border-color: #30363d;
+  --card-background-color: #16202c;
+  --highlight-color: #58a6ff;
+  --inactive-color: #4b5563;
 }
 
 body.dark-theme {
@@ -15,6 +29,21 @@ body.dark-theme {
   color: var(--text-primary-color);
 }
 
+/* Day Theme - Warm */
+body.light-theme {
+  --background-color: #f3f4f6;
+  --text-primary-color: #111827;
+  --text-secondary-color: #6b7280;
+  --button-background-color: #e5e7eb;
+  --button-text-color: #111827;
+  --border-color: #d1d5db;
+  --card-background-color: #ffffff;
+  --highlight-color: #ff9f43;
+  --inactive-color: #9ca3af;
+
+  background-color: var(--background-color);
+  color: var(--text-primary-color);
+}
 button {
   background-color: var(--button-background-color);
   color: var(--button-text-color);
