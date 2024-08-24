@@ -65,7 +65,7 @@ function ProfileButton() {
               <li className="dropdown-item">Welcome! {user.username}.</li>
               <li
                 className="dropdown-item"
-                onClick={() => navigate("/profile/edit")}
+                onClick={() => navigate("/profile")}
               >
                 Profile
               </li>

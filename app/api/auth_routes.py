@@ -19,7 +19,7 @@ def authenticate():
 def login():
     form = LoginForm()
     form["csrf_token"].data = request.cookies["csrf_token"]
-    
+
     if form.validate_on_submit():
         user = User.query.filter(User.email == form.data["email"]).first()
 
@@ -30,7 +30,7 @@ def login():
 
         login_user(user)
         return user.to_dict()
-    
+
     print(f"Form validation failed. Errors: {form.errors}")
     return form.errors, 401
 
@@ -45,7 +45,7 @@ def logout():
 def sign_up():
     form = SignUpForm()
     form["csrf_token"].data = request.cookies["csrf_token"]
-    
+
     if form.validate_on_submit():
         user = User(
             username=form.data["username"],
@@ -56,8 +56,27 @@ def sign_up():
         db.session.commit()
         login_user(user)
         return user.to_dict()
-    
+
     return form.errors, 401
+
+
+@auth_routes.route("/profile", methods=["GET"])
+@login_required
+def get_profile():
+    user = current_user
+    return jsonify(user.to_dict())
+
+
+@auth_routes.route("/profile", methods=["PUT"])
+@login_required
+def update_profile():
+    data = request.get_json()
+    user = current_user
+    user.username = data.get("username", user.username)
+    user.email = data.get("email", user.email)
+
+    db.session.commit()
+    return jsonify(user.to_dict())
 
 
 @auth_routes.route("/change-password", methods=["POST"])
@@ -67,7 +86,7 @@ def change_password():
     old_password = data.get("old_password")
     new_password = data.get("new_password")
     confirm_password = data.get("confirm_password")
-    
+
     print(f"Old password (plain): {old_password}")
     print(f"Stored hashed password: {current_user.hashed_password}")
 

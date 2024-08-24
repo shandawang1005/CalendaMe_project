@@ -1,0 +1,14 @@
+/* Dashboard.css */
+.dashboard-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.dashboard-container h1 {
+  font-size: 32px;
+  margin-bottom: 40px;
+  color: #333;
+}

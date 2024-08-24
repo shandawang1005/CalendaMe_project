@@ -10,6 +10,7 @@ import MessagesPage from "../components/MessagesPage";
 import NotFoundPage from "../components/NotFoundPage";
 import InvitationsPage from "../components/MessagesPage/Invitation";
 import ChangePasswordPage from "../components/ChangePasswordPage/ChangePasswordPage";
+import Profile from "../components/Profile";
 export const router = createBrowserRouter([
   {
     element: <Layout />,
@@ -47,7 +48,10 @@ export const router = createBrowserRouter([
         path: "profile/change-password",
         element: <ChangePasswordPage />,
       },
-
+      {
+        path: "profile",
+        element: <Profile />,
+      },
       {
         path: "*",
         element: <NotFoundPage />,

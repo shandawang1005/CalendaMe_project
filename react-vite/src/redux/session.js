@@ -3,6 +3,10 @@ const SET_USER = "session/setUser";
 const REMOVE_USER = "session/removeUser";
 const CHANGE_PASSWORD_SUCCESS = "session/changePasswordSuccess";
 const CHANGE_PASSWORD_FAILURE = "session/changePasswordFailure";
+const FETCH_PROFILE_SUCCESS = "session/fetchProfileSuccess";
+const FETCH_PROFILE_FAILURE = "session/fetchProfileFailure";
+const UPDATE_PROFILE_SUCCESS = "session/updateProfileSuccess";
+const UPDATE_PROFILE_FAILURE = "session/updateProfileFailure";
 
 // Action Creators
 const setUser = (user) => ({
@@ -24,20 +28,39 @@ const changePasswordFailure = (error) => ({
   payload: error,
 });
 
+const fetchProfileSuccess = (user) => ({
+  type: FETCH_PROFILE_SUCCESS,
+  payload: user,
+});
+
+const fetchProfileFailure = (error) => ({
+  type: FETCH_PROFILE_FAILURE,
+  payload: error,
+});
+
+const updateProfileSuccess = (user) => ({
+  type: UPDATE_PROFILE_SUCCESS,
+  payload: user,
+});
+
+const updateProfileFailure = (error) => ({
+  type: UPDATE_PROFILE_FAILURE,
+  payload: error,
+});
+
 // Thunks
+
 export const thunkAuthenticate = () => async (dispatch) => {
   const response = await fetch("/api/auth/");
   if (response.ok) {
     const data = await response.json();
-    if (data.errors) {
-      return;
+    if (!data.errors) {
+      dispatch(setUser(data));
     }
-    dispatch(setUser(data));
   }
 };
 
 export const thunkLogin = (credentials) => async (dispatch) => {
-  // Get the CSRF token from the cookies
   const csrfToken = document.cookie
     .split("; ")
     .find((row) => row.startsWith("csrf_token="))
@@ -47,7 +70,7 @@ export const thunkLogin = (credentials) => async (dispatch) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "X-CSRF-Token": csrfToken, // Include the CSRF token in the headers
+      "X-CSRF-Token": csrfToken,
     },
     body: JSON.stringify(credentials),
   });
@@ -64,7 +87,6 @@ export const thunkLogin = (credentials) => async (dispatch) => {
 };
 
 export const thunkSignup = (user) => async (dispatch) => {
-  // Get the CSRF token from the cookies
   const csrfToken = document.cookie
     .split("; ")
     .find((row) => row.startsWith("csrf_token="))
@@ -74,7 +96,7 @@ export const thunkSignup = (user) => async (dispatch) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "X-CSRF-Token": csrfToken, // Include the CSRF token in the headers
+      "X-CSRF-Token": csrfToken,
     },
     body: JSON.stringify(user),
   });
@@ -142,11 +164,49 @@ export const changePasswordThunk =
     }
   };
 
+export const thunkFetchProfile = () => async (dispatch) => {
+  const response = await fetch("/api/auth/profile");
+
+  if (response.ok) {
+    const data = await response.json();
+    dispatch(fetchProfileSuccess(data));
+  } else {
+    const errorData = await response.json();
+    dispatch(fetchProfileFailure(errorData.error));
+  }
+};
+
+export const thunkUpdateProfile = (profileData) => async (dispatch) => {
+  const csrfToken = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("csrf_token="))
+    ?.split("=")[1];
+
+  const response = await fetch("/api/auth/profile", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRF-Token": csrfToken,
+    },
+    body: JSON.stringify(profileData),
+  });
+
+  if (response.ok) {
+    const data = await response.json();
+    dispatch(updateProfileSuccess(data));
+  } else {
+    const errorData = await response.json();
+    dispatch(updateProfileFailure(errorData.error));
+  }
+};
+
 // Initial State
 const initialState = {
   user: null,
   passwordChangeMessage: null,
   passwordChangeError: null,
+  profileUpdateMessage: null,
+  profileUpdateError: null,
 };
 
 // Reducer
@@ -167,6 +227,24 @@ function sessionReducer(state = initialState, action) {
         ...state,
         passwordChangeMessage: null,
         passwordChangeError: action.payload,
+      };
+    case FETCH_PROFILE_SUCCESS:
+    case UPDATE_PROFILE_SUCCESS:
+      return {
+        ...state,
+        user: action.payload,
+        profileUpdateMessage:
+          action.type === UPDATE_PROFILE_SUCCESS
+            ? "Profile updated successfully."
+            : null,
+        profileUpdateError: null,
+      };
+    case FETCH_PROFILE_FAILURE:
+    case UPDATE_PROFILE_FAILURE:
+      return {
+        ...state,
+        profileUpdateMessage: null,
+        profileUpdateError: action.payload,
       };
     default:
       return state;
