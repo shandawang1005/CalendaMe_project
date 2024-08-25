@@ -6,14 +6,15 @@ import {
   cancelInvitation,
 } from "../../redux/invitation";
 import { useNotification } from "../NotificationPage/NotificationContainer"; // Import useNotification hook
+import "./InvitationsPage.css"; // Import CSS for styling
 
 const InvitationsPage = () => {
   const dispatch = useDispatch();
   const invitations = useSelector(
     (state) => state.invitations.receivedInvitations
   );
-  const currentUser = useSelector((state) => state.session.user); // Assuming the current user is stored in session
-  const { addNotification } = useNotification(); // Use the notification hook
+  const currentUser = useSelector((state) => state.session.user);
+  const { addNotification } = useNotification();
 
   useEffect(() => {
     dispatch(fetchReceivedInvitations());
@@ -25,7 +26,7 @@ const InvitationsPage = () => {
   };
 
   const handleCancel = (invitationId) => {
-    dispatch(cancelInvitation(invitationId)); // Dispatch to cancel the invitation
+    dispatch(cancelInvitation(invitationId));
     addNotification("Invitation canceled successfully.", "success", 3000);
   };
 
@@ -33,58 +34,72 @@ const InvitationsPage = () => {
     const start = new Date(startTime);
     const end = new Date(endTime);
     const durationMs = end - start;
-    const durationMinutes = Math.round(durationMs / 60000); // Convert milliseconds to minutes and round
+    const durationMinutes = Math.round(durationMs / 60000);
     return durationMinutes;
   };
-
+  const formatName = (name) => {
+    if (!name) return "Unknown"; // Fallback to "Unknown" if name is null/undefined
+    return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+  };
   return (
-    <div>
-      <h2>Your Invitations</h2>
+    <div className="invitations-page-container">
+      <h2 className="invitations-heading">Your Invitations</h2>
 
-      <ul>
+      <ul className="invitations-list">
         {invitations.map((invitation) => (
-          <li key={invitation.id}>
-            <p>
-              <strong>Event:</strong> {invitation.event_title} <br />
-              <strong>Status:</strong> {invitation.status} <br />
-              <strong>Start Time:</strong>{" "}
-              {new Date(invitation.event_start_time).toLocaleString()} <br />
-              <strong>Duration:</strong>{" "}
-              {calculateDurationInMinutes(
-                invitation.event_start_time,
-                invitation.event_end_time
-              )}{" "}
-              minutes <br />
-              <strong>Location:</strong> {invitation.event_location || "N/A"}{" "}
-              <br />
-              {invitation.inviter_id === currentUser.id
-                ? `You sent this invitation to ${invitation.invitee_name}`
-                : `You were invited by ${invitation.inviter_name}`}
-            </p>
+          <li key={invitation.id} className="invitation-item">
+            <div className="invitation-details">
+              <p>
+                <strong>Event:</strong> {invitation.event_title} <br />
+                <strong>Status:</strong> {invitation.status} <br />
+                <strong>Start Time:</strong>{" "}
+                {new Date(invitation.event_start_time).toLocaleString()} <br />
+                <strong>Duration:</strong>{" "}
+                {calculateDurationInMinutes(
+                  invitation.event_start_time,
+                  invitation.event_end_time
+                )}{" "}
+                minutes <br />
+                <strong>Location:</strong> {invitation.event_location || "N/A"}{" "}
+                <br />
+                {invitation.inviter_id === currentUser.id ? (
+                  <span>
+                    You sent this invitation to{" "}
+                    {formatName(invitation.invitee_name)}
+                  </span>
+                ) : (
+                  <span>You were invited by {invitation.inviter_name}</span>
+                )}
+              </p>
+            </div>
 
-            {/* If the current user is the inviter, allow cancellation */}
-            {invitation.inviter_id === currentUser.id ? (
-              <button onClick={() => handleCancel(invitation.id)}>
-                Cancel Invitation
-              </button>
-            ) : (
-              <>
-                {invitation.status === "pending" && (
+            <div className="invitation-actions">
+              {invitation.inviter_id === currentUser.id ? (
+                <button
+                  className="invitation-button cancel-button"
+                  onClick={() => handleCancel(invitation.id)}
+                >
+                  Cancel Invitation
+                </button>
+              ) : (
+                invitation.status === "pending" && (
                   <>
                     <button
+                      className="invitation-button accept-button"
                       onClick={() => handleResponse(invitation.id, "accepted")}
                     >
                       Accept
                     </button>
                     <button
+                      className="invitation-button decline-button"
                       onClick={() => handleResponse(invitation.id, "declined")}
                     >
                       Decline
                     </button>
                   </>
-                )}
-              </>
-            )}
+                )
+              )}
+            </div>
           </li>
         ))}
       </ul>

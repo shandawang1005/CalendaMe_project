@@ -48,14 +48,11 @@ const FriendsPage = () => {
   // Handle canceling a friend request
   const handleCancelRequest = async (friendId) => {
     await dispatch(cancelFriendRequestThunk(friendId));
-    dispatch(fetchFriendsListThunk()); // Re-fetch friends after cancelling request
+    dispatch(fetchFriendsListThunk()); // Re-fetch friends after canceling request
   };
 
   // Handle responding to a friend request
   const handleRespondToRequest = async (friendId, response) => {
-    console.log(
-      `Responding to friend request: ${friendId}, response: ${response}`
-    );
     await dispatch(respondToFriendRequestThunk(friendId, response));
     dispatch(fetchFriendsListThunk()); // Re-fetch friends after responding to request
   };
@@ -70,70 +67,87 @@ const FriendsPage = () => {
   };
 
   return (
-    <div>
-      <h2>Your Friends</h2>
+    <div className="friends-page-container">
+      <h2 className="friends-page-heading">Your Friends</h2>
 
-      <h3>Accepted Friends</h3>
-      {acceptedFriends.length > 0 ? (
-        <ul>
-          {acceptedFriends.map((friend) => (
-            <li key={friend.id}>
-              {friend.username} ({friend.email})
-              <button
-                className="friend-button remove-button"
-                onClick={() => openConfirmationModal(friend)}
-              >
-                Remove Friend
-              </button>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No accepted friends yet.</p>
-      )}
-
-      <h3>Pending Friend Requests</h3>
-      {pendingFriends.length > 0 ? (
-        <ul>
-          {pendingFriends.map((friend) => (
-            <li key={friend.id}>
-              {friend.username} ({friend.email})
-              {friend.isRequestSentByYou ? (
+      {/* Accepted Friends Section */}
+      <div className="friends-section">
+        <h3 className="friends-section-heading">Accepted Friends</h3>
+        {acceptedFriends.length > 0 ? (
+          <ul className="friend-list">
+            {acceptedFriends.map((friend) => (
+              <li key={friend.id} className="friend-list-item">
+                <span className="friend-info">
+                  {friend.username} ({friend.email})
+                </span>
                 <button
-                  className="friend-button cancel-button"
-                  onClick={() => handleCancelRequest(friend.id)}
+                  className="friend-button remove-button"
+                  onClick={() => openConfirmationModal(friend)}
                 >
-                  Cancel Request
+                  Remove Friend
                 </button>
-              ) : (
-                <div>
-                  <button
-                    className="friend-button accept-button"
-                    onClick={() => handleRespondToRequest(friend.id, "accept")}
-                  >
-                    Accept
-                  </button>
-                  <button
-                    className="friend-button decline-button"
-                    onClick={() => handleRespondToRequest(friend.id, "reject")}
-                  >
-                    Decline
-                  </button>
-                </div>
-              )}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No pending friend requests.</p>
-      )}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="no-friends-message">You have no accepted friends yet.</p>
+        )}
+      </div>
 
-      {error && <p style={{ color: "red" }}>Error: {error}</p>}
+      {/* Pending Friend Requests Section */}
+      <div className="friends-section">
+        <h3 className="friends-section-heading">Pending Friend Requests</h3>
+        {pendingFriends.length > 0 ? (
+          <ul className="friend-list">
+            {pendingFriends.map((friend) => (
+              <li key={friend.id} className="friend-list-item">
+                <span className="friend-info">
+                  {friend.username} ({friend.email})
+                </span>
+                {friend.isRequestSentByYou ? (
+                  <button
+                    className="friend-button cancel-button"
+                    onClick={() => handleCancelRequest(friend.id)}
+                  >
+                    Cancel Request
+                  </button>
+                ) : (
+                  <div className="friend-request-actions">
+                    <button
+                      className="friend-button accept-button"
+                      onClick={() =>
+                        handleRespondToRequest(friend.id, "accept")
+                      }
+                    >
+                      Accept
+                    </button>
+                    <button
+                      className="friend-button decline-button"
+                      onClick={() =>
+                        handleRespondToRequest(friend.id, "reject")
+                      }
+                    >
+                      Decline
+                    </button>
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="no-friends-message">No pending friend requests.</p>
+        )}
+      </div>
 
-      <button className="friend-button" onClick={openSearchModal}>
+      {/* Error Message */}
+      {error && <p className="error-message">Error: {error}</p>}
+
+      {/* Search Button */}
+      <button className="search-friend-button" onClick={openSearchModal}>
         Search for Friends
       </button>
 
+      {/* Search Modal */}
       <SearchBarModal
         isOpen={isModalOpen}
         onClose={closeSearchModal}

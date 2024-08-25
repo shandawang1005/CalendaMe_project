@@ -7,57 +7,53 @@ import {
   cancelFriendRequestThunk,
   removeFriendThunk,
   respondToFriendRequestThunk,
-  setSearchResults, // Import action to clear search results
+  setSearchResults,
 } from "../../redux/friends";
 import "./SearchBarModal.css";
 
 const SearchBarModal = ({ isOpen, onClose, triggerFetch }) => {
   const [query, setQuery] = useState("");
-  const [hasSearched, setHasSearched] = useState(false); // Track if search has been performed
+  const [hasSearched, setHasSearched] = useState(false);
   const dispatch = useDispatch();
   const modalRef = useRef(null);
 
   const results = useSelector((state) => state.friends.searchResults || []);
-  // const searchError = useSelector((state) => state.friends.searchError);
 
-  // Reset search input and results every time the modal is opened
   useEffect(() => {
     if (isOpen) {
-      setQuery(""); // Clear the search input when the modal opens
-      dispatch(setSearchResults([])); // Clear previous search results
-      setHasSearched(false); // Reset hasSearched when modal opens
+      setQuery("");
+      dispatch(setSearchResults([]));
+      setHasSearched(false);
     }
   }, [isOpen, dispatch]);
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (query.trim()) {
-      setHasSearched(true); // Set to true when search is initiated
+      setHasSearched(true);
       dispatch(searchUsersThunk(query.trim()));
     }
   };
 
   const handleSendRequest = async (friendId) => {
     await dispatch(sendFriendRequestThunk(friendId));
-    dispatch(searchUsersThunk(query.trim())); // Re-fetch search results after sending request
-    // triggerFetch(); // Trigger a re-fetch of the friends list on the parent page
+    dispatch(searchUsersThunk(query.trim()));
   };
 
   const handleCancelRequest = async (friendId) => {
     await dispatch(cancelFriendRequestThunk(friendId));
-    dispatch(searchUsersThunk(query.trim())); // Re-fetch search results after cancelling request
-    // triggerFetch();
+    dispatch(searchUsersThunk(query.trim()));
   };
 
   const handleRemoveFriend = async (friendId) => {
     await dispatch(removeFriendThunk(friendId));
-    dispatch(searchUsersThunk(query.trim())); // Re-fetch search results after removing friend
+    dispatch(searchUsersThunk(query.trim()));
     triggerFetch();
   };
 
   const handleRespondToRequest = async (friendId, response) => {
     await dispatch(respondToFriendRequestThunk(friendId, response));
-    dispatch(searchUsersThunk(query.trim())); // Re-fetch search results after responding
+    dispatch(searchUsersThunk(query.trim()));
     triggerFetch();
   };
 
@@ -82,56 +78,80 @@ const SearchBarModal = ({ isOpen, onClose, triggerFetch }) => {
   return ReactDOM.createPortal(
     <div className="modal-overlay">
       <div className="modal-content" ref={modalRef}>
-        <h2>Search for Friends</h2>
-        <form onSubmit={handleSearch}>
+        <h2 className="modal-heading">Search for Friends</h2>
+        <form className="search-form" onSubmit={handleSearch}>
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search by username or email"
+            className="search-input"
           />
-          <button type="submit">Search</button>
+          <button type="submit" className="search-button">
+            Search
+          </button>
         </form>
 
         {results.length > 0 ? (
-          <ul>
+          <ul className="results-list">
             {results.map((user) => (
-              <li key={user.id}>
-                {user.username} ({user.email}){" "}
-                {user.isFriend ? (
-                  <button onClick={() => handleRemoveFriend(user.id)}>
-                    Remove Friend
-                  </button>
-                ) : user.requestSent ? (
-                  <button onClick={() => handleCancelRequest(user.id)}>
-                    Cancel Request
-                  </button>
-                ) : user.requestReceived ? (
-                  <>
+              <li key={user.id} className="result-item">
+                <span className="user-info">
+                  {user.username} ({user.email})
+                </span>
+                <div className="action-buttons">
+                  {user.isFriend ? (
                     <button
-                      onClick={() => handleRespondToRequest(user.id, "accept")}
+                      onClick={() => handleRemoveFriend(user.id)}
+                      className="action-button remove-button"
                     >
-                      Accept Request
+                      Remove
                     </button>
+                  ) : user.requestSent ? (
                     <button
-                      onClick={() => handleRespondToRequest(user.id, "reject")}
+                      onClick={() => handleCancelRequest(user.id)}
+                      className="action-button cancel-button"
                     >
-                      Decline Request
+                      Cancel Request
                     </button>
-                  </>
-                ) : (
-                  <button onClick={() => handleSendRequest(user.id)}>
-                    Send Friend Request
-                  </button>
-                )}
+                  ) : user.requestReceived ? (
+                    <>
+                      <button
+                        onClick={() =>
+                          handleRespondToRequest(user.id, "accept")
+                        }
+                        className="action-button accept-button"
+                      >
+                        Accept
+                      </button>
+                      <button
+                        onClick={() =>
+                          handleRespondToRequest(user.id, "reject")
+                        }
+                        className="action-button decline-button"
+                      >
+                        Decline
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => handleSendRequest(user.id)}
+                      className="action-button send-button"
+                    >
+                      Send Request
+                    </button>
+                  )}
+                </div>
               </li>
             ))}
           </ul>
         ) : (
-          hasSearched && query && <p>No results found</p>
+          hasSearched && query && <p className="no-results-message">No results found</p>
         )}
 
-        <button onClick={onClose}>Close</button>
+        <button onClick={onClose} className="close-button">
+          Close
+        </button>
       </div>
     </div>,
     document.body

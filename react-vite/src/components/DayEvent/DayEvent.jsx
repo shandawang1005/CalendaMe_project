@@ -19,12 +19,15 @@ const CalendarPage = () => {
   }, [dispatch, date]);
 
   const openEditEventModal = (event) => {
-    setEditingEvent(event);
-    setIsModalOpen(true);
+    dispatch(fetchEventsForDay(date));
+    setEditingEvent(event); // Update the event being edited
+    setIsModalOpen(true); // Open the modal
   };
 
   const closeModal = () => {
-    setIsModalOpen(false);
+    setIsModalOpen(false); // Close the modal
+    setEditingEvent(null); // Reset the editing event
+    dispatch(fetchEventsForDay(date)); // Fetch updated events after closing modal
   };
 
   const parseDate = (dateString) => {

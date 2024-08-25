@@ -5,7 +5,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -14,83 +14,165 @@
 
 /* Modal Content */
 .modal-content {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  max-width: 500px;
+  background-color: var(--background-color);
+  padding: 30px;
+  border-radius: 15px;
   width: 100%;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  position: relative;
+  max-width: 500px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  color: var(--text-primary-color);
 }
 
-.modal-content h2 {
-  margin-top: 0;
+/* Modal Heading */
+.modal-heading {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.8rem;
+  font-weight: bold;
   margin-bottom: 20px;
-  font-size: 24px;
-  color: #333;
 }
 
-/* Input Field */
-.modal-content input[type="text"] {
-  width: calc(100% - 20px);
+/* Search Form */
+.search-form {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.search-input {
   padding: 10px;
-  margin-bottom: 15px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  font-size: 16px;
-}
-
-/* Buttons */
-.modal-content button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  font-size: 16px;
-  border-radius: 4px;
-  cursor: pointer;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--button-background-color);
+  color: var(--text-primary-color);
+  font-size: 1rem;
+  width: 100%;
+  max-width: 350px;
   margin-right: 10px;
 }
 
-.modal-content button:hover {
-  background-color: #0056b3;
+.search-button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 8px;
+  background-color: var(--highlight-color);
+  color: var(--button-text-color);
+  border: none;
+  cursor: pointer;
 }
 
-/* List of Results */
-.modal-content ul {
-  list-style-type: none;
-  padding-left: 0;
-  margin-top: 20px;
+.search-button:hover {
+  background-color: var(--text-primary-color);
+  color: var(--background-color);
 }
 
-.modal-content ul li {
-  padding: 10px;
-  border-bottom: 1px solid #f0f0f0;
+/* Results List */
+.results-list {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 20px;
+}
+
+.result-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: var(--button-background-color);
+  border: 1px solid var(--border-color);
+  margin-bottom: 10px;
 }
 
-.modal-content ul li:last-child {
-  border-bottom: none;
+/* User Info */
+.user-info {
+  font-size: 1rem;
+  color: var(--text-primary-color);
 }
 
-/* Error and Message Styles */
-.error-message {
-  color: red;
-  font-size: 14px;
-  margin-top: 10px;
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 10px;
 }
 
-.modal-content p {
-  margin: 10px 0;
+.action-button {
+  padding: 8px 15px;
+  font-size: 0.9rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.send-button {
+  background-color: var(--highlight-color);
+  color: var(--button-text-color);
+}
+
+.send-button:hover {
+  background-color: var(--text-primary-color);
+  color: var(--background-color);
+}
+
+.remove-button {
+  background-color: var(--highlight-color);
+  color: var(--button-text-color);
+}
+
+.remove-button:hover {
+  background-color: darkred;
+  color: var(--background-color);
+}
+
+.accept-button {
+  background-color: green;
+  color: white;
+}
+
+.accept-button:hover {
+  background-color: darkgreen;
+}
+
+.decline-button {
+  background-color: var(--inactive-color);
+  color: var(--text-secondary-color);
+}
+
+.decline-button:hover {
+  background-color: darkred;
+  color: white;
+}
+
+.cancel-button {
+  background-color: var(--inactive-color);
+  color: var(--text-secondary-color);
+}
+
+.cancel-button:hover {
+  background-color: darkred;
+  color: white;
 }
 
 /* Close Button */
-.modal-content button:last-child {
-  background-color: #dc3545;
+.close-button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 8px;
+  background-color: var(--inactive-color);
+  color: var(--text-secondary-color);
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.modal-content button:last-child:hover {
-  background-color: #c82333;
+.close-button:hover {
+  background-color: var(--text-primary-color);
+  color: var(--background-color);
+}
+
+/* No Results Message */
+.no-results-message {
+  font-size: 1rem;
+  color: var(--text-secondary-color);
 }

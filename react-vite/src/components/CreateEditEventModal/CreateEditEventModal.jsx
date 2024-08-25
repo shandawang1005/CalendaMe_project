@@ -2,16 +2,26 @@ import { useState, useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { clearSearchResults, searchFriendsForEvent } from "../../redux/friends";
-import { createEvent, editEvent, deleteEvent, sendInvitations } from "../../redux/event";
+import {
+  createEvent,
+  editEvent,
+  deleteEvent,
+  sendInvitations,
+  removeParticipant,
+} from "../../redux/event";
 import { useNotification } from "../NotificationPage/NotificationContainer"; // Import useNotification hook
+import { useNavigate } from "react-router-dom"; // For navigation
 import "./CreateEditEventModal.css";
 
 const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
   const dispatch = useDispatch();
   const { addNotification } = useNotification(); // Hook to trigger notifications
-  const friends = useSelector((state) => state.friends.eventSearchResults || []);
+  const friends = useSelector(
+    (state) => state.friends.eventSearchResults || []
+  );
   const currentUser = useSelector((state) => state.session.user); // Fetch current user
-  
+  const navigate = useNavigate(); // For navigation
+
   const [formData, setFormData] = useState({
     title: "",
     start_time: "",
@@ -29,10 +39,10 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
   useEffect(() => {
     if (isOpen) {
       // Reset fields when modal opens
-      setQuery(""); 
-      setHasSearched(false); 
-      setInviteeIds([]); 
-      dispatch(clearSearchResults()); 
+      setQuery("");
+      setHasSearched(false);
+      setInviteeIds([]);
+      dispatch(clearSearchResults());
       setErrors({});
 
       if (editingEvent) {
@@ -47,7 +57,9 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
 
         // Populate invitees if editing an event
         if (editingEvent.participants) {
-          const participantIds = editingEvent.participants.map((participant) => participant.id);
+          const participantIds = editingEvent.participants.map(
+            (participant) => participant.id
+          );
           setInviteeIds(participantIds);
         }
       } else {
@@ -77,14 +89,16 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
     e.preventDefault();
     if (query.trim()) {
       setHasSearched(true);
-      dispatch(searchFriendsForEvent(query.trim())); 
+      dispatch(searchFriendsForEvent(query.trim()));
     }
   };
 
   // Toggle invited friends
   const handleInviteeToggle = (friendId) => {
     setInviteeIds((prevIds) =>
-      prevIds.includes(friendId) ? prevIds.filter((id) => id !== friendId) : [...prevIds, friendId]
+      prevIds.includes(friendId)
+        ? prevIds.filter((id) => id !== friendId)
+        : [...prevIds, friendId]
     );
   };
 
@@ -123,14 +137,23 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
         if (response?.error) {
           addNotification(response.error, "error");
         } else {
-          addNotification(editingEvent ? "Event updated successfully!" : "Event created successfully!", "success");
+          addNotification(
+            editingEvent
+              ? "Event updated successfully!"
+              : "Event created successfully!",
+            "success"
+          );
           if (inviteeIds.length > 0) {
             dispatch(sendInvitations(response.event.id, inviteeIds));
           }
           onClose();
+          navigate("/"); // Redirect to the Dashboard
         }
       } catch (error) {
-        addNotification("An error occurred while processing the request", "error");
+        addNotification(
+          "An error occurred while processing the request",
+          "error"
+        );
       }
     }
   };
@@ -144,10 +167,44 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
         addNotification(response.error, "error");
       } else {
         addNotification("Event deleted successfully!", "success");
-        onClose(); 
+        onClose();
       }
     } catch (error) {
       addNotification("An error occurred while deleting the event", "error");
+    }
+  };
+
+  // Handle participant removal
+  const handleRemoveParticipant = async (participantId) => {
+    try {
+      // Dispatch the action to remove the participant from the backend
+      const response = await dispatch(
+        removeParticipant(editingEvent.id, participantId)
+      );
+
+      if (response?.error) {
+        addNotification(response.error, "error");
+      } else {
+        // Ensure that participants are initialized before filtering
+        const updatedParticipants =
+          formData.participants?.filter(
+            (participant) => participant.id !== participantId
+          ) || []; // Fallback to an empty array if undefined
+
+        setFormData((prevData) => ({
+          ...prevData,
+          participants: updatedParticipants,
+        }));
+
+        addNotification("Participant removed successfully!", "success");
+        onClose();
+      }
+    } catch (error) {
+      console.error("Error removing participant:", error);
+      addNotification(
+        "An error occurred while removing the participant",
+        "error"
+      );
     }
   };
 
@@ -170,10 +227,16 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
 
   if (!isOpen) return null;
 
+  const formatName = (name) => {
+    return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+  };
+
   return ReactDOM.createPortal(
     <div className="modal-overlay">
       <div className="modal-content-wrapper" ref={modalRef}>
-        <h2 className="modal-heading">{editingEvent ? "Edit Event" : "Create Event"}</h2>
+        <h2 className="modal-heading">
+          {editingEvent ? "Edit Event" : "Create Event"}
+        </h2>
         <form onSubmit={handleSubmit} className="modal-form">
           <div className="modal-form-group">
             <label className="modal-label">Title:</label>
@@ -195,7 +258,9 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
               onChange={handleChange}
               className="modal-input"
             />
-            {errors.start_time && <p className="error-message">{errors.start_time}</p>}
+            {errors.start_time && (
+              <p className="error-message">{errors.start_time}</p>
+            )}
           </div>
           <div className="modal-form-group">
             <label className="modal-label">End Time:</label>
@@ -206,7 +271,9 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
               onChange={handleChange}
               className="modal-input"
             />
-            {errors.end_time && <p className="error-message">{errors.end_time}</p>}
+            {errors.end_time && (
+              <p className="error-message">{errors.end_time}</p>
+            )}
           </div>
           <div className="modal-form-group">
             <label className="modal-label">Location:</label>
@@ -238,18 +305,24 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
               {editingEvent.participants.map((participant) => (
                 <div key={participant.id} className="participant-item">
                   <span className="participant-name">
-                    {participant.username}
-                    {currentUser.id === participant.id ? " (Host)" : ""}
+                    {formatName(participant.username)}
+                    {currentUser.id === participant.user_id ? " (Host)" : ""}
                   </span>
-                  {currentUser.id !== participant.id && (
-                    <button
-                      type="button"
-                      className="remove-participant-button"
-                      onClick={() => handleRemoveParticipant(participant.id)}
-                    >
-                      Remove
-                    </button>
-                  )}
+                  {/* {console.log("Participant:", participant)}
+                  {console.log("Current User ID:", currentUser.id)}
+                  {console.log("Event Creator ID:", editingEvent.creator_id)} */}
+                  {currentUser.id !== participant.user_id &&
+                    editingEvent.creator_id === currentUser.id && (
+                      <button
+                        type="button"
+                        className="remove-participant-button"
+                        onClick={() =>
+                          handleRemoveParticipant(participant.user_id)
+                        }
+                      >
+                        Remove
+                      </button>
+                    )}
                 </div>
               ))}
             </div>
@@ -291,7 +364,9 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
               )}
 
               {hasSearched && friends.length === 0 && (
-                <p className="no-friends-found">No friends found for the search query.</p>
+                <p className="no-friends-found">
+                  No friends found for the search query.
+                </p>
               )}
             </div>
           )}

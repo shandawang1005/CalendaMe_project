@@ -7,7 +7,10 @@ calendar_routes = Blueprint("calendar", __name__)
 
 
 # Helper function to check for time conflicts
-def has_time_conflict(user_id, start_time, end_time, event_id=None):
+def has_time_conflict(
+    user_id, start_time, end_time, event_id=None, visibility="private"
+):
+    # Check for conflicts with the user's own schedule
     user_conflict = (
         db.session.query(Event)
         .join(Participant)
@@ -21,19 +24,23 @@ def has_time_conflict(user_id, start_time, end_time, event_id=None):
         .count()
     )
 
-    participant_conflict = (
-        db.session.query(Event)
-        .join(Participant)
-        .filter(
-            Participant.user_id
-            != user_id,  # Check for participants other than the user
-            Participant.status == "accepted",
-            Event.start_time < end_time,
-            Event.end_time > start_time,
-            Event.id != event_id,
+    # If the event is private, skip checking participant conflicts
+    if visibility == "private":
+        participant_conflict = 0
+    else:
+        participant_conflict = (
+            db.session.query(Event)
+            .join(Participant)
+            .filter(
+                Participant.user_id
+                != user_id,  # Check for participants other than the user
+                Participant.status == "accepted",
+                Event.start_time < end_time,
+                Event.end_time > start_time,
+                Event.id != event_id,
+            )
+            .count()
         )
-        .count()
-    )
 
     return user_conflict > 0, participant_conflict > 0
 
@@ -161,13 +168,13 @@ def add_event():
 
     # Check for time conflicts
     user_conflict, participant_conflict = has_time_conflict(
-        current_user.id, start_time, end_time
+        current_user.id, start_time, end_time, visibility=visibility
     )
 
     if user_conflict:
         return jsonify({"error": "This event conflicts with your own schedule."}), 409
 
-    if participant_conflict:
+    if visibility == "public" and participant_conflict:
         return jsonify(
             {"error": "This event conflicts with other participants' schedules."}
         ), 409
@@ -185,18 +192,12 @@ def add_event():
     db.session.add(new_event)
     db.session.commit()
 
-    # Check if the current user is already a participant
-    existing_participant = Participant.query.filter_by(
-        event_id=new_event.id, user_id=current_user.id
-    ).first()
-
-    if not existing_participant:
-        # Add the current user as a participant
-        participant = Participant(
-            user_id=current_user.id, event_id=new_event.id, status="accepted"
-        )
-        db.session.add(participant)
-        db.session.commit()
+    # Add the current user as a participant
+    participant = Participant(
+        user_id=current_user.id, event_id=new_event.id, status="accepted"
+    )
+    db.session.add(participant)
+    db.session.commit()
 
     return jsonify(
         {"message": "Event added successfully!", "event": new_event.to_dict()}
@@ -234,13 +235,13 @@ def edit_event(event_id):
 
     # Check for time conflicts
     user_conflict, participant_conflict = has_time_conflict(
-        current_user.id, start_time, end_time, event_id
+        current_user.id, start_time, end_time, event_id, visibility=visibility
     )
 
     if user_conflict:
         return jsonify({"error": "This event conflicts with your own schedule."}), 409
 
-    if participant_conflict:
+    if visibility == "public" and participant_conflict:
         return jsonify(
             {"error": "This event conflicts with other participants' schedules."}
         ), 409

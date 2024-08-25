@@ -52,7 +52,9 @@ function ProfileButton() {
   const closeCreateEventModal = () => {
     setShowCreateEventModal(false);
   };
-
+  const formatName = (name) => {
+    return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+  };
   return (
     <div className="profile-button-wrapper">
       <button onClick={toggleMenu} className="profile-icon-button">
@@ -62,7 +64,9 @@ function ProfileButton() {
         <ul className="profile-dropdown" ref={ulRef}>
           {user ? (
             <>
-              <li className="dropdown-item">Welcome! {user.username}.</li>
+              <li className="dropdown-item">
+                Welcome! {formatName(user.username)}.
+              </li>
               <li
                 className="dropdown-item"
                 onClick={() => navigate("/profile")}

@@ -190,7 +190,8 @@
 .form-buttons {
   margin-top: 20px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  width: 100%;
 }
 
 /* Common Button Styling */
@@ -203,7 +204,7 @@
   border: none;
   cursor: pointer;
   transition: background-color 0.3s ease, color 0.3s ease;
-  margin-left: 10px; /* To ensure spacing between buttons */
+  /* margin-left: 10px; To ensure spacing between buttons */
 }
 
 /* Submit Button */
