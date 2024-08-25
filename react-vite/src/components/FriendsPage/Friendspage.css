@@ -1,32 +1,120 @@
-/* FriendsPage.css */
+/* General Container */
+.friends-page-container {
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+  font-family: "Montserrat", sans-serif;
+}
+
+/* Headings */
+.friends-page-heading {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--text-primary-color);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.friends-section-heading {
+  font-size: 1.5rem;
+  color: var(--text-secondary-color);
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+/* Friend List */
+.friend-list {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 20px;
+}
+
+.friend-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: var(--button-background-color);
+  margin-bottom: 10px;
+}
+
+.friend-info {
+  font-size: 1rem;
+  color: var(--text-primary-color);
+}
+
+/* Friend Action Buttons */
 .friend-button {
-  padding: 8px 12px;
-  border-radius: 4px;
+  padding: 10px 15px;
+  font-size: 1rem;
+  border-radius: 8px;
   border: none;
-  background-color: #007bff;
-  color: white;
   cursor: pointer;
-  margin-left: 10px;
-  font-size: 14px;
   transition: background-color 0.3s ease;
 }
 
-.friend-button:hover {
-  background-color: #0056b3;
-}
-
-.cancel-button {
-  background-color: #dc3545;
-}
-
-.cancel-button:hover {
-  background-color: #c82333;
-}
-
 .remove-button {
-  background-color: #ffc107;
+  background-color: var(--highlight-color);
+  color: var(--button-text-color);
 }
 
 .remove-button:hover {
-  background-color: #e0a800;
+  background-color: darkred;
+}
+
+.accept-button {
+  background-color: var(--highlight-color);
+  color: var(--button-text-color);
+}
+
+.accept-button:hover {
+  background-color: green;
+}
+
+.decline-button {
+  background-color: var(--inactive-color);
+  color: var(--text-secondary-color);
+}
+
+.decline-button:hover {
+  background-color: darkgray;
+}
+
+.cancel-button {
+  background-color: var(--inactive-color);
+  color: var(--text-secondary-color);
+}
+
+.cancel-button:hover {
+  background-color: darkgray;
+}
+
+.search-friend-button {
+  background-color: var(--highlight-color);
+  color: var(--button-text-color);
+  margin-top: 20px;
+  display: block;
+  width: 100%;
+}
+
+.search-friend-button:hover {
+  background-color: var(--text-primary-color);
+  color: var(--background-color);
+}
+
+/* Error Message */
+.error-message {
+  color: red;
+  font-size: 1rem;
+  margin-top: 10px;
+  text-align: center;
+}
+
+/* No Friends Message */
+.no-friends-message {
+  font-size: 1rem;
+  color: var(--text-secondary-color);
+  text-align: center;
 }

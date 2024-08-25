@@ -8,7 +8,7 @@ def seed_events():
     event1 = Event(
         title="Meeting",
         start_time=datetime.utcnow() + timedelta(weeks=4),
-        end_time=datetime.utcnow() + timedelta(weeks=4) + timedelta(hours=1),
+        end_time=datetime.utcnow() + timedelta(weeks=4) + timedelta(hours=3),
         location="Office",
         visibility="public",
         creator_id=1,  # Assume user with ID 1 is the creator
@@ -16,7 +16,7 @@ def seed_events():
     event2 = Event(
         title="Lunch",
         start_time=datetime.utcnow() + timedelta(weeks=4) + timedelta(days=1),
-        end_time=datetime.utcnow() + timedelta(weeks=4) + timedelta(days=1, hours=1),
+        end_time=datetime.utcnow() + timedelta(weeks=4) + timedelta(days=1, hours=3),
         location="Cafe",
         visibility="private",
         creator_id=2,  # Assume user with ID 2 is the creator

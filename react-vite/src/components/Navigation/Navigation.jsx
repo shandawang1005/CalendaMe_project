@@ -36,7 +36,7 @@ function Navigation() {
                   activeClassName="active"
                   className="NavLink"
                 >
-                  Calendar
+                  Today's Calendar
                 </NavLink>
               </li>
               <li>

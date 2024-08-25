@@ -67,14 +67,29 @@ def get_events_for_day():
     except ValueError:
         return jsonify({"error": "Invalid date format"}), 400
 
+    # Start of the current day
+    start_of_day = datetime(date.year, date.month, date.day, 0, 0, 0)
+
+    # End of the current day
+    end_of_day = start_of_day + timedelta(days=1)
+
+    # Query for events that start within today or end after today begins
     events = (
         db.session.query(Event)
         .join(Participant)
         .filter(
             Participant.user_id == current_user.id,
             Participant.status == "accepted",
-            Event.start_time >= date,
-            Event.start_time < date + timedelta(days=1),
+            db.or_(
+                # Case 1: Events that start today and end today
+                db.and_(
+                    Event.start_time >= start_of_day, Event.start_time < end_of_day
+                ),
+                # Case 2: Overnight events that started before today but end today
+                db.and_(
+                    Event.start_time < start_of_day, Event.end_time >= start_of_day
+                ),
+            ),
         )
         .all()
     )

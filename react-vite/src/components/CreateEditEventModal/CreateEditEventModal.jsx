@@ -2,17 +2,16 @@ import { useState, useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { clearSearchResults, searchFriendsForEvent } from "../../redux/friends";
-import { createEvent, editEvent, sendInvitations } from "../../redux/event";
+import { createEvent, editEvent, deleteEvent, sendInvitations } from "../../redux/event";
 import { useNotification } from "../NotificationPage/NotificationContainer"; // Import useNotification hook
 import "./CreateEditEventModal.css";
 
 const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
   const dispatch = useDispatch();
   const { addNotification } = useNotification(); // Hook to trigger notifications
-  const friends = useSelector(
-    (state) => state.friends.eventSearchResults || []
-  );
-
+  const friends = useSelector((state) => state.friends.eventSearchResults || []);
+  const currentUser = useSelector((state) => state.session.user); // Fetch current user
+  
   const [formData, setFormData] = useState({
     title: "",
     start_time: "",
@@ -29,11 +28,12 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
 
   useEffect(() => {
     if (isOpen) {
-      setQuery(""); // Reset search query
-      setHasSearched(false); // Reset search state
-      setInviteeIds([]); // Reset invitees
-      dispatch(clearSearchResults()); // Clear previous search results
-      setErrors({}); // Clear previous errors
+      // Reset fields when modal opens
+      setQuery(""); 
+      setHasSearched(false); 
+      setInviteeIds([]); 
+      dispatch(clearSearchResults()); 
+      setErrors({});
 
       if (editingEvent) {
         // Populate form data for editing
@@ -47,9 +47,7 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
 
         // Populate invitees if editing an event
         if (editingEvent.participants) {
-          const participantIds = editingEvent.participants.map(
-            (participant) => participant.id
-          );
+          const participantIds = editingEvent.participants.map((participant) => participant.id);
           setInviteeIds(participantIds);
         }
       } else {
@@ -79,16 +77,14 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
     e.preventDefault();
     if (query.trim()) {
       setHasSearched(true);
-      dispatch(searchFriendsForEvent(query.trim())); // Trigger friend search
+      dispatch(searchFriendsForEvent(query.trim())); 
     }
   };
 
   // Toggle invited friends
   const handleInviteeToggle = (friendId) => {
     setInviteeIds((prevIds) =>
-      prevIds.includes(friendId)
-        ? prevIds.filter((id) => id !== friendId)
-        : [...prevIds, friendId]
+      prevIds.includes(friendId) ? prevIds.filter((id) => id !== friendId) : [...prevIds, friendId]
     );
   };
 
@@ -125,26 +121,33 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
         const response = await dispatch(eventAction);
 
         if (response?.error) {
-          // Show notification on conflict
           addNotification(response.error, "error");
         } else {
-          addNotification(
-            editingEvent
-              ? "Event updated successfully!"
-              : "Event created successfully!",
-            "success"
-          );
+          addNotification(editingEvent ? "Event updated successfully!" : "Event created successfully!", "success");
           if (inviteeIds.length > 0) {
             dispatch(sendInvitations(response.event.id, inviteeIds));
           }
           onClose();
         }
       } catch (error) {
-        addNotification(
-          "An error occurred while processing the request",
-          "error"
-        );
+        addNotification("An error occurred while processing the request", "error");
       }
+    }
+  };
+
+  // Handle event deletion
+  const handleDeleteEvent = async () => {
+    try {
+      const response = await dispatch(deleteEvent(editingEvent.id));
+
+      if (response?.error) {
+        addNotification(response.error, "error");
+      } else {
+        addNotification("Event deleted successfully!", "success");
+        onClose(); 
+      }
+    } catch (error) {
+      addNotification("An error occurred while deleting the event", "error");
     }
   };
 
@@ -169,108 +172,149 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
 
   return ReactDOM.createPortal(
     <div className="modal-overlay">
-      <div className="modal-content" ref={modalRef}>
-        <h2>{editingEvent ? "Edit Event" : "Create Event"}</h2>
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label>Title:</label>
+      <div className="modal-content-wrapper" ref={modalRef}>
+        <h2 className="modal-heading">{editingEvent ? "Edit Event" : "Create Event"}</h2>
+        <form onSubmit={handleSubmit} className="modal-form">
+          <div className="modal-form-group">
+            <label className="modal-label">Title:</label>
             <input
               type="text"
               name="title"
               value={formData.title}
               onChange={handleChange}
+              className="modal-input"
             />
             {errors.title && <p className="error-message">{errors.title}</p>}
           </div>
-          <div>
-            <label>Start Time:</label>
+          <div className="modal-form-group">
+            <label className="modal-label">Start Time:</label>
             <input
               type="datetime-local"
               name="start_time"
               value={formData.start_time}
               onChange={handleChange}
+              className="modal-input"
             />
-            {errors.start_time && (
-              <p className="error-message">{errors.start_time}</p>
-            )}
+            {errors.start_time && <p className="error-message">{errors.start_time}</p>}
           </div>
-          <div>
-            <label>End Time:</label>
+          <div className="modal-form-group">
+            <label className="modal-label">End Time:</label>
             <input
               type="datetime-local"
               name="end_time"
               value={formData.end_time}
               onChange={handleChange}
+              className="modal-input"
             />
-            {errors.end_time && (
-              <p className="error-message">{errors.end_time}</p>
-            )}
+            {errors.end_time && <p className="error-message">{errors.end_time}</p>}
           </div>
-          <div>
-            <label>Location:</label>
+          <div className="modal-form-group">
+            <label className="modal-label">Location:</label>
             <input
               type="text"
               name="location"
               value={formData.location}
               onChange={handleChange}
+              className="modal-input"
             />
           </div>
-          <div>
-            <label>Visibility:</label>
+          <div className="modal-form-group">
+            <label className="modal-label">Visibility:</label>
             <select
               name="visibility"
               value={formData.visibility}
               onChange={handleChange}
+              className="modal-select"
             >
               <option value="public">Public</option>
               <option value="private">Private</option>
             </select>
           </div>
 
-          <button type="submit">
-            {editingEvent ? "Update Event" : "Create Event"}
-          </button>
-          <button type="button" onClick={onClose}>
-            Cancel
-          </button>
-        </form>
+          {/* Participants Section */}
+          {editingEvent && (
+            <div className="participants-wrapper">
+              <h3 className="participants-heading">Participants</h3>
+              {editingEvent.participants.map((participant) => (
+                <div key={participant.id} className="participant-item">
+                  <span className="participant-name">
+                    {participant.username}
+                    {currentUser.id === participant.id ? " (Host)" : ""}
+                  </span>
+                  {currentUser.id !== participant.id && (
+                    <button
+                      type="button"
+                      className="remove-participant-button"
+                      onClick={() => handleRemoveParticipant(participant.id)}
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
 
-        {/* Friend Search Section */}
-        {formData.visibility === "public" && (
-          <div className="friend-search">
-            <h3>Invite Friends</h3>
-            <form onSubmit={handleSearch}>
-              <input
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search for friends by username or email"
-              />
-              <button type="submit">Search</button>
-            </form>
+          {/* Friend Search Section */}
+          {formData.visibility === "public" && (
+            <div className="friend-search-wrapper">
+              <h3 className="friend-search-heading">Invite Friends</h3>
+              <div className="friend-search">
+                <input
+                  type="text"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search for friends by username or email"
+                  className="friend-search-input"
+                />
+                <button onClick={handleSearch} className="friend-search-button">
+                  Search
+                </button>
+              </div>
 
-            {friends.length > 0 && (
-              <ul>
-                {friends.map((friend) => (
-                  <li key={friend.id}>
-                    <label>
-                      <input
-                        type="checkbox"
-                        checked={inviteeIds.includes(friend.id)}
-                        onChange={() => handleInviteeToggle(friend.id)}
-                      />
-                      {friend.username} ({friend.email})
-                    </label>
-                  </li>
-                ))}
-              </ul>
-            )}
+              {friends.length > 0 && (
+                <ul className="friend-list">
+                  {friends.map((friend) => (
+                    <li key={friend.id} className="friend-list-item">
+                      <label className="friend-checkbox-label">
+                        <input
+                          type="checkbox"
+                          checked={inviteeIds.includes(friend.id)}
+                          onChange={() => handleInviteeToggle(friend.id)}
+                          className="friend-checkbox"
+                        />
+                        {friend.username} ({friend.email})
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+              )}
 
-            {hasSearched && friends.length === 0 && (
-              <p>No friends found for the search query.</p>
+              {hasSearched && friends.length === 0 && (
+                <p className="no-friends-found">No friends found for the search query.</p>
+              )}
+            </div>
+          )}
+
+          <div className="form-buttons">
+            <button type="submit" className="submit-button">
+              {editingEvent ? "Update Event" : "Create Event"}
+            </button>
+            <button type="button" onClick={onClose} className="cancel-button">
+              Cancel
+            </button>
+            {editingEvent && (
+              <button
+                type="button"
+                onClick={handleDeleteEvent}
+                className="delete-button"
+                style={{ marginLeft: "10px" }}
+              >
+                Delete Event
+              </button>
             )}
           </div>
-        )}
+        </form>
       </div>
     </div>,
     document.body

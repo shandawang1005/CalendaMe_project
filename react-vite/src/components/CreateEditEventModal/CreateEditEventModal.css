@@ -1,45 +1,246 @@
+/* Modal Overlay */
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  }
-  
-  .modal-content {
-    background: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    max-width: 500px;
-    width: 100%;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-  }
-  
-  .modal-content h2 {
-    margin-bottom: 20px;
-  }
-  
-  .search-bar {
-    margin-top: 20px;
-  }
-  
-  .search-bar input {
-    padding: 8px;
-    margin-right: 10px;
-  }
-  
-  .search-results {
-    list-style: none;
-    padding-left: 0;
-  }
-  
-  .search-results li {
-    margin: 5px 0;
-    cursor: pointer;
-  }
-  
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Modal Content Wrapper */
+.modal-content-wrapper {
+  background-color: var(--background-color);
+  padding: 30px;
+  border-radius: 15px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
+  color: var(--text-primary-color);
+}
+
+/* Modal Heading */
+.modal-heading {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--text-primary-color);
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Modal Form */
+.modal-form {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Modal Form Group */
+.modal-form-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Modal Label */
+.modal-label {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--text-secondary-color);
+  margin-bottom: 5px;
+}
+
+/* Modal Input */
+.modal-input,
+.modal-select {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--button-background-color);
+  color: var(--text-primary-color);
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.3s;
+  width: 100%;
+}
+
+/* Input Focus */
+.modal-input:focus,
+.modal-select:focus {
+  border-color: var(--highlight-color);
+}
+
+/* Participants Section */
+.participants-wrapper {
+  margin-top: 20px;
+}
+
+.participants-heading {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--text-primary-color);
+  margin-bottom: 10px;
+}
+
+.participant-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.participant-name {
+  font-size: 1rem;
+  color: var(--text-primary-color);
+}
+
+.remove-participant-button {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.remove-participant-button:hover {
+  background-color: darkred;
+}
+
+/* Friend Search Wrapper */
+.friend-search-wrapper {
+  margin-top: 20px;
+}
+
+/* Friend Search Heading */
+.friend-search-heading {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--text-primary-color);
+  margin-bottom: 10px;
+}
+
+/* Friend Search Input */
+.friend-search-input {
+  margin-bottom: 10px;
+  width: calc(100% - 90px);
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--button-background-color);
+  color: var(--text-primary-color);
+  font-size: 1rem;
+  margin-right: 10px;
+}
+
+/* Friend Search Button */
+.friend-search-button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: none;
+  background-color: var(--highlight-color);
+  color: var(--button-text-color);
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.friend-search-button:hover {
+  background-color: var(--text-primary-color);
+  color: var(--background-color);
+}
+
+/* Friend List */
+.friend-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 15px;
+}
+
+/* Friend List Item */
+.friend-list-item {
+  margin-bottom: 10px;
+}
+
+/* Friend Checkbox Label */
+.friend-checkbox-label {
+  display: flex;
+  align-items: center;
+}
+
+/* Friend Checkbox */
+.friend-checkbox {
+  margin-right: 10px;
+}
+
+/* No Friends Found Message */
+.no-friends-found {
+  font-size: 0.9rem;
+  color: var(--text-secondary-color);
+  margin-top: 10px;
+}
+
+/* Form Buttons */
+.form-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Common Button Styling */
+.submit-button,
+.cancel-button,
+.delete-button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  margin-left: 10px; /* To ensure spacing between buttons */
+}
+
+/* Submit Button */
+.submit-button {
+  background-color: var(--highlight-color);
+  color: var(--button-text-color);
+}
+
+.submit-button:hover {
+  background-color: var(--text-primary-color);
+  color: var(--background-color);
+}
+
+/* Cancel Button */
+.cancel-button {
+  background-color: var(--inactive-color);
+  color: var(--text-secondary-color);
+}
+
+.cancel-button:hover {
+  background-color: var(--border-color);
+  color: var(--background-color);
+}
+
+/* Delete Button */
+.delete-button {
+  background-color: red;
+  color: white;
+}
+
+.delete-button:hover {
+  background-color: darkred;
+}
+
+/* Error Message */
+.error-message {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 5px;
+}

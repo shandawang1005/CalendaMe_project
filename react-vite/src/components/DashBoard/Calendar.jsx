@@ -47,13 +47,21 @@ function Calendar() {
     navigate(`/timeline/${dateStr}`);
   };
 
+  // New logic to account for multi-day events
   const getEventsForDay = (year, month, day) => {
     return events.filter((event) => {
-      const eventDate = new Date(event.start_time);
+      const eventStart = new Date(event.start_time);
+      const eventEnd = new Date(event.end_time);
+
+      const currentDayStart = new Date(year, month, day, 0, 0, 0);
+      const currentDayEnd = new Date(year, month, day, 23, 59, 59);
+
+      // Event spans the current day if it starts or ends on this day,
+      // or if it spans across this entire day
       return (
-        eventDate.getFullYear() === year &&
-        eventDate.getMonth() === month &&
-        eventDate.getDate() === day
+        (eventStart >= currentDayStart && eventStart <= currentDayEnd) ||
+        (eventEnd >= currentDayStart && eventEnd <= currentDayEnd) ||
+        (eventStart < currentDayStart && eventEnd > currentDayEnd)
       );
     });
   };
@@ -83,7 +91,7 @@ function Calendar() {
         >
           <div className="calendar-date">{day || ""}</div>
           {eventsForDay.length > 0 && (
-            <div className="calendar-event-indicator">•</div> // Style this indicator
+            <div className="calendar-event-indicator">•</div>
           )}
         </div>
       );
