@@ -77,7 +77,11 @@ const ChatModal = ({ currentUser, friend }) => {
       <div className="chat-box-container">
         {friend ? (
           <>
-            <h3 className="chat-heading">Chat with {friend.username}</h3>
+            <h3 className="chat-heading">
+              Chat with{" "}
+              {friend.username[0].toUpperCase() +
+                friend.username.slice(1, friend.username.length).toLowerCase()}
+            </h3>
             <div className="chat-history-container">
               {chatHistory.map((chat, index) => (
                 <div
