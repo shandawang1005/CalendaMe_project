@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "6b181e116ca6be4955a5d0082f23dd01baae839475ea0debb9e0a1a8affb95f4"
+            "sha256": "881f7760740d1f2cba8406940be70ea1b129a0405259a30b58762044f509664f"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -44,11 +44,12 @@
         },
         "dnspython": {
             "hashes": [
-                "sha256:5ef3b9680161f6fa89daf8ad451b5f1a33b18ae8a1c6778cdf4b43f08c0a6e50",
-                "sha256:e8f0f9c23a7b7cb99ded64e6c3a6f3e701d78f50c55e002b839dea7225cff7cc"
+                "sha256:081649da27ced5e75709a1ee542136eaba9842a0fe4c03da4fb0a3d3ed1f3c44",
+                "sha256:e79351e032d0b606b98d38a4b0e6e2275b31a5b85c873e587cc11b73aca026d6"
             ],
-            "markers": "python_version >= '3.8'",
-            "version": "==2.6.1"
+            "index": "pypi",
+            "markers": "python_version >= '3.6' and python_version < '4.0'",
+            "version": "==2.2.0"
         },
         "eventlet": {
             "hashes": [
@@ -333,11 +334,12 @@
         },
         "python-socketio": {
             "hashes": [
-                "sha256:194af8cdbb7b0768c2e807ba76c7abc288eb5bb85559b7cddee51a6bc7a65737",
-                "sha256:2a923a831ff70664b7c502df093c423eb6aa93c1ce68b8319e840227a26d8b69"
+                "sha256:5011a0cd2545c954d7df09eef7489ec424c93b001cc146599cd72f1dd20f0d46",
+                "sha256:86ee93591c1e781d339d9a61940e62fd6cbc838390653b52a7bcc4f7ce89fe47"
             ],
-            "markers": "python_version >= '3.8'",
-            "version": "==5.11.3"
+            "index": "pypi",
+            "markers": "python_version >= '3.6'",
+            "version": "==5.7.1"
         },
         "setuptools": {
             "hashes": [
