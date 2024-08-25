@@ -11,6 +11,7 @@ import NotFoundPage from "../components/NotFoundPage";
 import InvitationsPage from "../components/MessagesPage/Invitation";
 import ChangePasswordPage from "../components/ChangePasswordPage/ChangePasswordPage";
 import Profile from "../components/Profile";
+import EventHistory from "../components/EventHistory";
 export const router = createBrowserRouter([
   {
     element: <Layout />,
@@ -55,6 +56,10 @@ export const router = createBrowserRouter([
       {
         path: "timeline/:date",
         element: <DayEvent />,
+      },
+      {
+        path: "history",
+        element: <EventHistory />,
       },
 
       {

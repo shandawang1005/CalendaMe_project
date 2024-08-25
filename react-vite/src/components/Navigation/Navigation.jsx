@@ -41,15 +41,6 @@ function Navigation() {
               </li>
               <li>
                 <NavLink
-                  to="/friends"
-                  activeClassName="active"
-                  className="NavLink"
-                >
-                  Friends
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
                   to="/messages"
                   activeClassName="active"
                   className="NavLink"
@@ -57,6 +48,7 @@ function Navigation() {
                   Messages
                 </NavLink>
               </li>
+
               <li>
                 <NavLink
                   to="/invitation"
@@ -64,6 +56,15 @@ function Navigation() {
                   className="NavLink"
                 >
                   Invitation
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/friends"
+                  activeClassName="active"
+                  className="NavLink"
+                >
+                  Add Friends
                 </NavLink>
               </li>
               <li>

@@ -1,0 +1,114 @@
+/* Container for the event history */
+.event-history-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: var(--background-color);
+    color: var(--text-primary-color);
+  }
+  
+  /* Title classes */
+  .event-history-title {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 40px;
+    margin-top: 30px;
+    text-align: center;
+  }
+  
+  .section-title {
+    font-size: 24px;
+    margin-bottom: 30px;
+    text-align: center;
+    color: var(--highlight-color);
+  }
+  
+  /* Cards for each event */
+  .card {
+    background-color: var(--card-background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 25px;
+    padding: 20px;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 800px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    text-align: left;
+  }
+  
+  /* Hover effect for cards */
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Event title */
+  .event-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  /* Event details styling */
+  .event-details {
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: var(--text-secondary-color);
+  }
+  
+  .event-details strong {
+    color: var(--text-primary-color);
+  }
+  
+  /* Button styles */
+  .delete-button {
+    padding: 15px;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #dc3545;
+    color: white;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .delete-button:hover {
+    background-color: #c82333;
+  }
+  
+  /* Empty state styling */
+  .inactive {
+    font-size: 18px;
+    color: var(--inactive-color);
+    text-align: center;
+    margin-top: 30px;
+  }
+  
+  /* List and list items */
+  .event-list {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+  }
+  
+  .event-item {
+    margin-bottom: 20px;
+  }
+  
+  /* Section padding and spacing */
+  .upcoming-events,
+  .past-events,
+  .ongoing-events {
+    width: 100%;
+    margin-bottom: 40px;
+  }
+  

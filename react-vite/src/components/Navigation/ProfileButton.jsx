@@ -82,7 +82,12 @@ function ProfileButton() {
               <li className="dropdown-item" onClick={openCreateEventModal}>
                 Create Event
               </li>
-
+              <li
+                className="dropdown-item"
+                onClick={() => navigate("/history")}
+              >
+                Event History
+              </li>
               <li className="dropdown-item">
                 <button onClick={logout} className="logout-button">
                   Log Out
