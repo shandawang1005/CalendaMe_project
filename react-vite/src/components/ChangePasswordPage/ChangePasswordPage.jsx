@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { changePasswordThunk } from "../../redux/session";
 import { useNotification } from "../NotificationPage/NotificationContainer";
 import "./ChangePasswordPage.css"; // Import the CSS file
@@ -11,12 +11,12 @@ function ChangePasswordPage() {
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
   // Get the success or error messages from the Redux store
-  const successMessage = useSelector(
-    (state) => state.session.passwordChangeMessage
-  );
-  const errorMessage = useSelector(
-    (state) => state.session.passwordChangeError
-  );
+  // const successMessage = useSelector(
+  //   (state) => state.session.passwordChangeMessage
+  // );
+  // const errorMessage = useSelector(
+  //   (state) => state.session.passwordChangeError
+  // );
 
   // Get the addNotification function from your custom notification hook
   const { addNotification } = useNotification();

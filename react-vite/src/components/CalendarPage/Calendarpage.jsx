@@ -7,10 +7,8 @@ import { TfiAngleLeft, TfiAngleRight } from "react-icons/tfi";
 import "../DayEvent/DayEvent.css"; // Custom CSS for the timeline
 
 const CalendarPage = () => {
-  const dateString = "Sat Aug 24 2024 05:35:20 GMT-0700";
-  const dateObject = new Date(dateString); // Convert the date object to YYYY-MM-DD format
-
-  const date = dateObject.toISOString().split("T")[0];
+  const today = new Date();
+  const date = today.toISOString().split("T")[0];
 
   const dispatch = useDispatch();
   const events = useSelector((state) => state.events);

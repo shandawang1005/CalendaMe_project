@@ -1,0 +1,106 @@
+.chat-modal {
+  display: flex;
+  background-color: var(--card-background-color);
+  border-radius: 8px;
+  padding: 10px;
+  height:500px;
+}
+
+.friend-list-container {
+  width: 200px;
+  border-right: 1px solid var(--border-color);
+}
+
+.friend-list-heading {
+  padding: 10px;
+  background-color: var(--background-color);
+  color: var(--text-primary-color);
+  font-weight: bold;
+}
+
+.friend-list-ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.friend-list-item {
+  padding: 10px;
+  cursor: pointer;
+  color: var(--text-primary-color);
+}
+
+.friend-list-item-selected {
+  background-color: var(--highlight-color);
+  color: white;
+}
+
+.chat-box-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.chat-heading {
+  padding: 10px;
+  background-color: var(--background-color);
+  color: var(--text-primary-color);
+  font-weight: bold;
+}
+
+.chat-history-container {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 10px;
+  background-color: var(--card-background-color);
+  border-radius: 8px;
+}
+
+.chat-message-sent {
+  text-align: right;
+  background-color: var(--highlight-color);
+  padding: 10px;
+  border-radius: 10px;
+  margin: 5px 0;
+  color: white;
+}
+
+.chat-message-received {
+  text-align: left;
+  background-color: var(--button-background-color);
+  padding: 10px;
+  border-radius: 10px;
+  margin: 5px 0;
+  color: var(--text-primary-color);
+}
+
+.chat-input-container {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--card-background-color);
+}
+
+.chat-input-field {
+  flex-grow: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background-color: var(--background-color);
+  color: var(--text-primary-color);
+}
+
+.chat-send-button {
+  padding: 10px 20px;
+  background-color: var(--button-background-color);
+  border: none;
+  color: var(--button-text-color);
+  border-radius: 10px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.chat-send-button:hover {
+  background-color: var(--highlight-color);
+}

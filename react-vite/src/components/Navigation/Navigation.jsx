@@ -36,16 +36,7 @@ function Navigation() {
                   activeClassName="active"
                   className="NavLink"
                 >
-                  Today's Calendar
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/messages"
-                  activeClassName="active"
-                  className="NavLink"
-                >
-                  Messages
+                  Today&apos;s Calendar
                 </NavLink>
               </li>
 
@@ -65,6 +56,15 @@ function Navigation() {
                   className="NavLink"
                 >
                   Add Friends
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/messages"
+                  activeClassName="active"
+                  className="NavLink"
+                >
+                  Live Chat
                 </NavLink>
               </li>
               <li>

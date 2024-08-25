@@ -4,7 +4,7 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect, generate_csrf
 from flask_login import LoginManager
-
+from flask_socketio import SocketIO, emit, join_room, leave_room
 
 from .models import db, User
 from .api.user_routes import user_routes
@@ -12,7 +12,6 @@ from .api.auth_routes import auth_routes
 from .api.friend_routes import friend_routes
 from .api.calendar_routes import calendar_routes
 from .api.invitation_routes import invitation_routes
-
 
 from .seeds import seed_commands
 from .config import Config
@@ -28,6 +27,9 @@ login.login_view = "auth.unauthorized"
 def load_user(id):
     return User.query.get(int(id))
 
+
+# Setup WebSocket (Flask-SocketIO)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Tell flask about our seed commands
 app.cli.add_command(seed_commands)
@@ -45,11 +47,6 @@ Migrate(app, db)
 CORS(app)
 
 
-# Since we are deploying with Docker and Flask,
-# we won't be using a buildpack when we deploy to Heroku.
-# Therefore, we need to make sure that in production any
-# request made over http is redirected to https.
-# Well.........
 @app.before_request
 def https_redirect():
     if os.environ.get("FLASK_ENV") == "production":
@@ -91,11 +88,6 @@ def api_help():
 @app.route("/", defaults={"path": ""})
 @app.route("/<path:path>")
 def react_root(path):
-    """
-    This route will direct to the public directory in our
-    react builds in the production environment for favicon
-    or index.html requests
-    """
     if path == "favicon.ico":
         return app.send_from_directory("public", "favicon.ico")
     return app.send_static_file("index.html")
@@ -104,3 +96,42 @@ def react_root(path):
 @app.errorhandler(404)
 def not_found(e):
     return app.send_static_file("index.html")
+
+
+# WebSocket Events for Chat
+user_rooms = {}
+
+
+@socketio.on("join")
+def handle_join(data):
+    user_id = data["user_id"]
+    room = f"user_{user_id}"
+    user_rooms[user_id] = room
+    join_room(room)
+    emit("joined", {"room": room})
+
+
+@socketio.on("leave")
+def handle_leave(data):
+    user_id = data["user_id"]
+    room = user_rooms.get(user_id)
+    if room:
+        leave_room(room)
+        del user_rooms[user_id]
+        emit("left", {"room": room})
+
+
+@socketio.on("private_message")
+def handle_private_message(data):
+    sender_id = data["sender_id"]
+    recipient_id = data["recipient_id"]
+    message = data["message"]
+
+    if recipient_id in user_rooms:
+        room = user_rooms[recipient_id]
+        emit("new_message", {"sender_id": sender_id, "message": message}, room=room)
+
+
+# Run the Flask app with SocketIO
+if __name__ == "__main__":
+    socketio.run(app, host="0.0.0.0", port=8000)

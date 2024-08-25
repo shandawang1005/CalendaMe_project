@@ -1,24 +1,42 @@
+# Use official Python runtime as the base image
 FROM python:3.9.18-alpine3.18
 
-RUN apk add build-base
+# Install system dependencies needed for building and running the application
+RUN apk add --no-cache build-base \
+    postgresql-dev gcc python3-dev musl-dev libffi-dev openssl-dev
 
-RUN apk add postgresql-dev gcc python3-dev musl-dev
-
+# Set environment variables passed via ARG
 ARG FLASK_APP
 ARG FLASK_ENV
 ARG DATABASE_URL
 ARG SCHEMA
 ARG SECRET_KEY
 
+ENV FLASK_APP=${FLASK_APP}
+ENV FLASK_ENV=${FLASK_ENV}
+ENV DATABASE_URL=${DATABASE_URL}
+ENV SCHEMA=${SCHEMA}
+ENV SECRET_KEY=${SECRET_KEY}
+
+# Set working directory
 WORKDIR /var/www
 
+# Copy over the requirements.txt file and install dependencies
 COPY requirements.txt .
 
-RUN pip install -r requirements.txt
-RUN pip install psycopg2
+RUN pip install --no-cache-dir -r requirements.txt \
+    && pip install --no-cache-dir psycopg2 \
+    && pip install --no-cache-dir eventlet  # Install eventlet for WebSocket support
 
+# Copy the rest of the application code to the container
 COPY . .
 
+# Run database migrations and seeding
 RUN flask db upgrade
 RUN flask seed all
-CMD gunicorn app:app
+
+# Expose the port Gunicorn will serve on
+EXPOSE 8000
+
+# Run the application using Gunicorn with WebSocket support (via eventlet)
+CMD ["gunicorn", "-k", "eventlet", "--bind", "0.0.0.0:8000", "app:app"]

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchEvents, deleteEvent } from "../../redux/event"; // Using the deleteEvent thunk
 import { useNotification } from "../NotificationPage/NotificationContainer"; // Import the useNotification hook
