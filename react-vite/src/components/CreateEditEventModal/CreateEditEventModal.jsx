@@ -42,11 +42,13 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
       setQuery("");
       setHasSearched(false);
       setInviteeIds([]);
+      console.log("Initial Invitee IDs: ", inviteeIds);
       dispatch(clearSearchResults());
       setErrors({});
 
       if (editingEvent) {
         // Populate form data for editing
+        console.log("Editing Event:", editingEvent); // Log the full editingEvent
         setFormData({
           title: editingEvent.title || "",
           start_time: editingEvent.start_time || "",
@@ -57,10 +59,12 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
 
         // Populate invitees if editing an event
         if (editingEvent.participants) {
+          console.log("Participants:", editingEvent.participants); // Log the participants specifically
           const participantIds = editingEvent.participants.map(
-            (participant) => participant.id
+            (participant) => participant.user_id
           );
           setInviteeIds(participantIds);
+          console.log("Loaded participants into inviteeIds:", participantIds);
         }
       } else {
         // Reset form for creating a new event
@@ -95,13 +99,17 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
 
   // Toggle invited friends
   const handleInviteeToggle = (friendId) => {
-    setInviteeIds((prevIds) =>
-      prevIds.includes(friendId)
+    setInviteeIds((prevIds) => {
+      const newInviteeIds = prevIds.includes(friendId)
         ? prevIds.filter((id) => id !== friendId)
-        : [...prevIds, friendId]
-    );
-  };
+        : [...prevIds, friendId];
 
+      // Log the updated inviteeIds array after toggle
+      console.log("Updated invitee IDs after toggle:", newInviteeIds);
+
+      return newInviteeIds;
+    });
+  };
   // Validate form fields
   const validateForm = () => {
     const newErrors = {};
@@ -132,6 +140,9 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
         : createEvent(formData, inviteeIds);
 
       try {
+        // Log the inviteeIds state before dispatching the event creation
+        console.log("Invitee IDs before sending invitations:", inviteeIds);
+
         const response = await dispatch(eventAction);
 
         if (response?.error) {
@@ -143,9 +154,17 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
               : "Event created successfully!",
             "success"
           );
-          if (inviteeIds.length > 0) {
-            dispatch(sendInvitations(response.event.id, inviteeIds));
+
+          // Log the inviteeIds right before sending invitations
+          console.log("Sending invitations to invitee IDs:", inviteeIds);
+          const filteredInviteeIds = inviteeIds.filter(
+            (id) => id !== currentUser.id
+          );
+
+          if (filteredInviteeIds.length > 0) {
+            dispatch(sendInvitations(response.event.id, filteredInviteeIds));
           }
+
           onClose();
           navigate("/"); // Redirect to the Dashboard
         }
@@ -157,7 +176,6 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
       }
     }
   };
-
   // Handle event deletion
   const handleDeleteEvent = async () => {
     try {
