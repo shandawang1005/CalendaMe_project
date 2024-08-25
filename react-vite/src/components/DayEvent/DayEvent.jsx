@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchEventsForDay } from "../../redux/event";
 import CreateEditEventModal from "../CreateEditEventModal/CreateEditEventModal";
 import { useParams, useNavigate } from "react-router-dom";
+import { TfiAngleLeft, TfiAngleRight } from "react-icons/tfi";
 import "../DayEvent/DayEvent.css"; // Custom CSS for the timeline
 
 const CalendarPage = () => {
@@ -19,9 +20,14 @@ const CalendarPage = () => {
   }, [dispatch, date]);
 
   const openEditEventModal = (event) => {
-    dispatch(fetchEventsForDay(date));
-    setEditingEvent(event); // Update the event being edited
-    setIsModalOpen(true); // Open the modal
+    const currentTime = new Date();
+    const eventStartTime = new Date(event.start_time);
+
+    // Check if the event has already started
+    if (currentTime < eventStartTime) {
+      setEditingEvent(event); // Update the event being edited
+      setIsModalOpen(true); // Open the modal
+    }
   };
 
   const closeModal = () => {
@@ -110,6 +116,7 @@ const CalendarPage = () => {
               .map((event) => {
                 const startDateTime = new Date(event.start_time);
                 const endDateTime = new Date(event.end_time);
+                const currentTime = new Date();
 
                 let adjustedStartTime = startDateTime;
                 let adjustedEndTime = endDateTime;
@@ -169,17 +176,26 @@ const CalendarPage = () => {
                   topOffset = 0; // Afternoon events have no offset
                 }
 
+                // Check if the event has already started
+                const eventHasStarted = currentTime >= startDateTime;
+
                 return (
                   <div
                     key={event.id}
-                    className="timeline-event"
+                    className={`timeline-event ${
+                      eventHasStarted ? "event-started" : ""
+                    }`}
                     style={{
                       height: `${eventHeight}px`,
                       top: `${topOffset}px`,
                       width: "80%",
                       marginLeft: "10%",
                     }}
-                    onClick={() => openEditEventModal(event)} // Open modal on click
+                    onClick={() => {
+                      if (!eventHasStarted) {
+                        openEditEventModal(event);
+                      }
+                    }} // Only open modal if the event has not started
                   >
                     <div className="event-main">
                       <div className="event-title">{event.title}</div>
@@ -212,9 +228,19 @@ const CalendarPage = () => {
   return (
     <div className="day-event-container">
       <div className="navigation-buttons">
-        <button onClick={handleEarlierDayClick}>&larr;</button>
+        <button
+          onClick={handleEarlierDayClick}
+          className="navigation-buttons-button"
+        >
+          <TfiAngleLeft />
+        </button>
         <h2>Events for {date}</h2>
-        <button onClick={handleNextDayClick}>&rarr;</button>
+        <button
+          onClick={handleNextDayClick}
+          className="navigation-buttons-button"
+        >
+          <TfiAngleRight />
+        </button>
       </div>
       <div className="timeline-container">{renderTimeline()}</div>
       <CreateEditEventModal

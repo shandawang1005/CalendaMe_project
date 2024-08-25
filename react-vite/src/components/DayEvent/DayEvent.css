@@ -107,7 +107,7 @@
   width: 100%;
 }
 
-.navigation-buttons button {
+.navigation-buttons-button {
   background-color: transparent;
   border: none;
   font-size: 2rem;
@@ -115,8 +115,9 @@
   color: var(--text-primary-color);
 }
 
-.navigation-buttons button:hover {
-  color: var(--highlight-color);
+.navigation-buttons-button:hover {
+  background-color: var(--highlight-color) !important;
+  padding: 5px;
 }
 
 /* Light Theme Adjustments */
