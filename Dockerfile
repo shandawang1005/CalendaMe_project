@@ -27,7 +27,7 @@ COPY requirements.txt .
 # Install dependencies and correct version of eventlet
 RUN pip install --no-cache-dir -r requirements.txt \
     && pip install --no-cache-dir psycopg2 \
-    && pip install --no-cache-dir eventlet==0.31.0  # Install stable eventlet version
+    && pip install --no-cache-dir eventlet==0.32.0  # Install stable eventlet version
 
 # Copy the rest of the application code to the container
 COPY . .
