@@ -24,6 +24,6 @@ werkzeug==2.2.2; python_version >= '3.7'
 wtforms==3.0.1; python_version >= '3.7'
 zipp==3.17.0; python_version >= '3.8'
 flask-socketio==5.2.0
-eventlet==0.32.0
+eventlet==0.31.0
 python-socketio==5.7.1
 dnspython==2.1.0
