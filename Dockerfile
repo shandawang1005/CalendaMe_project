@@ -24,8 +24,8 @@ COPY . .
 # ENV DATABASE_URL=sqlite:///dev.db
 # ENV SCHEMA=flask_schema
 
-# Run database migrations and seeding
-RUN flask db upgrade && flask seed all
+# Ensure that the environment variables are loaded correctly
+RUN export $(cat .env | xargs) && flask db upgrade && flask seed all
 
 # Expose the port Gunicorn will serve on
 EXPOSE 8000
