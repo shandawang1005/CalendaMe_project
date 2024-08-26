@@ -29,7 +29,10 @@ def load_user(id):
 
 
 # Setup WebSocket (Flask-SocketIO)
-socketio = SocketIO(app, cors_allowed_origins="*")
+
+socketio = SocketIO(
+    app, cors_allowed_origins="*", async_mode="gevent", ping_interval=25
+)
 
 # Tell flask about our seed commands
 app.cli.add_command(seed_commands)
@@ -138,4 +141,4 @@ def handle_private_message(data):
 
 # Run the Flask app with SocketIO Test
 if __name__ == "__main__":
-    socketio.run(app, host="0.0.0.0", port=8000)
+    socketio.run(app, host="0.0.0.0", port=10000)
