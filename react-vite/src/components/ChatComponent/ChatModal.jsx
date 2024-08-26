@@ -1,33 +1,42 @@
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { io } from "socket.io-client";
+import { fetchMessages, sendMessage } from "../../redux/messages";
 import "./ChatModal.css";
 
 const ChatModal = ({ currentUser, friend }) => {
+  const dispatch = useDispatch();
+  const chatHistory = useSelector((state) => state.messages.messages); // Redux state
   const [message, setMessage] = useState("");
-  const [chatHistory, setChatHistory] = useState([]);
   const [socket, setSocket] = useState(null);
 
+  // Log chatHistory for debugging
+  useEffect(() => {
+    console.log("chatHistory:", chatHistory); // Check what chatHistory contains
+  }, [chatHistory]);
+
+  // Initialize WebSocket connection
   useEffect(() => {
     if (currentUser) {
-      // Initialize the WebSocket connection
       const newSocket = io("https://calendame.onrender.com", {
-        transports: ["websocket", "polling"], // Fallback to long polling
+        transports: ["websocket", "polling"],
       });
       setSocket(newSocket);
 
       // Join user's room
       newSocket.emit("join", { user_id: currentUser.id });
 
-      // Handle WebSocket errors
+      // WebSocket error handling
       newSocket.on("connect_error", (error) => {
         console.error("WebSocket Connection Error:", error);
       });
 
+      // Handle WebSocket disconnect
       newSocket.on("disconnect", () => {
         console.log("WebSocket disconnected");
       });
 
-      // Cleanup on component unmount
+      // Cleanup WebSocket on component unmount
       return () => {
         newSocket.emit("leave", { user_id: currentUser.id });
         newSocket.disconnect();
@@ -35,42 +44,49 @@ const ChatModal = ({ currentUser, friend }) => {
     }
   }, [currentUser]);
 
+  // Fetch chat history using Redux when friend is selected
   useEffect(() => {
-    if (socket && friend) {
-      // Listen for incoming messages when a friend is selected
+    if (friend?.id) {
+      dispatch(fetchMessages(friend.id));
+    }
+  }, [dispatch, friend?.id]);
+
+  // Listen for new messages via WebSocket
+  useEffect(() => {
+    if (socket && friend?.id) {
       socket.on("new_message", (data) => {
-        setChatHistory((prevHistory) => [
-          ...prevHistory,
-          {
-            sender: data.sender_id === currentUser.id ? "You" : friend.username,
-            message: data.message,
-          },
-        ]);
+        if (data.sender_id === friend.id || data.recipient_id === friend.id) {
+          dispatch(fetchMessages(friend.id));
+        }
       });
 
-      // Cleanup listener when the friend or socket changes
       return () => {
         socket.off("new_message");
       };
     }
-  }, [socket, friend, currentUser]);
+  }, [socket, friend?.id, currentUser, dispatch]);
 
   const handleSendMessage = () => {
     if (message.trim() && friend && socket) {
-      // Send message via WebSocket
       const messageData = {
         sender_id: currentUser.id,
         recipient_id: friend.id,
-        message,
+        message, // This should be the content of the message
       };
-      socket.emit("private_message", messageData);
 
-      // Update chat history locally
-      setChatHistory((prevHistory) => [
-        ...prevHistory,
-        { sender: "You", message },
-      ]);
+      dispatch(sendMessage(messageData)); // Dispatch the thunk to send the message
+      console.log("Do we get here????????????");
+
+      socket.emit("private_message", messageData); // Send message via WebSocket
+
       setMessage("");
+    }
+  };
+
+  // Handle "Enter" key press
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSendMessage();
     }
   };
 
@@ -81,23 +97,31 @@ const ChatModal = ({ currentUser, friend }) => {
           <>
             <h3 className="chat-heading">
               Chat with{" "}
-              {friend.username[0].toUpperCase() +
-                friend.username.slice(1, friend.username.length).toLowerCase()}
+              {friend.username[0].toUpperCase() + friend.username.slice(1)}
             </h3>
             <div className="chat-history-container">
-              {chatHistory.map((chat, index) => (
-                <div
-                  key={index}
-                  className={
-                    chat.sender === "You"
-                      ? "chat-message-sent"
-                      : "chat-message-received"
-                  }
-                >
-                  <strong>{chat.sender}: </strong>
-                  {chat.message}
-                </div>
-              ))}
+              {chatHistory.length > 0 ? (
+                chatHistory.map((message, index) => (
+                  <div
+                    key={index}
+                    className={
+                      message.sender_id === currentUser.id
+                        ? "chat-message-sent"
+                        : "chat-message-received"
+                    }
+                  >
+                    {message.sender_id === currentUser.id
+                      ? "You"
+                      : friend.username[0].toUpperCase() +
+                        friend.username
+                          .slice(1, friend.username.length)
+                          .toLowerCase()}
+                    : {message.content}
+                  </div>
+                ))
+              ) : (
+                <p>No messages to display</p>
+              )}
             </div>
             <div className="chat-input-container">
               <input
@@ -106,6 +130,7 @@ const ChatModal = ({ currentUser, friend }) => {
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Type your message..."
                 className="chat-input-field"
+                onKeyDown={handleKeyPress} // Trigger send on "Enter" key
               />
               <button onClick={handleSendMessage} className="chat-send-button">
                 Send

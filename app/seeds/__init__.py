@@ -4,7 +4,7 @@ from .events import seed_events, undo_events
 from .friends import seed_friends, undo_friends
 from .participants import seed_participants, undo_participants
 from .messages import seed_messages, undo_messages
-from .appointments import seed_appointments, undo_appointments
+
 from .notifications import seed_notifications, undo_notifications
 from .invitations import seed_invitations, undo_invitations
 from app.models.db import db, environment, SCHEMA
@@ -26,7 +26,7 @@ def seed():
         db.session.commit()
         undo_invitations()
         undo_notifications()
-        undo_appointments()
+        
         undo_messages()
         undo_participants()
         undo_events()
@@ -36,7 +36,7 @@ def seed():
     seed_friends()
     seed_events()
     seed_participants()
-    seed_appointments()
+    
     seed_messages()
     seed_notifications()
     seed_invitations()
@@ -48,7 +48,7 @@ def seed():
 def undo():
     undo_invitations()
     undo_notifications()
-    undo_appointments()
+    
     undo_messages()
     undo_participants()
     undo_events()

@@ -1,30 +1,27 @@
 from app.models import db, Message, environment, SCHEMA
-from datetime import datetime, timedelta
+from datetime import datetime
 from sqlalchemy.sql import text
 
 
 def seed_messages():
-    # Example: Messages tied to specific appointments
+    # Example: Messages between friends
     message1 = Message(
-        content="Looking forward to our appointment!",
+        content="Hey, how are you?",
         sent_at=datetime.now(),
-        appointment_id=1,
         sender_id=1,
-        event_id=1,
+        recipient_id=2,
     )
     message2 = Message(
-        content="See you then!",
+        content="I'm doing well! How about you?",
         sent_at=datetime.now(),
-        appointment_id=1,
         sender_id=2,
-        event_id=1,
+        recipient_id=1,
     )
     message3 = Message(
-        content="Can we reschedule?",
+        content="I'm good too. Want to catch up later?",
         sent_at=datetime.now(),
-        appointment_id=2,
-        sender_id=2,
-        event_id=2,
+        sender_id=1,
+        recipient_id=2,
     )
 
     # Add the messages to the session

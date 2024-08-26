@@ -2,6 +2,7 @@ from .db import db, environment, SCHEMA, add_prefix_for_prod
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from .friends import Friend
+from .events import Event  # Import the Event model
 
 
 class User(db.Model, UserMixin):
@@ -15,6 +16,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(255), nullable=False, unique=True)
     hashed_password = db.Column(db.String(255), nullable=False)
 
+    # Password properties and methods
     @property
     def password(self):
         return self.hashed_password
@@ -37,22 +39,28 @@ class User(db.Model, UserMixin):
         cascade="all, delete-orphan",
     )
 
+    # Relationship for messages the user has sent
+    messages_sent = db.relationship(
+        "Message",
+        foreign_keys="[Message.sender_id]",
+        back_populates="sender",
+        cascade="all, delete-orphan",
+    )
+
+    # Relationship for messages the user has received
+    messages_received = db.relationship(
+        "Message",
+        foreign_keys="[Message.recipient_id]",
+        back_populates="recipient",
+        cascade="all, delete-orphan",
+    )
+
+    # Relationship for notifications
+    notifications = db.relationship(
+        "Notification", back_populates="user", cascade="all, delete-orphan"
+    )
+
     # Relationship for events the user has created
     events = db.relationship(
         "Event", back_populates="creator", cascade="all, delete-orphan"
-    )
-
-    # New relationship: events the user is participating in
-    events_participating = db.relationship(
-        "Participant", back_populates="user", cascade="all, delete-orphan"
-    )
-
-    appointments = db.relationship(
-        "Appointment", back_populates="user", cascade="all, delete-orphan"
-    )
-    messages_sent = db.relationship(
-        "Message", back_populates="sender", cascade="all, delete-orphan"
-    )
-    notifications = db.relationship(
-        "Notification", back_populates="user", cascade="all, delete-orphan"
     )

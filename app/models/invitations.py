@@ -1,13 +1,16 @@
 from .db import db, SCHEMA, environment, add_prefix_for_prod
+from sqlalchemy.orm import relationship
 from .events import Event
 from .participants import Participant
-from sqlalchemy.orm import relationship
+from datetime import datetime
 
 
 class Invitation(db.Model):
     __tablename__ = "invitations"
+
     if environment == "production":
         __table_args__ = {"schema": SCHEMA}
+
     id = db.Column(db.Integer, primary_key=True)
     event_id = db.Column(
         db.Integer, db.ForeignKey(add_prefix_for_prod("events.id")), nullable=False

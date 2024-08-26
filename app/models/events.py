@@ -25,12 +25,7 @@ class Event(db.Model):
     participants = db.relationship(
         "Participant", back_populates="event", cascade="all, delete-orphan"
     )
-    messages = db.relationship(
-        "Message", back_populates="event", cascade="all, delete-orphan"
-    )
-    appointments = db.relationship(
-        "Appointment", back_populates="event", cascade="all, delete-orphan"
-    )
+
     invitations = db.relationship(
         "Invitation", back_populates="event", cascade="all, delete-orphan"
     )

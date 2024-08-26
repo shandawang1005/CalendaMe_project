@@ -9,12 +9,13 @@ import sessionReducer from "./session";
 import friendsReducer from "./friends";
 import eventsReducer from "./event";
 import invitationReducer from "./invitation";
-
+import messagesReducer from "./messages";
 const rootReducer = combineReducers({
   session: sessionReducer,
   friends: friendsReducer,
   events: eventsReducer,
   invitations: invitationReducer,
+  messages: messagesReducer,
 });
 
 let enhancer;

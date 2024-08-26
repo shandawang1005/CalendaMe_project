@@ -113,17 +113,7 @@ export const thunkSignup = (user) => async (dispatch) => {
 };
 
 export const thunkLogout = () => async (dispatch) => {
-  const csrfToken = document.cookie
-    .split("; ")
-    .find((row) => row.startsWith("csrf_token="))
-    ?.split("=")[1];
-
-  await fetch("/api/auth/logout", {
-    method: "POST",
-    headers: {
-      "X-CSRF-Token": csrfToken,
-    },
-  });
+  await fetch("/api/auth/logout");
   dispatch(removeUser());
 };
 

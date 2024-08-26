@@ -12,7 +12,7 @@ from .api.auth_routes import auth_routes
 from .api.friend_routes import friend_routes
 from .api.calendar_routes import calendar_routes
 from .api.invitation_routes import invitation_routes
-
+from .api.messages_routes import messages_routes
 from .seeds import seed_commands
 from .config import Config
 
@@ -43,7 +43,7 @@ app.register_blueprint(auth_routes, url_prefix="/api/auth")
 app.register_blueprint(friend_routes, url_prefix="/api/friends")
 app.register_blueprint(calendar_routes, url_prefix="/api/calendar")
 app.register_blueprint(invitation_routes, url_prefix="/api/invitation")
-
+app.register_blueprint(messages_routes, url_prefix="/api/messages")
 print(f"DATABASE_URL: {os.getenv('DATABASE_URL')}")
 
 
