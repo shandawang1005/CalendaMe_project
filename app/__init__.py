@@ -40,6 +40,10 @@ app.register_blueprint(auth_routes, url_prefix="/api/auth")
 app.register_blueprint(friend_routes, url_prefix="/api/friends")
 app.register_blueprint(calendar_routes, url_prefix="/api/calendar")
 app.register_blueprint(invitation_routes, url_prefix="/api/invitation")
+
+print(f"DATABASE_URL: {os.getenv('DATABASE_URL')}")
+
+
 db.init_app(app)
 Migrate(app, db)
 
