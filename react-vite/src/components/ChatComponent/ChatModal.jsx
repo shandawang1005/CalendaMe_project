@@ -10,7 +10,7 @@ const ChatModal = ({ currentUser, friend }) => {
   useEffect(() => {
     if (currentUser) {
       // Initialize the WebSocket connection
-      const newSocket = io("http://localhost:8000");
+      const newSocket = io("https://calendame.onrender.com/api");
       setSocket(newSocket);
 
       // Join user's room
