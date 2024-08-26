@@ -49,21 +49,21 @@ def search_users():
         # Check if the current user and the found user are already friends
         is_friend = (
             Friend.query.filter_by(
-                user_id=current_user.id, friend_id=user.id, accepted=1
+                user_id=current_user.id, friend_id=user.id, accepted=True
             ).first()
             or Friend.query.filter_by(
-                user_id=user.id, friend_id=current_user.id, accepted=1
+                user_id=user.id, friend_id=current_user.id, accepted=True
             ).first()
         )
 
         # Check if the current user has sent a friend request to the found user
         request_sent = Friend.query.filter_by(
-            user_id=current_user.id, friend_id=user.id, accepted=0
+            user_id=current_user.id, friend_id=user.id, accepted=False
         ).first()
 
         # Check if the current user has received a friend request from the found user
         request_received = Friend.query.filter_by(
-            user_id=user.id, friend_id=current_user.id, accepted=0
+            user_id=user.id, friend_id=current_user.id, accepted=False
         ).first()
 
         results.append(
