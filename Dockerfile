@@ -25,7 +25,7 @@ COPY . .
 # ENV SCHEMA=flask_schema
 
 # Ensure that the environment variables are loaded correctly
-RUN export $(cat .env | xargs) && flask db upgrade && flask seed all
+RUN flask db upgrade && flask seed all
 
 # Expose the port Gunicorn will serve on
 EXPOSE 8000
