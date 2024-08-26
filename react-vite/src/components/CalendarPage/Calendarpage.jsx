@@ -8,7 +8,13 @@ import "../DayEvent/DayEvent.css"; // Custom CSS for the timeline
 
 const CalendarPage = () => {
   const today = new Date();
-  const date = today.toISOString().split("T")[0];
+  console.log("---------------->", today);
+  const offset = today.getTimezoneOffset(); // 获取时区偏移量
+  const date = new Date(today.getTime() - offset * 60 * 1000)
+    .toISOString()
+    .split("T")[0];
+
+  console.log("---------------->", date);
 
   const dispatch = useDispatch();
   const events = useSelector((state) => state.events);

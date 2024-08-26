@@ -42,7 +42,7 @@ function Navigation() {
                   activeClassName="active"
                   className="NavLink"
                 >
-                  Invitation
+                  Invitations
                 </NavLink>
               </li>
               <li>
@@ -51,7 +51,7 @@ function Navigation() {
                   activeClassName="active"
                   className="NavLink"
                 >
-                  Add Friends
+                  Friends
                 </NavLink>
               </li>
               <li>
@@ -74,11 +74,7 @@ function Navigation() {
         </nav>
       ) : (
         <div className="Logged-out-theme-button">
-          <img
-            className="Logo"
-            src="../../../public/images/Logo-removebg.png"
-            alt="Logo"
-          />
+          <img className="Logo" src="/images/Logo.png" alt="Logo" />
 
           <li>
             <ThemeToggleButton /> {/* Theme toggle button */}
