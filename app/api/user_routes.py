@@ -26,7 +26,7 @@ def user(id):
     user = User.query.get(id)
     return user.to_dict()
 
-
+##Search User
 @user_routes.route("/search", methods=["GET"])
 @login_required
 def search_users():
