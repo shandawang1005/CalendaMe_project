@@ -136,6 +136,6 @@ def handle_private_message(data):
         emit("new_message", {"sender_id": sender_id, "message": message}, room=room)
 
 
-# Run the Flask app with SocketIO
+# Run the Flask app with SocketIO Test
 if __name__ == "__main__":
     socketio.run(app, host="0.0.0.0", port=8000)
