@@ -197,8 +197,8 @@
 /* Common Button Styling */
 .submit-button,
 .cancel-button,
-.delete-button {
-  padding: 10px 20px;
+.delete-button-edit {
+  padding: 10px 10px;
   font-size: 1rem;
   border-radius: 8px;
   border: none;
@@ -230,12 +230,12 @@
 }
 
 /* Delete Button */
-.delete-button {
+.delete-button-edit {
   background-color: red;
   color: white;
 }
 
-.delete-button:hover {
+.delete-button-edit:hover {
   background-color: darkred;
 }
 

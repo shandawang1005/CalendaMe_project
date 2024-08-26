@@ -400,7 +400,7 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
               <button
                 type="button"
                 onClick={handleDeleteEvent}
-                className="delete-button"
+                className="delete-button-edit"
                 style={{ marginLeft: "10px" }}
               >
                 Delete Event

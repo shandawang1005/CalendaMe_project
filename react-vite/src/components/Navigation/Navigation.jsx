@@ -13,11 +13,7 @@ function Navigation() {
         <nav className="navbar">
           <ul className="navbar-links">
             <Link to="/">
-              <img
-                className="Logo"
-                src="../../../public/images/Logo-removebg.png"
-                alt="Logo"
-              />
+              <img className="Logo" src="/images/Logo.png" alt="Logo" />
             </Link>
             <>
               <li>
