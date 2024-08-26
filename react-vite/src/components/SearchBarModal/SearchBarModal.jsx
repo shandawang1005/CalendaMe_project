@@ -146,7 +146,8 @@ const SearchBarModal = ({ isOpen, onClose, triggerFetch }) => {
             ))}
           </ul>
         ) : (
-          hasSearched && query && <p className="no-results-message">No results found</p>
+          hasSearched &&
+          query && <p className="no-results-message">No results found</p>
         )}
 
         <button onClick={onClose} className="close-button">

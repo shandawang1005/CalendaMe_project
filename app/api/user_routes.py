@@ -38,7 +38,7 @@ def search_users():
     # Find users that match the search query by username or email
     users = (
         User.query.filter(
-            or_(User.username.ilike(f"%{query}%"), User.email.ilike(f"%{query}%"))
+            (User.username.ilike(f"%{query}%")) | (User.email.ilike(f"%{query}%"))
         )
         .filter(User.id != current_user.id)
         .all()

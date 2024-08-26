@@ -8,7 +8,8 @@ const CANCEL_FRIEND_REQUEST = "friends/CANCEL_FRIEND_REQUEST";
 const RESPOND_TO_FRIEND_REQUEST = "friends/RESPOND_TO_FRIEND_REQUEST";
 const REMOVE_FRIEND = "friends/REMOVE_FRIEND";
 const CLEAR_SEARCH_RESULTS = "friends/CLEAR_SEARCH_RESULTS";
-const SET_EVENT_FRIEND_SEARCH_RESULTS = "friends/SET_EVENT_FRIEND_SEARCH_RESULTS";
+const SET_EVENT_FRIEND_SEARCH_RESULTS =
+  "friends/SET_EVENT_FRIEND_SEARCH_RESULTS";
 
 // Action Creators
 export const fetchFriendsList = (friends) => ({
@@ -118,6 +119,7 @@ export const searchUsersThunk = (query) => async (dispatch) => {
     if (!response.ok) throw new Error("Failed to fetch search results");
 
     const data = await response.json();
+    console.log("data=======>", data);
     dispatch(setSearchResults(data));
   } catch (error) {
     console.error("Error searching users:", error.message);
