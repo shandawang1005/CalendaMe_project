@@ -19,15 +19,5 @@ RUN pip install --no-cache-dir -r requirements.txt \
 # Copy the rest of the application code to the container
 COPY . .
 
-# # Set environment variables (consider reading these from a more secure place in production)
-# ENV SECRET_KEY=lkasjdf09ajsdkfljalsiorj12n3490re9485309irefvn,u90818734902139489230
-# ENV DATABASE_URL=sqlite:///dev.db
-# ENV SCHEMA=flask_schema
-
-# Ensure that the environment variables are loaded correctly
-RUN flask db upgrade && flask seed all
-
-
-
-# Run the application using Gunicorn with WebSocket support via gevent
-CMD ["gunicorn", "-k", "gevent", "--bind", "0.0.0.0:8000", "app:app"]
+# Command to run Flask migrations and seed data at startup
+CMD flask db upgrade && flask seed all && gunicorn -k gevent --bind 0.0.0.0:$PORT app:app
