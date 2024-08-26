@@ -27,8 +27,7 @@ COPY . .
 # Ensure that the environment variables are loaded correctly
 RUN flask db upgrade && flask seed all
 
-# Expose the port Gunicorn will serve on
-EXPOSE 8000
+
 
 # Run the application using Gunicorn with WebSocket support via gevent
 CMD ["gunicorn", "-k", "gevent", "--bind", "0.0.0.0:8000", "app:app"]
