@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchEventsForDay } from "../../redux/event";
 import CreateEditEventModal from "../CreateEditEventModal/CreateEditEventModal";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { TfiAngleLeft, TfiAngleRight } from "react-icons/tfi";
 import "../DayEvent/DayEvent.css"; // Custom CSS for the timeline
 
@@ -15,7 +15,6 @@ const CalendarPage = () => {
     .split("T")[0];
 
   console.log("---------------->", date);
-
   const dispatch = useDispatch();
   const events = useSelector((state) => state.events);
   const navigate = useNavigate(); // Replace useHistory with useNavigate
@@ -206,22 +205,24 @@ const CalendarPage = () => {
                     }} // Only open modal if the event has not started
                   >
                     <div className="event-main">
-                      <div className="event-title">{event.title}</div>
-                      <div className="event-details">
-                        <span className="event-location">
-                          {event.location || "N/A"}
-                        </span>
-                        <span className="event-time">
-                          {adjustedStartTime.toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}{" "}
-                          -{" "}
-                          {adjustedEndTime.toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </span>
+                      <div className="event-content">
+                        <span className="event-title">{event.title}</span>
+                        <div className="event-details">
+                          <span className="event-location">
+                            {event.location || "N/A"}
+                          </span>
+                          <span className="event-time">
+                            {adjustedStartTime.toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}{" "}
+                            -{" "}
+                            {adjustedEndTime.toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -242,7 +243,7 @@ const CalendarPage = () => {
         >
           <TfiAngleLeft />
         </button>
-        <h2>Events for Today ({date})</h2>
+        <h2>Events for {date}</h2>
         <button
           onClick={handleNextDayClick}
           className="navigation-buttons-button"

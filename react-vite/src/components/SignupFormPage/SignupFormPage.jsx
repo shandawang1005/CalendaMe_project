@@ -12,9 +12,13 @@ function SignupFormPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [errors, setErrors] = useState({});
+  const [emailError, setEmailError] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
   if (sessionUser) return <Navigate to="/" replace={true} />;
+
   const handleLogin = async (e) => {
     e.preventDefault();
     navigate("/login");
@@ -23,11 +27,17 @@ function SignupFormPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Clear previous errors
+    setEmailError("");
+    setUsernameError("");
+    setPasswordError("");
+    setConfirmPasswordError("");
+
     if (password !== confirmPassword) {
-      return setErrors({
-        confirmPassword:
-          "Confirm Password field must be the same as the Password field",
-      });
+      setConfirmPasswordError(
+        "Confirm Password field must be the same as the Password field"
+      );
+      return;
     }
 
     const serverResponse = await dispatch(
@@ -39,7 +49,20 @@ function SignupFormPage() {
     );
 
     if (serverResponse) {
-      setErrors(serverResponse);
+      console.log("Response", serverResponse);
+      // Assuming serverResponse contains specific field errors
+      if (serverResponse.email) {
+        setEmailError(serverResponse.email);
+      }
+      if (serverResponse.username) {
+        setUsernameError(serverResponse.username);
+      }
+      if (serverResponse.password) {
+        setPasswordError(serverResponse.password);
+      }
+      if (serverResponse.confirmPassword) {
+        setConfirmPasswordError(serverResponse.confirmPassword);
+      }
     } else {
       navigate("/");
     }
@@ -49,8 +72,6 @@ function SignupFormPage() {
     <div className="centered-container">
       <div className="login-container">
         <h1 className="login-title">Sign-Up</h1>
-
-        {errors.server && <p>{errors.server}</p>}
 
         <form onSubmit={handleSubmit} className="login-form">
           <div className="input-container">
@@ -64,6 +85,7 @@ function SignupFormPage() {
             />
             <label className="floating-label">Email</label>
           </div>
+          {emailError && <p className="error">{emailError}</p>}
 
           <div className="input-container">
             <input
@@ -76,6 +98,7 @@ function SignupFormPage() {
             />
             <label className="floating-label">Username</label>
           </div>
+          {usernameError && <p className="error">{usernameError}</p>}
 
           <div className="input-container">
             <input
@@ -88,6 +111,7 @@ function SignupFormPage() {
             />
             <label className="floating-label">Password</label>
           </div>
+          {passwordError && <p className="error">{passwordError}</p>}
 
           <div className="input-container">
             <input
@@ -100,6 +124,9 @@ function SignupFormPage() {
             />
             <label className="floating-label">Confirm Password</label>
           </div>
+          {confirmPasswordError && (
+            <p className="error">{confirmPasswordError}</p>
+          )}
 
           <button type="submit" className="login-button">
             Sign Up
@@ -107,9 +134,7 @@ function SignupFormPage() {
         </form>
 
         <div className="signup-link">
-          {" "}
-          Already have an account?
-          <button onClick={handleLogin}>Log in</button>
+          Already have an account? <button onClick={handleLogin}>Log in</button>
         </div>
       </div>
     </div>

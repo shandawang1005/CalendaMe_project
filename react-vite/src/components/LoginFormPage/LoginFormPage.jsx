@@ -10,12 +10,17 @@ function LoginFormPage() {
   const sessionUser = useSelector((state) => state.session.user);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState([]);
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   if (sessionUser) return <Navigate to="/" replace={true} />;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Reset errors
+    setEmailError("");
+    setPasswordError("");
 
     const serverResponse = await dispatch(
       thunkLogin({
@@ -25,7 +30,14 @@ function LoginFormPage() {
     );
 
     if (serverResponse) {
-      setErrors(serverResponse);
+      console.log("Response", serverResponse);
+      // Assuming serverResponse contains a specific message for email and password
+      if (serverResponse.email) {
+        setEmailError(serverResponse.email);
+      }
+      if (serverResponse.password) {
+        setPasswordError(serverResponse.password);
+      }
     } else {
       navigate("/");
     }
@@ -72,13 +84,6 @@ function LoginFormPage() {
         <h1 className="login-title">Log In</h1>
 
         <form onSubmit={handleSubmit} className="login-form">
-          {errors.length > 0 &&
-            errors.map((message, index) => (
-              <p key={index} className="error">
-                {message}
-              </p>
-            ))}
-
           <div className="input-container">
             <input
               type="text"
@@ -90,6 +95,7 @@ function LoginFormPage() {
             />
             <label className="floating-label">Email</label>
           </div>
+          {emailError && <p className="error">{emailError}</p>}
 
           <div className="input-container">
             <input
@@ -102,6 +108,7 @@ function LoginFormPage() {
             />
             <label className="floating-label">Password</label>
           </div>
+          {passwordError && <p className="error">{passwordError}</p>}
           <button type="submit" className="login-button">
             Log In
           </button>

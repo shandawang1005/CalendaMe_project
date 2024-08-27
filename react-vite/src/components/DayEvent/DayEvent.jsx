@@ -198,22 +198,24 @@ const CalendarPage = () => {
                     }} // Only open modal if the event has not started
                   >
                     <div className="event-main">
-                      <div className="event-title">{event.title}</div>
-                      <div className="event-details">
-                        <span className="event-location">
-                          {event.location || "N/A"}
-                        </span>
-                        <span className="event-time">
-                          {adjustedStartTime.toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}{" "}
-                          -{" "}
-                          {adjustedEndTime.toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </span>
+                      <div className="event-content">
+                        <span className="event-title">{event.title}</span>
+                        <div className="event-details">
+                          <span className="event-location">
+                            {event.location || "N/A"}
+                          </span>
+                          <span className="event-time">
+                            {adjustedStartTime.toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}{" "}
+                            -{" "}
+                            {adjustedEndTime.toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>

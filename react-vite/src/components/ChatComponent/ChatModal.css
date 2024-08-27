@@ -3,7 +3,8 @@
   background-color: var(--card-background-color);
   border-radius: 8px;
   padding: 10px;
-  height:500px;
+  height: 600px;
+  width: 100%;
 }
 
 .friend-list-container {
@@ -40,6 +41,7 @@
   display: flex;
   flex-direction: column;
   padding: 10px;
+  min-width: 0;
 }
 
 .chat-heading {
@@ -55,6 +57,10 @@
   padding: 10px;
   background-color: var(--card-background-color);
   border-radius: 8px;
+  max-height: 400px; /* Set a max height for better scrolling behavior */
+  white-space: normal; /* Ensure text wraps correctly */
+  word-wrap: break-word; /* Break long words and prevent horizontal scrolling */
+  overflow-wrap: break-word;
 }
 
 .chat-message-sent {
@@ -64,6 +70,8 @@
   border-radius: 10px;
   margin: 5px 0;
   color: white;
+  max-width: 100%; /* Ensure message does not take up full width */
+  word-wrap: break-word; /* Wrap long words */
 }
 
 .chat-message-received {
@@ -80,6 +88,7 @@
   padding: 10px;
   border-top: 1px solid var(--border-color);
   background-color: var(--card-background-color);
+  align-items: center; /* Align input, emoji, and send buttons */
 }
 
 .chat-input-field {
@@ -89,6 +98,20 @@
   border: 1px solid var(--border-color);
   background-color: var(--background-color);
   color: var(--text-primary-color);
+}
+
+.chat-emoji-button {
+  padding: 10px;
+  background-color: var(--button-background-color);
+  border: none;
+  color: var(--button-text-color);
+  border-radius: 10px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.chat-emoji-button:hover {
+  background-color: var(--highlight-color);
 }
 
 .chat-send-button {
@@ -103,4 +126,22 @@
 
 .chat-send-button:hover {
   background-color: var(--highlight-color);
+}
+
+/* Optional: Styling for the emoji picker */
+.emoji-picker-modal {
+  position: absolute;
+  bottom: 60px; /* Adjust this based on the emoji button placement */
+  left: 0; /* Align with the emoji button */
+  width: 350px;
+  height: 450px;
+  background-color: white;
+  border-radius: 12px;
+  z-index: 1000;
+  padding: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.emoji-picker-overlay {
+  background-color: transparent;
 }

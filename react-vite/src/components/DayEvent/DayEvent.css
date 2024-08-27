@@ -50,44 +50,74 @@
 /* Event block styling */
 .timeline-event {
   background-color: var(--event-background-color); /* Event background color */
-  padding: 10px;
+  padding: 0; /* No padding by default */
   border-radius: 8px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   position: absolute;
   z-index: 10;
   top: 0px;
+  width: 100%;
+  height: 100%;
   cursor: pointer;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease, background-color 0.2s ease;
+  transition: transform 0.2s ease, background-color 0.2s ease, padding 0.2s ease;
+  opacity: 0.9; /* Set default opacity */
 }
 
+/* Initially hide the event content */
+.timeline-event .event-content {
+  display: none;
+}
+
+/* Show the event content when hovering over the event */
+.timeline-event:hover .event-content {
+  display: flex;
+  justify-content: space-between; /* Ensures title, location, and time are on one line */
+  align-items: center;
+  width: 100%;
+}
+
+/* Hover effects */
 .timeline-event:hover {
   background-color: var(--event-hover-color); /* Hover color for event box */
-  transform: translateY(-2px);
+  transform: scale(1.1); /* Scale the event box on hover */
+  padding: 15px; /* Add padding when hovered */
+  opacity: 1; /* Make it fully visible on hover */
 }
 
-/* Main content of the event block */
+/* Flex container for event main */
 .event-main {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   width: 100%;
+  padding: 5px;
+  box-sizing: border-box;
 }
 
 /* Title of the event */
 .event-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
-  margin-bottom: 5px;
+  margin-right: 10px;
   color: var(--text-primary-color);
+  white-space: nowrap; /* Prevent line break */
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* Event details */
+/* Event details (location and time) */
 .event-details {
-  font-size: 14px;
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
   color: var(--text-secondary-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Location of the event */
@@ -100,34 +130,49 @@
   font-size: 14px;
 }
 
+/* Light Theme Adjustments */
+body.light-theme {
+  --event-background-color: rgb(251, 206, 139); /* Bright blue for event box */
+  --event-hover-color: RGB(251, 206, 61); /* Darker blue on hover */
+}
+
+/* Dark Theme Adjustments */
+body.dark-theme {
+  --event-background-color: #001439; /* Green for event box */
+  --event-hover-color: #160c5a; /* Darker green on hover */
+}
+/* Container for the navigation buttons */
 .navigation-buttons {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  margin-bottom: 20px;
 }
 
+/* Styling for each button inside the navigation buttons */
 .navigation-buttons-button {
-  background-color: transparent;
+  background-color: var(--button-background-color);
+  color: var(--button-text-color);
   border: none;
-  font-size: 2rem;
+  padding: 10px 20px;
+  border-radius: 8px;
   cursor: pointer;
-  color: var(--text-primary-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
 }
 
+/* Add hover effect for navigation buttons */
 .navigation-buttons-button:hover {
-  background-color: var(--highlight-color) !important;
-  padding: 5px;
+  background-color: var(--highlight-color);
+  color: var(--background-color);
 }
 
-/* Light Theme Adjustments */
-body.light-theme {
-  --event-background-color: #e3f2fd; /* Bright blueish tone for event box */
-  --event-hover-color: #bbdefb; /* Slightly darker on hover */
-}
-
-/* Dark Theme Adjustments */
-body.dark-theme {
-  --event-background-color: #1e293b; /* Dark grey-blue for event box */
-  --event-hover-color: #334155; /* Slightly lighter on hover */
+/* Heading for the date */
+.navigation-buttons h2 {
+  font-size: 1.5rem;
+  color: var(--text-primary-color);
+  margin: 0;
 }

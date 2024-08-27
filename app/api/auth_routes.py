@@ -43,21 +43,24 @@ def logout():
 
 @auth_routes.route("/signup", methods=["POST"])
 def sign_up():
-    form = SignUpForm()
-    form["csrf_token"].data = request.cookies["csrf_token"]
+    try:
+        form = SignUpForm()
+        form["csrf_token"].data = request.cookies["csrf_token"]
 
-    if form.validate_on_submit():
-        user = User(
-            username=form.data["username"],
-            email=form.data["email"],
-            password=form.data["password"],
-        )
-        db.session.add(user)
-        db.session.commit()
-        login_user(user)
-        return user.to_dict()
+        if form.validate_on_submit():
+            user = User(username=form.data["username"], email=form.data["email"])
+            user.password = form.data["password"]  # This will hash the password
+            db.session.add(user)
+            db.session.commit()
+            login_user(user)
+            return user.to_dict()
 
-    return form.errors, 401
+        return form.errors, 400
+
+    except Exception as e:
+        print(f"Exception during signup: {e}")  # Log the error details
+        db.session.rollback()
+        return {"error": "An internal server error occurred. Please try again."}, 500
 
 
 @auth_routes.route("/profile", methods=["GET"])

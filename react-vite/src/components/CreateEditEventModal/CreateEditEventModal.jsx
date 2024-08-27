@@ -135,6 +135,27 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
     e.preventDefault();
 
     if (validateForm()) {
+      // Round up the meeting time if it's less than 15 minutes
+      const startTime = new Date(formData.start_time);
+      const endTime = new Date(formData.end_time);
+
+      // Calculate the minimum meeting duration in milliseconds (15 minutes = 900,000 ms)
+      const minMeetingDuration = 15 * 60 * 1000; // 15 minutes in milliseconds
+
+      // Check if the meeting duration is less than 15 minutes
+      if (endTime - startTime < minMeetingDuration) {
+        // Round the end time up to 15 minutes after the start time
+        const roundedEndTime = new Date(
+          startTime.getTime() + minMeetingDuration
+        );
+        setFormData((prevData) => ({
+          ...prevData,
+          end_time: roundedEndTime.toISOString().slice(0, 16), // Update end_time to the rounded time in "YYYY-MM-DDTHH:mm" format
+        }));
+
+        console.log("Meeting time rounded to:", roundedEndTime); // Log the rounded end time
+      }
+
       const eventAction = editingEvent
         ? editEvent(editingEvent.id, formData, inviteeIds)
         : createEvent(formData, inviteeIds);
@@ -176,6 +197,7 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
       }
     }
   };
+
   // Handle event deletion
   const handleDeleteEvent = async () => {
     try {
