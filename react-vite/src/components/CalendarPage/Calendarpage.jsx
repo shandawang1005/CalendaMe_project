@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchEventsForDay } from "../../redux/event";
 import CreateEditEventModal from "../CreateEditEventModal/CreateEditEventModal";
-import { useParams, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import { TfiAngleLeft, TfiAngleRight } from "react-icons/tfi";
 import "../DayEvent/DayEvent.css"; // Custom CSS for the timeline
 

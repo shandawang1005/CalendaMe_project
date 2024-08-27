@@ -43,14 +43,14 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
       setQuery("");
       setHasSearched(false);
       setInviteeIds([]);
-      console.log("Initial Invitee IDs: ", inviteeIds);
+      // console.log("Initial Invitee IDs: ", inviteeIds);
       dispatch(clearSearchResults());
       setErrors({});
       setLoading(false); // Reset loading state when modal opens
 
       if (editingEvent) {
         // Populate form data for editing
-        console.log("Editing Event:", editingEvent); // Log the full editingEvent
+        // console.log("Editing Event:", editingEvent); // Log the full editingEvent
         setFormData({
           title: editingEvent.title || "",
           start_time: editingEvent.start_time || "",
@@ -61,12 +61,12 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
 
         // Populate invitees if editing an event
         if (editingEvent.participants) {
-          console.log("Participants:", editingEvent.participants); // Log the participants specifically
+          // console.log("Participants:", editingEvent.participants); // Log the participants specifically
           const participantIds = editingEvent.participants.map(
             (participant) => participant.user_id
           );
           setInviteeIds(participantIds);
-          console.log("Loaded participants into inviteeIds:", participantIds);
+          // console.log("Loaded participants into inviteeIds:", participantIds);
         }
       } else {
         // Reset form for creating a new event
@@ -406,9 +406,8 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
                   ))}
                 </ul>
               ) : (
-                hasSearched && query && (
-                  <p className="no-friends-found">No friends found</p>
-                )
+                hasSearched &&
+                query && <p className="no-friends-found">No friends found</p>
               )}
             </div>
           )}

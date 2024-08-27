@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { io } from "socket.io-client";
 import { fetchMessages, sendMessage } from "../../redux/messages";
@@ -14,7 +14,7 @@ const ChatModal = ({ currentUser, friend }) => {
 
   // Log chatHistory for debugging
   useEffect(() => {
-    console.log("chatHistory:", chatHistory); // Check what chatHistory contains
+    // console.log("chatHistory:", chatHistory); // Check what chatHistory contains
   }, [chatHistory]);
 
   // Initialize WebSocket connection

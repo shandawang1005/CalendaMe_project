@@ -119,7 +119,7 @@ export const searchUsersThunk = (query) => async (dispatch) => {
     if (!response.ok) throw new Error("Failed to fetch search results");
 
     const data = await response.json();
-    console.log("data=======>", data);
+    // console.log("data=======>", data);
     dispatch(setSearchResults(data));
   } catch (error) {
     console.error("Error searching users:", error.message);
