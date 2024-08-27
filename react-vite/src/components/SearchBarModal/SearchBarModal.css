@@ -176,3 +176,12 @@
   font-size: 1rem;
   color: var(--text-secondary-color);
 }
+
+
+
+.loading-message {
+  font-size: 1rem;
+  color: var(--text-secondary-color);
+  margin-top: 10px;
+  text-align: center;
+}

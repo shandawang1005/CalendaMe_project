@@ -14,6 +14,7 @@ import "./SearchBarModal.css";
 const SearchBarModal = ({ isOpen, onClose, triggerFetch }) => {
   const [query, setQuery] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
+  const [loading, setLoading] = useState(false); // Add loading state
   const dispatch = useDispatch();
   const modalRef = useRef(null);
 
@@ -24,36 +25,39 @@ const SearchBarModal = ({ isOpen, onClose, triggerFetch }) => {
       setQuery("");
       dispatch(setSearchResults([]));
       setHasSearched(false);
+      setLoading(false); // Reset loading state when modal opens
     }
   }, [isOpen, dispatch]);
 
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
     if (query.trim()) {
       setHasSearched(true);
-      dispatch(searchUsersThunk(query.trim()));
+      setLoading(true); // Set loading to true when search starts
+      await dispatch(searchUsersThunk(query.trim()));
+      setLoading(false); // Set loading to false after the search completes
     }
   };
 
   const handleSendRequest = async (friendId) => {
     await dispatch(sendFriendRequestThunk(friendId));
-    dispatch(searchUsersThunk(query.trim()));
+    await dispatch(searchUsersThunk(query.trim()));
   };
 
   const handleCancelRequest = async (friendId) => {
     await dispatch(cancelFriendRequestThunk(friendId));
-    dispatch(searchUsersThunk(query.trim()));
+    await dispatch(searchUsersThunk(query.trim()));
   };
 
   const handleRemoveFriend = async (friendId) => {
     await dispatch(removeFriendThunk(friendId));
-    dispatch(searchUsersThunk(query.trim()));
+    await dispatch(searchUsersThunk(query.trim()));
     triggerFetch();
   };
 
   const handleRespondToRequest = async (friendId, response) => {
     await dispatch(respondToFriendRequestThunk(friendId, response));
-    dispatch(searchUsersThunk(query.trim()));
+    await dispatch(searchUsersThunk(query.trim()));
     triggerFetch();
   };
 
@@ -92,7 +96,9 @@ const SearchBarModal = ({ isOpen, onClose, triggerFetch }) => {
           </button>
         </form>
 
-        {results.length > 0 ? (
+        {loading ? (
+          <p className="loading-message">Loading...</p>
+        ) : results.length > 0 ? (
           <ul className="results-list">
             {results.map((user) => (
               <li key={user.id} className="result-item">

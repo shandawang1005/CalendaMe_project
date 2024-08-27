@@ -34,6 +34,7 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
   const [query, setQuery] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false); // Add loading state
   const modalRef = useRef(null);
 
   useEffect(() => {
@@ -45,6 +46,7 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
       console.log("Initial Invitee IDs: ", inviteeIds);
       dispatch(clearSearchResults());
       setErrors({});
+      setLoading(false); // Reset loading state when modal opens
 
       if (editingEvent) {
         // Populate form data for editing
@@ -89,11 +91,13 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
   };
 
   // Handle friend search
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
     if (query.trim()) {
       setHasSearched(true);
-      dispatch(searchFriendsForEvent(query.trim()));
+      setLoading(true); // Set loading to true
+      await dispatch(searchFriendsForEvent(query.trim()));
+      setLoading(false); // Set loading to false when search completes
     }
   };
 
@@ -110,6 +114,7 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
       return newInviteeIds;
     });
   };
+
   // Validate form fields
   const validateForm = () => {
     const newErrors = {};
@@ -348,9 +353,6 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
                     {formatName(participant.username)}
                     {currentUser.id === participant.user_id ? " (Host)" : ""}
                   </span>
-                  {/* {console.log("Participant:", participant)}
-                  {console.log("Current User ID:", currentUser.id)}
-                  {console.log("Event Creator ID:", editingEvent.creator_id)} */}
                   {currentUser.id !== participant.user_id &&
                     editingEvent.creator_id === currentUser.id && (
                       <button
@@ -385,7 +387,9 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
                 </button>
               </div>
 
-              {friends.length > 0 && (
+              {loading ? (
+                <p className="loading-message">Loading...</p>
+              ) : friends.length > 0 ? (
                 <ul className="friend-list">
                   {friends.map((friend) => (
                     <li key={friend.id} className="friend-list-item">
@@ -401,12 +405,10 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
                     </li>
                   ))}
                 </ul>
-              )}
-
-              {hasSearched && friends.length === 0 && (
-                <p className="no-friends-found">
-                  No friends found for the search query.
-                </p>
+              ) : (
+                hasSearched && query && (
+                  <p className="no-friends-found">No friends found</p>
+                )
               )}
             </div>
           )}

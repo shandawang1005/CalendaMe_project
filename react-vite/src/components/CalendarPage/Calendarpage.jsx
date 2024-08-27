@@ -8,22 +8,26 @@ import "../DayEvent/DayEvent.css"; // Custom CSS for the timeline
 
 const CalendarPage = () => {
   const today = new Date();
-  console.log("---------------->", today);
-  const offset = today.getTimezoneOffset(); // 获取时区偏移量
+  const offset = today.getTimezoneOffset(); // Get timezone offset
   const date = new Date(today.getTime() - offset * 60 * 1000)
     .toISOString()
     .split("T")[0];
-
-  console.log("---------------->", date);
   const dispatch = useDispatch();
   const events = useSelector((state) => state.events);
   const navigate = useNavigate(); // Replace useHistory with useNavigate
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
+  const [loading, setLoading] = useState(true); // Add loading state
 
   useEffect(() => {
-    dispatch(fetchEventsForDay(date));
+    const fetchData = async () => {
+      setLoading(true); // Start loading
+      await dispatch(fetchEventsForDay(date));
+      setLoading(false); // Stop loading after fetch is complete
+    };
+
+    fetchData();
   }, [dispatch, date]);
 
   const openEditEventModal = (event) => {
@@ -251,7 +255,25 @@ const CalendarPage = () => {
           <TfiAngleRight />
         </button>
       </div>
-      <div className="timeline-container">{renderTimeline()}</div>
+      {loading ? (
+        <main>
+          <div className="center-loading">
+            <div className="lds-roller">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+            <p>Loading...</p>
+          </div>
+        </main>
+      ) : (
+        <div className="timeline-container">{renderTimeline()}</div>
+      )}
       <CreateEditEventModal
         isOpen={isModalOpen}
         onClose={closeModal}

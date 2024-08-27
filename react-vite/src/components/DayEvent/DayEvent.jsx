@@ -14,9 +14,16 @@ const CalendarPage = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
+  const [loading, setLoading] = useState(true); // Add loading state
 
   useEffect(() => {
-    dispatch(fetchEventsForDay(date));
+    const fetchData = async () => {
+      setLoading(true); // Start loading
+      await dispatch(fetchEventsForDay(date));
+      setLoading(false); // Stop loading after fetch is complete
+    };
+
+    fetchData();
   }, [dispatch, date]);
 
   const openEditEventModal = (event) => {
@@ -244,7 +251,25 @@ const CalendarPage = () => {
           <TfiAngleRight />
         </button>
       </div>
-      <div className="timeline-container">{renderTimeline()}</div>
+      {loading ? (
+        <main>
+          <div className="center-loading">
+            <div className="lds-roller">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+            <p>Loading...</p>
+          </div>
+        </main>
+      ) : (
+        <div className="timeline-container">{renderTimeline()}</div>
+      )}
       <CreateEditEventModal
         isOpen={isModalOpen}
         onClose={closeModal}
