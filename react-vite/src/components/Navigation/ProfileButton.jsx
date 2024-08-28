@@ -39,15 +39,16 @@ function ProfileButton() {
     document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
   };
 
-  const logout = (e) => {
+  const logout = async (e) => {
     e.preventDefault();
     // Delete the session cookie
     deleteCookie("session");
-    clearFriends();
     //  delete the CSRF token cookie
     deleteCookie("csrf_token");
-    dispatch(thunkLogout());
+    clearFriends();
+    await dispatch(thunkLogout());
     closeMenu();
+    // setTimeout(navigate("/"), 10000);
     navigate("/");
   };
 
