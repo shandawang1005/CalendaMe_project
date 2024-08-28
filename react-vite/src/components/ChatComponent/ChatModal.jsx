@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { io } from "socket.io-client";
 import { fetchMessages, sendMessage } from "../../redux/messages";
-// import EmojiPickerModal from "./EmojiPickerModal";
 import "./ChatModal.css";
 
 const ChatModal = ({ currentUser, friend }) => {
@@ -10,12 +9,7 @@ const ChatModal = ({ currentUser, friend }) => {
   const chatHistory = useSelector((state) => state.messages.messages); // Redux state
   const [message, setMessage] = useState("");
   const [socket, setSocket] = useState(null);
-  // const [isEmojiPickerOpen, setEmojiPickerOpen] = useState(false);
-
-  // Log chatHistory for debugging
-  useEffect(() => {
-    // console.log("chatHistory:", chatHistory); // Check what chatHistory contains
-  }, [chatHistory]);
+  const chatHistoryRef = useRef(null); // Reference to the chat history container
 
   // Initialize WebSocket connection
   useEffect(() => {
@@ -53,7 +47,7 @@ const ChatModal = ({ currentUser, friend }) => {
     }
   }, [dispatch, friend?.id]);
 
-  // Listen for new messages via WebSocket
+  // Listen for new messages via WebSocket and scroll to the bottom
   useEffect(() => {
     if (socket && friend?.id) {
       socket.on("new_message", (data) => {
@@ -67,6 +61,13 @@ const ChatModal = ({ currentUser, friend }) => {
       };
     }
   }, [socket, friend?.id, currentUser, dispatch]);
+
+  // Scroll to the bottom of the chat history when it updates
+  useEffect(() => {
+    if (chatHistoryRef.current) {
+      chatHistoryRef.current.scrollTop = chatHistoryRef.current.scrollHeight;
+    }
+  }, [chatHistory]);
 
   const handleSendMessage = () => {
     if (message.trim() && friend && socket) {
@@ -84,15 +85,6 @@ const ChatModal = ({ currentUser, friend }) => {
     }
   };
 
-  // const handleEmojiSelect = (emoji) => {
-  //   setMessage((prevMessage) => prevMessage + emoji); // Append the emoji to the current message
-  //   setEmojiPickerOpen(false);
-  // };
-
-  // const toggleEmojiPicker = () => {
-  //   setEmojiPickerOpen(!isEmojiPickerOpen);
-  // };
-
   // Handle "Enter" key press
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
@@ -109,7 +101,7 @@ const ChatModal = ({ currentUser, friend }) => {
               Chat with{" "}
               {friend.username[0].toUpperCase() + friend.username.slice(1)}
             </h3>
-            <div className="chat-history-container">
+            <div className="chat-history-container" ref={chatHistoryRef}>
               {chatHistory.length > 0 ? (
                 chatHistory.map((message, index) => (
                   <div
@@ -142,9 +134,6 @@ const ChatModal = ({ currentUser, friend }) => {
                 className="chat-input-field"
                 onKeyDown={handleKeyPress} // Trigger send on "Enter" key
               />
-              {/* <button onClick={toggleEmojiPicker} className="chat-emoji-button">
-                😊
-              </button> */}
               <button onClick={handleSendMessage} className="chat-send-button">
                 Send
               </button>
@@ -154,13 +143,6 @@ const ChatModal = ({ currentUser, friend }) => {
           <p>Select a friend to start chatting.</p>
         )}
       </div>
-
-      {/* Emoji Picker Modal */}
-      {/* <EmojiPickerModal
-        onEmojiSelect={(emoji) => handleEmojiSelect(emoji)} // Correctly pass the emoji
-        isOpen={isEmojiPickerOpen}
-        onRequestClose={toggleEmojiPicker}
-      /> */}
     </div>
   );
 };
