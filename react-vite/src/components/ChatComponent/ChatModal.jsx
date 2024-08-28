@@ -1,7 +1,12 @@
 import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { io } from "socket.io-client";
-import { fetchMessages, sendMessage } from "../../redux/messages";
+import {
+  fetchMessages,
+  sendMessage,
+  deleteMessage,
+  clearChatHistory,
+} from "../../redux/messages"; // import clearChatHistory action
 import "./ChatModal.css";
 
 const ChatModal = ({ currentUser, friend }) => {
@@ -10,6 +15,8 @@ const ChatModal = ({ currentUser, friend }) => {
   const [message, setMessage] = useState("");
   const [socket, setSocket] = useState(null);
   const chatHistoryRef = useRef(null); // Reference to the chat history container
+
+  const [contextMenu, setContextMenu] = useState(null); // State to manage the context menu
 
   // Initialize WebSocket connection
   useEffect(() => {
@@ -77,11 +84,14 @@ const ChatModal = ({ currentUser, friend }) => {
         message, // This should be the content of the message
       };
 
-      dispatch(sendMessage(messageData)); // Dispatch the thunk to send the message
-
-      socket.emit("private_message", messageData); // Send message via WebSocket
-
-      setMessage("");
+      dispatch(sendMessage(messageData)) // Dispatch the thunk to send the message
+        .then(() => {
+          socket.emit("private_message", messageData); // Send message via WebSocket
+          setMessage("");
+        })
+        .catch((error) => {
+          console.error("Failed to send message:", error);
+        });
     }
   };
 
@@ -92,15 +102,65 @@ const ChatModal = ({ currentUser, friend }) => {
     }
   };
 
+  // Handle right-click to show the context menu
+  const handleContextMenu = (e, messageId) => {
+    e.preventDefault();
+
+    const menuWidth = 150; // Set a width value that approximates your context menu's width
+    const rightEdge = window.innerWidth;
+
+    let xPos = e.clientX;
+    let yPos = e.clientY;
+
+    // Check if the menu would overflow on the right, and adjust position if necessary
+    if (xPos + menuWidth > rightEdge) {
+      xPos = e.clientX - menuWidth;
+    }
+
+    setContextMenu({
+      mouseX: xPos,
+      mouseY: yPos,
+      messageId: messageId,
+    });
+  };
+
+  // Handle click outside of context menu to close it
+  const handleCloseContextMenu = () => {
+    setContextMenu(null);
+  };
+
+  // Handle message deletion
+  const handleDeleteMessage = () => {
+    if (contextMenu && contextMenu.messageId) {
+      dispatch(deleteMessage(contextMenu.messageId));
+      setContextMenu(null);
+    }
+  };
+
+  // Handle clearing the chat history
+  const handleClearChatHistory = () => {
+    if (friend?.id) {
+      dispatch(clearChatHistory(friend.id));
+    }
+  };
+
   return (
-    <div className="chat-modal">
+    <div className="chat-modal" onClick={handleCloseContextMenu}>
       <div className="chat-box-container">
         {friend ? (
           <>
-            <h3 className="chat-heading">
-              Chat with{" "}
-              {friend.username[0].toUpperCase() + friend.username.slice(1)}
-            </h3>
+            <div className="chat-header">
+              <h3 className="chat-heading">
+                Chat with{" "}
+                {friend.username[0].toUpperCase() + friend.username.slice(1)}
+              </h3>
+              <button
+                onClick={handleClearChatHistory}
+                className="clear-chat-button"
+              >
+                Clear Chat History
+              </button>
+            </div>
             <div className="chat-history-container" ref={chatHistoryRef}>
               {chatHistory.length > 0 ? (
                 chatHistory.map((message, index) => (
@@ -111,13 +171,12 @@ const ChatModal = ({ currentUser, friend }) => {
                         ? "chat-message-sent"
                         : "chat-message-received"
                     }
+                    onContextMenu={(e) => handleContextMenu(e, message.id)} // Attach right-click event
                   >
                     {message.sender_id === currentUser.id
                       ? "You"
                       : friend.username[0].toUpperCase() +
-                        friend.username
-                          .slice(1, friend.username.length)
-                          .toLowerCase()}
+                        friend.username.slice(1).toLowerCase()}
                     : {message.content}
                   </div>
                 ))
@@ -143,6 +202,18 @@ const ChatModal = ({ currentUser, friend }) => {
           <p>Select a friend to start chatting.</p>
         )}
       </div>
+      {/* Context Menu for Deleting Message */}
+      {contextMenu && (
+        <ul
+          className="context-menu"
+          style={{
+            top: contextMenu.mouseY,
+            left: contextMenu.mouseX,
+          }}
+        >
+          <li onClick={handleDeleteMessage}>Delete Message</li>
+        </ul>
+      )}
     </div>
   );
 };

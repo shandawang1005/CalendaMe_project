@@ -35,9 +35,17 @@ function ProfileButton() {
   }, [showMenu]);
 
   const closeMenu = () => setShowMenu(false);
+  const deleteCookie = (name) => {
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+  };
 
   const logout = (e) => {
     e.preventDefault();
+    // Delete the session cookie
+    deleteCookie("session");
+
+    //  delete the CSRF token cookie
+    deleteCookie("csrf_token");
     dispatch(thunkLogout());
     closeMenu();
     navigate("/");

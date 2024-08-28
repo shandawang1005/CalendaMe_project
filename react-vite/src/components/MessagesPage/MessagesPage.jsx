@@ -1,10 +1,18 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { fetchFriendsListThunk } from "../../redux/friends"; // Assuming you have a thunk for fetching friends
 import ChatModal from "../ChatComponent/ChatModal";
 import "./MessagesPage.css";
 
 function MessagesPage() {
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.session.user);
+  useEffect(() => {
+    if (!user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
   const dispatch = useDispatch();
   const loggedInUser = useSelector((state) => state.session.user);
   const friends = useSelector((state) => state.friends.accepted);

@@ -7,10 +7,16 @@ import { TfiAngleLeft, TfiAngleRight } from "react-icons/tfi";
 import "../DayEvent/DayEvent.css"; // Custom CSS for the timeline
 
 const CalendarPage = () => {
+  const navigate = useNavigate(); // Replace useHistory with useNavigate
+  const user = useSelector((state) => state.session.user);
+  useEffect(() => {
+    if (!user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
   const { date } = useParams(); // date comes as a string
   const dispatch = useDispatch();
   const events = useSelector((state) => state.events);
-  const navigate = useNavigate(); // Replace useHistory with useNavigate
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);

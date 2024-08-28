@@ -2,11 +2,18 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchEventsForDay } from "../../redux/event";
 import CreateEditEventModal from "../CreateEditEventModal/CreateEditEventModal";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { TfiAngleLeft, TfiAngleRight } from "react-icons/tfi";
 import "../DayEvent/DayEvent.css"; // Custom CSS for the timeline
 
 const CalendarPage = () => {
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.session.user);
+  useEffect(() => {
+    if (!user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
   const today = new Date();
   const offset = today.getTimezoneOffset(); // Get timezone offset
   const date = new Date(today.getTime() - offset * 60 * 1000)
@@ -14,7 +21,7 @@ const CalendarPage = () => {
     .split("T")[0];
   const dispatch = useDispatch();
   const events = useSelector((state) => state.events);
-  const navigate = useNavigate(); // Replace useHistory with useNavigate
+  // const navigate = useNavigate(); // Replace useHistory with useNavigate
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);

@@ -9,8 +9,16 @@ import {
 import SearchBarModal from "../SearchBarModal/SearchBarModal";
 import ConfirmationModal from "../FriendsPage/ConfirmRemove";
 import "./Friendspage.css";
+import { useNavigate } from "react-router-dom";
 
 const FriendsPage = () => {
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.session.user);
+  useEffect(() => {
+    if (!user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
   const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [friendToRemove, setFriendToRemove] = useState(null);
@@ -90,7 +98,9 @@ const FriendsPage = () => {
             ))}
           </ul>
         ) : (
-          <p className="no-friends-message">You have no accepted friends yet.</p>
+          <p className="no-friends-message">
+            You have no accepted friends yet.
+          </p>
         )}
       </div>
 

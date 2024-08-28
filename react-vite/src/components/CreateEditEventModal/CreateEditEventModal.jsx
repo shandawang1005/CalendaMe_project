@@ -22,6 +22,8 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
   const currentUser = useSelector((state) => state.session.user); // Fetch current user
   const navigate = useNavigate(); // For navigation
 
+  const MAX_EVENT_NAME_LENGTH = 50; // Define the maximum length for the event name
+
   const [formData, setFormData] = useState({
     title: "",
     start_time: "",
@@ -43,14 +45,12 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
       setQuery("");
       setHasSearched(false);
       setInviteeIds([]);
-      // console.log("Initial Invitee IDs: ", inviteeIds);
       dispatch(clearSearchResults());
       setErrors({});
       setLoading(false); // Reset loading state when modal opens
 
       if (editingEvent) {
         // Populate form data for editing
-        // console.log("Editing Event:", editingEvent); // Log the full editingEvent
         setFormData({
           title: editingEvent.title || "",
           start_time: editingEvent.start_time || "",
@@ -61,12 +61,10 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
 
         // Populate invitees if editing an event
         if (editingEvent.participants) {
-          // console.log("Participants:", editingEvent.participants); // Log the participants specifically
           const participantIds = editingEvent.participants.map(
             (participant) => participant.user_id
           );
           setInviteeIds(participantIds);
-          // console.log("Loaded participants into inviteeIds:", participantIds);
         }
       } else {
         // Reset form for creating a new event
@@ -107,10 +105,6 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
       const newInviteeIds = prevIds.includes(friendId)
         ? prevIds.filter((id) => id !== friendId)
         : [...prevIds, friendId];
-
-      // Log the updated inviteeIds array after toggle
-      console.log("Updated invitee IDs after toggle:", newInviteeIds);
-
       return newInviteeIds;
     });
   };
@@ -121,7 +115,10 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
 
     if (!formData.title.trim()) {
       newErrors.title = "Title is required.";
+    } else if (formData.title.length > MAX_EVENT_NAME_LENGTH) {
+      newErrors.title = `Title cannot exceed ${MAX_EVENT_NAME_LENGTH} characters.`;
     }
+
     if (!formData.start_time) {
       newErrors.start_time = "Start time is required.";
     }
@@ -140,35 +137,11 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
     e.preventDefault();
 
     if (validateForm()) {
-      // Round up the meeting time if it's less than 15 minutes
-      const startTime = new Date(formData.start_time);
-      const endTime = new Date(formData.end_time);
-
-      // Calculate the minimum meeting duration in milliseconds (15 minutes = 900,000 ms)
-      const minMeetingDuration = 15 * 60 * 1000; // 15 minutes in milliseconds
-
-      // Check if the meeting duration is less than 15 minutes
-      if (endTime - startTime < minMeetingDuration) {
-        // Round the end time up to 15 minutes after the start time
-        const roundedEndTime = new Date(
-          startTime.getTime() + minMeetingDuration
-        );
-        setFormData((prevData) => ({
-          ...prevData,
-          end_time: roundedEndTime.toISOString().slice(0, 16), // Update end_time to the rounded time in "YYYY-MM-DDTHH:mm" format
-        }));
-
-        console.log("Meeting time rounded to:", roundedEndTime); // Log the rounded end time
-      }
-
       const eventAction = editingEvent
         ? editEvent(editingEvent.id, formData, inviteeIds)
         : createEvent(formData, inviteeIds);
 
       try {
-        // Log the inviteeIds state before dispatching the event creation
-        console.log("Invitee IDs before sending invitations:", inviteeIds);
-
         const response = await dispatch(eventAction);
 
         if (response?.error) {
@@ -181,8 +154,6 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
             "success"
           );
 
-          // Log the inviteeIds right before sending invitations
-          console.log("Sending invitations to invitee IDs:", inviteeIds);
           const filteredInviteeIds = inviteeIds.filter(
             (id) => id !== currentUser.id
           );
@@ -222,7 +193,6 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
   // Handle participant removal
   const handleRemoveParticipant = async (participantId) => {
     try {
-      // Dispatch the action to remove the participant from the backend
       const response = await dispatch(
         removeParticipant(editingEvent.id, participantId)
       );
@@ -230,11 +200,10 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
       if (response?.error) {
         addNotification(response.error, "error");
       } else {
-        // Ensure that participants are initialized before filtering
         const updatedParticipants =
           formData.participants?.filter(
             (participant) => participant.id !== participantId
-          ) || []; // Fallback to an empty array if undefined
+          ) || [];
 
         setFormData((prevData) => ({
           ...prevData,
@@ -245,7 +214,6 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
         onClose();
       }
     } catch (error) {
-      console.error("Error removing participant:", error);
       addNotification(
         "An error occurred while removing the participant",
         "error"
@@ -291,7 +259,11 @@ const CreateEditEventModal = ({ isOpen, onClose, editingEvent = null }) => {
               value={formData.title}
               onChange={handleChange}
               className="modal-input"
+              maxLength={MAX_EVENT_NAME_LENGTH} // Prevent typing beyond max length of 50 words
             />
+            <small>
+              {formData.title.length}/{MAX_EVENT_NAME_LENGTH} characters
+            </small>
             {errors.title && <p className="error-message">{errors.title}</p>}
           </div>
           <div className="modal-form-group">

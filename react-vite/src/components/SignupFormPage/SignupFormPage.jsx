@@ -19,9 +19,27 @@ function SignupFormPage() {
 
   if (sessionUser) return <Navigate to="/" replace={true} />;
 
-  const handleLogin = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
     navigate("/login");
+  };
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validateUsername = (username) => {
+    return username.length >= 3 && username.length <= 20;
+  };
+
+  const validatePassword = (password) => {
+    const hasRequiredLength = password.length >= 8;
+    const hasNumber = /\d/.test(password); //at least 1 number
+    const hasSpecialCharacter = /[!@#$%^&*]/.test(password); //at least one of the characters inside
+    const hasDot = /\./.test(password);
+
+    return hasRequiredLength && hasNumber && (hasSpecialCharacter || hasDot);
   };
 
   const handleSubmit = async (e) => {
@@ -33,13 +51,38 @@ function SignupFormPage() {
     setPasswordError("");
     setConfirmPasswordError("");
 
+    let hasErrors = false;
+
+    // Frontend validations
+    if (!validateEmail(email)) {
+      setEmailError("Please enter a valid email address.");
+      hasErrors = true;
+    }
+
+    if (!validateUsername(username)) {
+      setUsernameError("Username must be between 3 and 20 characters long.");
+      hasErrors = true;
+    }
+
+    if (!validatePassword(password)) {
+      setPasswordError(
+        "Password must be at least 8 characters long and include at least one number and one special character ( !, @, #, $, %, ^, &, *)."
+      );
+      hasErrors = true;
+    }
+
     if (password !== confirmPassword) {
       setConfirmPasswordError(
-        "Confirm Password field must be the same as the Password field"
+        "Confirm Password field must match the Password field."
       );
+      hasErrors = true;
+    }
+
+    if (hasErrors) {
       return;
     }
 
+    // Proceed with backend validation if frontend validation passes
     const serverResponse = await dispatch(
       thunkSignup({
         email,
