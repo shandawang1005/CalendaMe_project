@@ -10,7 +10,7 @@ const REMOVE_FRIEND = "friends/REMOVE_FRIEND";
 const CLEAR_SEARCH_RESULTS = "friends/CLEAR_SEARCH_RESULTS";
 const SET_EVENT_FRIEND_SEARCH_RESULTS =
   "friends/SET_EVENT_FRIEND_SEARCH_RESULTS";
-
+const CLEAR_FRIENDS = "friends/CLEAR_FRIENDS";
 // Action Creators
 export const fetchFriendsList = (friends) => ({
   type: FETCH_FRIENDS_LIST,
@@ -60,7 +60,10 @@ export const setEventFriendSearchResults = (results) => ({
   type: SET_EVENT_FRIEND_SEARCH_RESULTS,
   payload: results,
 });
-
+export const clearFriends = () => ({
+  type: CLEAR_FRIENDS,
+  payload: {},
+});
 // Thunks
 
 // Fetch the list of friends
