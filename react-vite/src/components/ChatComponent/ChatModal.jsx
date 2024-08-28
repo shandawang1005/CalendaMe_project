@@ -102,9 +102,14 @@ const ChatModal = ({ currentUser, friend }) => {
     }
   };
 
-  // Handle right-click to show the context menu
-  const handleContextMenu = (e, messageId) => {
+  // Handle right-click to show the context menu, only if it's the user's own message
+  const handleContextMenu = (e, messageId, senderId) => {
     e.preventDefault();
+
+    if (senderId !== currentUser.id) {
+      // If the message was not sent by the current user, do not show the context menu
+      return;
+    }
 
     const menuWidth = 150; // Set a width value that approximates your context menu's width
     const rightEdge = window.innerWidth;
@@ -154,12 +159,14 @@ const ChatModal = ({ currentUser, friend }) => {
                 Chat with{" "}
                 {friend.username[0].toUpperCase() + friend.username.slice(1)}
               </h3>
-              <button
-                onClick={handleClearChatHistory}
-                className="clear-chat-button"
-              >
-                Clear Chat History
-              </button>
+              {chatHistory.length > 0 && ( // Conditionally render the button
+                <button
+                  onClick={handleClearChatHistory}
+                  className="clear-chat-button"
+                >
+                  Clear Chat History
+                </button>
+              )}
             </div>
             <div className="chat-history-container" ref={chatHistoryRef}>
               {chatHistory.length > 0 ? (
@@ -171,7 +178,9 @@ const ChatModal = ({ currentUser, friend }) => {
                         ? "chat-message-sent"
                         : "chat-message-received"
                     }
-                    onContextMenu={(e) => handleContextMenu(e, message.id)} // Attach right-click event
+                    onContextMenu={(e) =>
+                      handleContextMenu(e, message.id, message.sender_id)
+                    } // Attach right-click event with sender check
                   >
                     {message.sender_id === currentUser.id
                       ? "You"
