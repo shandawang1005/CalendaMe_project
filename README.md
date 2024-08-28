@@ -1,181 +1,203 @@
-# Calendar Scheduling App
+# CalendaMe  by October Momento.LLC © 2024
 
 ## Project Overview
 
 The Calendar Scheduling App is a comprehensive tool that allows users to manage their schedules, connect with friends, and communicate during events. The application is built using Flask for the backend and React for the frontend, providing a robust and user-friendly experience.
 
-## Getting Started
+## Live Site
 
-### Prerequisites
+[Visit the Calendar Scheduling App](https://calendame.onrender.com)
 
-- Python 3.8+
-- Node.js 14+
-- SQLite3
+## Backend Repository (if separate)
 
-### Backend Setup
+[Link to Backend Repository](https://github.com/shandawang1005/CalendaMe_project)
 
-1. Clone the repository and navigate to the backend directory:
+## Summary
 
-   ```bash
-   git clone https://github.com/your-repo/calendar-app.git
-   cd backend
-   ```
+The Calendar Scheduling App offers users a full suite of scheduling tools, including event management, friend connections, and real-time chat. The app is designed to be intuitive and accessible, providing users with a seamless way to organize their time and communicate with friends during events.
 
-2. Install dependencies:
+## Screenshots
 
-   ```bash
-   pipenv install -r requirements.txt
-   ```
+![Home Page](/CalendaMe_project/react-vite/public/images/Home.png)
+![Calendar View](/CalendaMe_project/react-vite/public/images/SingleDay.png)
+![Chat Feature](/CalendaMe_project/react-vite/public/images/Chat.png)
 
-3. Create a `.env` file based on the example provided, setting up your environment variables, including the SQLite3 database connection URL and other necessary settings.
+## Technologies Used
 
-4. Make sure the SQLite3 database connection URL is configured in the `.env` file.
+- **Frontend:** React, Redux, Socket.IO, CSS3, Html, 
+- **Backend:** Flask, SQLAlchemy, SQLite3
+- **Deployment:** Render.com
+- **Others:** WebSockets for real-time communication, CRON Jobs for keeping the web app alive
 
-5. The application uses a schema defined by the `SCHEMA` environment variable. Replace the `SCHEMA` value with a unique name in snake_case.
+## Features
 
-6. Start the Flask app:
+1. **User Authentication System**
+   - Users can sign up, log in, log out, and access protected content.
+2. **Friend System**
+   - Users can search for friends, send friend requests, accept/decline friend requests, view friends, and remove friends.
+3. **Calendar/Event CRUD**
+   - Users can view, create, edit, and delete events, set event visibility, and manage recurring events.
+4. **Scheduling Appointments**
+   - Users can create availability slots, request appointments, and manage them.
+5. **Real-Time Chat**
+   - Users can chat with friends or event participants in real-time.
+6. **File Sharing**
+   - Users can upload and share files related to events.
 
-   ```bash
-   pipenv shell
-   flask db upgrade
-   flask seed all
-   flask run
-   ```
+## Future Features
 
-### Frontend Setup
+- **Recurring Events:** Allow users to create and manage recurring events.
+- **Event Reminders:** Automated event reminders via email or SMS.
+- **Public Calendars:** Option to make your calendar public for others to view.
+- **Google Calendar Integration:** Sync events with Google Calendar.
 
-1. Navigate to the `react-vite` directory:
+## Technical Implementation Details
 
-   ```bash
-   cd react-vite
-   ```
+### Event Creation and Validation
 
-2. Install dependencies:
+- **Frontend:**
 
-   ```bash
-   npm install
-   ```
+  - The event creation form includes validations for title length, start and end times, and participant limits. The frontend ensures that users are guided through an error-free process.
 
-3. Build the React frontend:
+  ```javascript
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.title.trim()) {
+      newErrors.title = "Title is required.";
+    } else if (formData.title.length > 50) {
+      newErrors.title = "Title cannot exceed 50 characters.";
+    }
+    if (!formData.start_time) {
+      newErrors.start_time = "Start time is required.";
+    }
+    if (!formData.end_time) {
+      newErrors.end_time = "End time is required.";
+    } else if (new Date(formData.end_time) <= new Date(formData.start_time)) {
+      newErrors.end_time = "End time must be after start time.";
+    }
+    return newErrors;
+  };
+ - The event display on daily event calendar page.Split up 
 
-   ```bash
-   npm run build
-   ```
+  ```javascript
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.title.trim()) {
+      newErrors.title = "Title is required.";
+    } else if (formData.title.length > 50) {
+      newErrors.title = "Title cannot exceed 50 characters.";
+    }
+    if (!formData.start_time) {
+      newErrors.start_time = "Start time is required.";
+    }
+    if (!formData.end_time) {
+      newErrors.end_time = "End time is required.";
+    } else if (new Date(formData.end_time) <= new Date(formData.start_time)) {
+      newErrors.end_time = "End time must be after start time.";
+    }
+    return newErrors;
+  };
 
-   The build process will create a `dist` folder containing the production-ready React code.
 
-4. To run the frontend in development mode:
+- **Backend:**
+  - Flask handles data validation, storage, and retrieval using SQLAlchemy, ensuring data consistency and security.
 
-   ```bash
-   npm start
-   ```
+### Real-Time Chat
 
-### Deployment on Render.com
+- **WebSocket Implementation:**
+  - The app leverages Socket.IO for real-time communication. Users are notified of new messages instantly, and the chat history is efficiently managed in the backend.
 
-Before deploying, ensure that your `dist` folder is built and up to date. Vite, used for development, will not be included in the production environment.
+### Responsive Design
 
-1. Run the build command:
+- **Media Queries:**
+  - CSS3 media queries ensure that the application adapts to different screen sizes, providing an optimal user experience on both mobile and desktop devices.
 
-   ```bash
-   npm run build
-   ```
+## Challenges Faced
 
-2. Push your changes to GitHub, then follow the steps on Render.com to deploy your project.
+### WebSocket Integration:
 
-3. Set up the environment variables on Render.com, including `SECRET_KEY`, `FLASK_ENV`, `FLASK_APP`, `SCHEMA`, and `DATABASE_URL`.
+- Implementing real-time communication using WebSockets was challenging but rewarding. Ensuring that messages were delivered and displayed correctly across all connected clients required careful consideration.
 
-4. Deploy the application by creating a new Web Service on Render.com and selecting the correct repository.
+### Data Validation:
 
-### MVP Feature List
+- Balancing between front-end and back-end validations to ensure data integrity while maintaining a responsive user experience was another key challenge.
 
-#### 1. Friend System
+## Endpoints
 
-   - **Search for Friends**: Users can search for other users by username or email.
-   - **Send Friend Requests**: Users can send friend requests to connect with other users.
-   - **Accept/Decline Friend Requests**: Users can view and accept/decline incoming friend requests.
-   - **View Friends List**: Users can see their confirmed friends.
+### Friend System
 
-**Backend Routes**:
-- **GET /api/friends**: Retrieve list of friends.
-- **POST /api/friends/request**: Send a friend request.
-- **PUT /api/friends/request/:id**: Accept/decline a friend request.
-- **DELETE /api/friends/:id**: Remove a friend.
+**Backend Routes:**
 
-**Frontend Routes**:
-- `/friends`: Manage friends and friend requests.
-- `/friends/search`: Search for friends.
+- **GET /api/friends:** Retrieve the list of friends.
+- **POST /api/friends/request:** Send a friend request.
+- **PUT /api/friends/request/:id:** Accept/decline a friend request.
+- **DELETE /api/friends/:id:** Remove a friend.
 
-#### 2. Appointments and Scheduling
+**Frontend Routes:**
 
-   - **Create Availability Slots**: Users can create time slots for when they are available to meet.
-   - **View Available Slots**: Users can view friends' available time slots.
-   - **Request Appointments**: Users can request an appointment based on their friend's availability.
-   - **Accept/Decline Appointments**: Users can accept or decline appointment requests.
-   - **View Appointments**: Users can view all confirmed and pending appointments.
+- **/friends:** Manage friends and friend requests.
+- **/friends/search:** Search for friends.
 
-**Backend Routes**:
-- **POST /api/appointments**: Create a new appointment request.
-- **PUT /api/appointments/:id**: Accept/decline an appointment request.
-- **GET /api/appointments**: Retrieve scheduled appointments.
+### Appointments and Scheduling
 
-**Frontend Routes**:
-- `/appointments`: View/manage appointment requests.
+**Backend Routes:**
 
-#### 3. Calendar/Event CRUD
+- **POST /api/appointments:** Create a new appointment request.
+- **PUT /api/appointments/:id:** Accept/decline an appointment request.
+- **GET /api/appointments:** Retrieve scheduled appointments.
 
-   - **Calendar Display**: Users can view their events and appointments in a monthly, weekly, or daily calendar format.
-   - **Event Creation**: Users can create events directly from the calendar view.
-   - **Edit Events**: Users can click on events to edit details such as time, location, and visibility.
-   - **Set Event Visibility**: Users can choose whether an event is public (visible to friends) or private (visible only to them).
-   - **Filter Events by Visibility**: Users can filter events by visibility to see public events shared by friends or their private events.
-   - **Create Recurring Events**: Users can create events that repeat daily, weekly, or monthly.
-   - **Manage Recurring Events**: Users can modify or cancel recurring events.
+**Frontend Routes:**
 
-**Backend Routes**:
-- **GET /api/events**: Get all user events.
-- **POST /api/events**: Create a new event.
-- **PUT /api/events/:id**: Update an event.
-- **DELETE /api/events/:id**: Delete an event.
-- **POST /api/events/:id/recurring**: Create a recurring event.
+- **/appointments:** View/manage appointment requests.
 
-**Frontend Routes**:
-- `/calendar`: View the calendar in various formats.
-- `/calendar/new`: Create a new event.
-- `/calendar/edit/:id`: Edit an event.
-- `/calendar/recurring`: Manage recurring events.
+### Calendar/Event CRUD
 
-#### 4. Notifications
+**Backend Routes:**
 
-   - **Event & Appointment Notifications**: Users receive notifications when an event or appointment is requested, accepted, or canceled.
-   - **Friend Request Notifications**: Users receive notifications when they receive a new friend request.
+- **GET /api/events:** Get all user events.
+- **POST /api/events:** Create a new event.
+- **PUT /api/events/:id:** Update an event.
+- **DELETE /api/events/:id:** Delete an event.
+- **POST /api/events/:id/recurring:** Create a recurring event.
 
-**Backend Routes**:
-- **GET /api/notifications**: Retrieve user notifications.
-- **PUT /api/notifications/:id/read**: Mark a notification as read.
+**Frontend Routes:**
 
-**Frontend Routes**:
-- `/notifications`: View notifications.
+- **/calendar:** View the calendar in various formats.
+- **/calendar/new:** Create a new event.
+- **/calendar/edit/:id:** Edit an event.
+- **/calendar/recurring:** Manage recurring events.
 
-#### 5. Event Live Chat (Bonus)
+### Notifications
 
-   - **Live Chat**: Users can communicate with other participants during the event via a real-time chat interface.
+**Backend Routes:**
 
-**Backend Routes**:
-- **GET /api/events/:id/chat**: Fetch chat history.
-- **POST /api/events/:id/chat**: Send a chat message.
+- **GET /api/notifications:** Retrieve user notifications.
+- **PUT /api/notifications/:id/read:** Mark a notification as read.
 
-**Frontend Routes**:
-- `/events/:id/chat`: Access live chat.
+**Frontend Routes:**
 
-#### 6. File Sharing (Bonus Feature)
+- **/notifications:** View notifications.
 
-   - **File Upload**: Users can upload files to an event for participants to access and download.
-   - **File Download**: Participants can view and share important documents or resources related to the event.
+### Event Live Chat (Bonus)
 
-**Backend Routes**:
-- **POST /api/files**: Upload a file for an event.
-- **GET /api/files/:id**: Retrieve a file.
-- **DELETE /api/files/:id**: Delete a file.
+**Backend Routes:**
 
-**Frontend Routes**:
-- `/events/:id/files`: Manage event files.
+- **GET /api/events/:id/chat:** Fetch chat history.
+- **POST /api/events/:id/chat:** Send a chat message.
+
+**Frontend Routes:**
+
+- **/events/:id/chat:** Access live chat.
+
+### File Sharing (Bonus Feature)
+
+**Backend Routes:**
+
+- **POST /api/files:** Upload a file for an event.
+- **GET /api/files/:id:** Retrieve a file.
+- **DELETE /api/files/:id:** Delete a file.
+
+**Frontend Routes:**
+
+- **/events/:id/files:** Manage event files.
+
