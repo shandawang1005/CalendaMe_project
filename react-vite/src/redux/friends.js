@@ -305,7 +305,16 @@ const friendsReducer = (state = initialState, action) => {
         eventSearchResults: action.payload,
         searchError: null,
       };
-
+    case CLEAR_FRIENDS:
+      return {
+        ...state,
+        accepted: [],
+        pending: [],
+        searchResults: [],
+        eventSearchResults: [],
+        error: null,
+        searchError: null,
+      };
     default:
       return state;
   }

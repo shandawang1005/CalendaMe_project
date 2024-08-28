@@ -6,7 +6,7 @@ import { thunkLogout } from "../../redux/session";
 import CreateEditEventModal from "../CreateEditEventModal/CreateEditEventModal";
 import { useNavigate } from "react-router-dom";
 import "./ProfileButton.css"; // Import the CSS file for styling
-import { clearFriends } from "../../redux/friends";
+
 function ProfileButton() {
   const dispatch = useDispatch();
   const [showMenu, setShowMenu] = useState(false);
@@ -45,7 +45,7 @@ function ProfileButton() {
     deleteCookie("session");
     //  delete the CSRF token cookie
     deleteCookie("csrf_token");
-    clearFriends();
+    
     await dispatch(thunkLogout());
     closeMenu();
     // setTimeout(navigate("/"), 10000);

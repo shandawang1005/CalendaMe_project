@@ -1,3 +1,5 @@
+import { clearFriends } from "../redux/friends";
+
 // Action Types
 const SET_USER = "session/setUser";
 const REMOVE_USER = "session/removeUser";
@@ -123,6 +125,7 @@ export const thunkSignup = (user) => async (dispatch) => {
 export const thunkLogout = () => async (dispatch) => {
   await fetch("/api/auth/logout");
   dispatch(removeUser());
+  dispatch(clearFriends());
 };
 
 export const changePasswordThunk =
