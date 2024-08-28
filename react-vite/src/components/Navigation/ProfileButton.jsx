@@ -57,7 +57,11 @@ function ProfileButton() {
   };
   return (
     <div className="profile-button-wrapper">
-      <button onClick={toggleMenu} className="profile-icon-button">
+      <button
+        onClick={toggleMenu}
+        className="profile-icon-button"
+        // disabled={isDisabled}
+      >
         <FaUserCircle />
       </button>
       {showMenu && (

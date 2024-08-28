@@ -21,7 +21,7 @@
   position: absolute;
   top: calc(100% + 5px);
   right: 0;
-  background-color: white;
+  background-color: var(--card-background-color);
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   padding: 10px;
