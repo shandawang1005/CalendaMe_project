@@ -1,203 +1,405 @@
-# CalendaMe  by October Momento.LLC © 2024
+# CalendaMe
 
-## Project Overview
+**CalendaMe** is a full-featured calendar scheduling application designed to help users manage their schedules, connect with friends, and communicate in real-time during events. The inspiration for this project comes from the need for a seamless and intuitive scheduling tool that combines social connectivity with robust event management. The application provides a user-friendly interface with features like friend management, event invitations, and live chat. My goal is to continuously improve this project, making it a central piece of my software engineering portfolio.
 
-The Calendar Scheduling App is a comprehensive tool that allows users to manage their schedules, connect with friends, and communicate during events. The application is built using Flask for the backend and React for the frontend, providing a robust and user-friendly experience.
+## Live Link
 
-## Live Site
+[Visit CalendaMe](https://calendame.onrender.com)
 
-[Visit the Calendar Scheduling App](https://calendame.onrender.com)
+### GitHub Repository
 
-## Backend Repository (if separate)
-
-[Link to Backend Repository](https://github.com/shandawang1005/CalendaMe_project)
+[Link to Repository](https://github.com/shandawang1005/CalendaMe_project)
 
 ## Summary
 
-The Calendar Scheduling App offers users a full suite of scheduling tools, including event management, friend connections, and real-time chat. The app is designed to be intuitive and accessible, providing users with a seamless way to organize their time and communicate with friends during events.
+CalendaMe is built using Flask for the backend and React for the frontend, offering a comprehensive set of tools for scheduling and event management. The application is designed to be easy to use, enabling users to create events, manage their schedules, and communicate with friends, all in one place.
 
 ## Screenshots
 
-![Home Page](/CalendaMe_project/react-vite/public/images/Home.png)
-![Calendar View](/CalendaMe_project/react-vite/public/images/SingleDay.png)
-![Chat Feature](/CalendaMe_project/react-vite/public/images/Chat.png)
+- **Home Page**
+  ![Home Page](../CalendaMe_project/react-vite/public/images/Home.png)
+- **Calendar View**
+  ![Calendar View](../CalendaMe_project/react-vite/public/images/SingleDay.png)
+- **Chatting System**
+  ![Chatting Syste](../CalendaMe_project/react-vite/public/images/Chat.png)
 
 ## Technologies Used
 
-- **Frontend:** React, Redux, Socket.IO, CSS3, Html, 
-- **Backend:** Flask, SQLAlchemy, SQLite3
-- **Deployment:** Render.com
-- **Others:** WebSockets for real-time communication, CRON Jobs for keeping the web app alive
+### Frontend:
+
+- ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+- ![Redux](https://img.shields.io/badge/Redux-764ABC?style=for-the-badge&logo=redux&logoColor=white)
+- ![Socket.IO](https://img.shields.io/badge/Socket.IO-010101?style=for-the-badge&logo=socket.io&logoColor=white)
+- ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+- ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+
+### Backend:
+
+- ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+- ![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)
+- ![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-FF5533?style=for-the-badge&logo=python&logoColor=white)
+- ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
+
+### Hosting:
+
+- ![Render](https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)
+
+## Index
+
+- [Feature List](https://github.com/shandawang1005/CalendaMe_project/wiki/MVP's-Feature-List)
+- [Database Schema](https://github.com/shandawang1005/CalendaMe_project/wiki/DB-Schema)
+- [User Stories](https://github.com/shandawang1005/CalendaMe_project/wiki/User-Stories)
+- [Wireframes](https://github.com/shandawang1005/CalendaMe_project/wiki/Example-WireFrames)
 
 ## Features
 
-1. **User Authentication System**
-   - Users can sign up, log in, log out, and access protected content.
-2. **Friend System**
-   - Users can search for friends, send friend requests, accept/decline friend requests, view friends, and remove friends.
-3. **Calendar/Event CRUD**
-   - Users can view, create, edit, and delete events, set event visibility, and manage recurring events.
-4. **Scheduling Appointments**
-   - Users can create availability slots, request appointments, and manage them.
-5. **Real-Time Chat**
-   - Users can chat with friends or event participants in real-time.
-6. **File Sharing**
-   - Users can upload and share files related to events.
+### User Authentication System
 
-## Future Features
-
-- **Recurring Events:** Allow users to create and manage recurring events.
-- **Event Reminders:** Automated event reminders via email or SMS.
-- **Public Calendars:** Option to make your calendar public for others to view.
-- **Google Calendar Integration:** Sync events with Google Calendar.
-
-## Technical Implementation Details
-
-### Event Creation and Validation
-
-- **Frontend:**
-
-  - The event creation form includes validations for title length, start and end times, and participant limits. The frontend ensures that users are guided through an error-free process.
-
-  ```javascript
-  const validateForm = () => {
-    const newErrors = {};
-    if (!formData.title.trim()) {
-      newErrors.title = "Title is required.";
-    } else if (formData.title.length > 50) {
-      newErrors.title = "Title cannot exceed 50 characters.";
-    }
-    if (!formData.start_time) {
-      newErrors.start_time = "Start time is required.";
-    }
-    if (!formData.end_time) {
-      newErrors.end_time = "End time is required.";
-    } else if (new Date(formData.end_time) <= new Date(formData.start_time)) {
-      newErrors.end_time = "End time must be after start time.";
-    }
-    return newErrors;
-  };
- - The event display on daily event calendar page.Split up 
-
-  ```javascript
-  const validateForm = () => {
-    const newErrors = {};
-    if (!formData.title.trim()) {
-      newErrors.title = "Title is required.";
-    } else if (formData.title.length > 50) {
-      newErrors.title = "Title cannot exceed 50 characters.";
-    }
-    if (!formData.start_time) {
-      newErrors.start_time = "Start time is required.";
-    }
-    if (!formData.end_time) {
-      newErrors.end_time = "End time is required.";
-    } else if (new Date(formData.end_time) <= new Date(formData.start_time)) {
-      newErrors.end_time = "End time must be after start time.";
-    }
-    return newErrors;
-  };
-
-
-- **Backend:**
-  - Flask handles data validation, storage, and retrieval using SQLAlchemy, ensuring data consistency and security.
-
-### Real-Time Chat
-
-- **WebSocket Implementation:**
-  - The app leverages Socket.IO for real-time communication. Users are notified of new messages instantly, and the chat history is efficiently managed in the backend.
-
-### Responsive Design
-
-- **Media Queries:**
-  - CSS3 media queries ensure that the application adapts to different screen sizes, providing an optimal user experience on both mobile and desktop devices.
-
-## Challenges Faced
-
-### WebSocket Integration:
-
-- Implementing real-time communication using WebSockets was challenging but rewarding. Ensuring that messages were delivered and displayed correctly across all connected clients required careful consideration.
-
-### Data Validation:
-
-- Balancing between front-end and back-end validations to ensure data integrity while maintaining a responsive user experience was another key challenge.
-
-## Endpoints
+- Users can sign up, log in, log out, and access protected content.
 
 ### Friend System
 
-**Backend Routes:**
+- Users can search for friends, send friend requests, accept/decline friend requests, view friends, and remove friends.
 
-- **GET /api/friends:** Retrieve the list of friends.
-- **POST /api/friends/request:** Send a friend request.
-- **PUT /api/friends/request/:id:** Accept/decline a friend request.
-- **DELETE /api/friends/:id:** Remove a friend.
+### Event Management
 
-**Frontend Routes:**
+- Users can create, edit, and delete events.
+- Users can invite friends to events via invitations.
 
-- **/friends:** Manage friends and friend requests.
-- **/friends/search:** Search for friends.
+### Live Chat
 
-### Appointments and Scheduling
+- Real-time chat functionality for users to communicate during events.
 
-**Backend Routes:**
+### Invitation System
 
-- **POST /api/appointments:** Create a new appointment request.
-- **PUT /api/appointments/:id:** Accept/decline an appointment request.
-- **GET /api/appointments:** Retrieve scheduled appointments.
+- Users can send and manage event invitations, allowing friends to join events.
 
-**Frontend Routes:**
+## Endpoints
 
-- **/appointments:** View/manage appointment requests.
+### Auth Routes
 
-### Calendar/Event CRUD
+#### Current User
 
-**Backend Routes:**
+- **Purpose:** Fetches the current user's information upon initial app load and subsequent navigations.
+- **Method:** `POST`
+- **URL:** `/api/auth/`
+- **Successful Response:** `HTTP Status Code 200`
+  ```json
+  {
+    "email": "string",
+    "id": "integer",
+    "username": "string"
+  }
+  ```
+- **Error Response:** `HTTP Status Code 401`
+  ```json
+  {
+    "errors": "Unauthorized"
+  }
+  ```
 
-- **GET /api/events:** Get all user events.
-- **POST /api/events:** Create a new event.
-- **PUT /api/events/:id:** Update an event.
-- **DELETE /api/events/:id:** Delete an event.
-- **POST /api/events/:id/recurring:** Create a recurring event.
+#### Sign Up
 
-**Frontend Routes:**
+- **Purpose:** Sends signup form data to the backend to create a new user.
+- **Method:** `POST`
+- **URL:** `/api/auth/signup`
+- **Successful Response:** `HTTP Status 201`
+  ```json
+  {
+    "id": "integer",
+    "username": "string",
+    "email": "string"
+  }
+  ```
+- **Error Response:** `HTTP Status 400`
+  ```json
+  {
+    "errors": ["string"]
+  }
+  ```
 
-- **/calendar:** View the calendar in various formats.
-- **/calendar/new:** Create a new event.
-- **/calendar/edit/:id:** Edit an event.
-- **/calendar/recurring:** Manage recurring events.
+#### Login
 
-### Notifications
+- **Purpose:** Attempts to log in a user with the provided credentials.
+- **Method:** `POST`
+- **URL:** `/api/auth/login`
+- **Successful Response:** `HTTP Status 200`
+  ```json
+  {
+    "id": "integer",
+    "username": "string",
+    "email": "string"
+  }
+  ```
+- **Error Response:** `HTTP Status 400`
+  ```json
+  {
+    "errors": ["string"]
+  }
+  ```
 
-**Backend Routes:**
+#### Logout
 
-- **GET /api/notifications:** Retrieve user notifications.
-- **PUT /api/notifications/:id/read:** Mark a notification as read.
+- **Purpose:** Logs out the current user.
+- **Method:** `POST`
+- **URL:** `/api/auth/logout`
+- **Successful Response:** `HTTP Status 200`
+  ```json
+  { "id": "id", "username": "username", "email": "email" }
+  ```
+- **Error Response:** `HTTP Status 404`
+  ```json
+  {
+    "errors": "No session"
+  }
+  ```
 
-**Frontend Routes:**
+#### Change Profile
 
-- **/notifications:** View notifications.
+- **Purpose:** Change user's username/email
+- **Method:** `PUT`
+- **URL:** `/api/auth/profile`
+- **Successful Response:** `HTTP Status 200`
+  ```json
+  {
+    "message": "User logged out"
+  }
+  ```
+- **Error Response:** `HTTP Status 400`
 
-### Event Live Chat (Bonus)
+  ```json
+  {
+    "errors": "No session"
+  }
+  ```
 
-**Backend Routes:**
+  #### Change Password
 
-- **GET /api/events/:id/chat:** Fetch chat history.
-- **POST /api/events/:id/chat:** Send a chat message.
+- **Purpose:** Change user's password
+- **Method:** `POST`
+- **URL:** `/api/auth/change-password`
+- **Successful Response:** `HTTP Status 200`
+  ```json
+  { "message": "Password changed successfully." }
+  ```
+- **Error Response:** `HTTP Status 400`
+  ```json
+  { "error": "Current password is incorrect." }
+  ```
 
-**Frontend Routes:**
+### Friend Routes
 
-- **/events/:id/chat:** Access live chat.
+#### Get Friends
 
-### File Sharing (Bonus Feature)
+- **Purpose:** Fetches the list of friends for the current user.
+- **Method:** `GET`
+- **URL:** `/api/friends/`
+- **Successful Response:** `HTTP Status 200`
+  ```json
+  {
+    "friends": { "accepted": "accepted_friends", "pending": "pending_requests" }
+  }
+  ```
+- **Error Response:** `HTTP Status 400`
+  ```json
+  {
+    "errors": "User not found"
+  }
+  ```
 
-**Backend Routes:**
+#### Add Friend
 
-- **POST /api/files:** Upload a file for an event.
-- **GET /api/files/:id:** Retrieve a file.
-- **DELETE /api/files/:id:** Delete a file.
+- **Purpose:** Sends a friend request to another user.
+- **Method:** `POST`
+- **URL:** `/api/friends/request`
+- **Body:**
+  ```json
+  {
+    "friend_id": "integer"
+  }
+  ```
+- **Successful Response:** `HTTP Status 201`
+  ```json
+  {"message": "Friend request sent", "friend": serialize_friend(friend_user)}
+  ```
+- **Error Response:** `HTTP Status 400`
+  ```json
+  { "error": "Friend ID is required" }
+  ```
 
-**Frontend Routes:**
+#### Accept Friend Request
 
-- **/events/:id/files:** Manage event files.
+- **Purpose:** Accepts a friend request from another user.
+- **Method:** `POST`
+- **URL:** `/api/friends/<int:friendship_id>/respond`
+- **Body:**
+  ```json
+  {
+    "friend_id": "integer"
+  }
+  ```
+- **Successful Response:** `HTTP Status 200`
+  ```json
+  {"message": f"Friend request {response}ed"}
+  ```
+- **Error Response:** `HTTP Status 400`
+  ```json
+  { "error": "Invalid response" }
+  ```
 
+#### Decline Friend Request
+
+- **Purpose:** Accepts a friend request from another user.
+- **Method:** `DELETE`
+- **URL:** `/api/friends/cancel/<int:friend_id>`
+- **Body:**
+  ```json
+  {
+    "friend_id": "integer"
+  }
+  ```
+- **Successful Response:** `HTTP Status 200`
+  ```json
+  { "message": "Friend request canceled" }
+  ```
+- **Error Response:** `HTTP Status 400`
+  ```json
+  { "error": "Pending friend request not found" }
+  ```
+
+#### Remove Friend
+
+- **Purpose:** Removes a friend from the current user's friend list.
+- **Method:** `DELETE`
+- **URL:** `/api/friends//<int:friend_id>/remove`
+- **Body:**
+  ```json
+  {
+    "friend_id": "integer"
+  }
+  ```
+- **Successful Response:** `HTTP Status 200`
+  ```json
+  {
+    "message": "Friend removed","friend": serialize_friend(friend_user)
+  }
+  ```
+- **Error Response:** `HTTP Status 404`
+  ```json
+  { "error": "Friendship not found" }
+  ```
+
+### Event Routes
+
+#### Get Events
+
+- **Purpose:** Fetches all events for the current user.
+- **Method:** `GET`
+- **URL:** `/api/calendar/`
+- **Successful Response:** `HTTP Status 200`
+  ```json
+  {
+    "id": "id",
+    "title": "title",
+    "start_time": "start_time.strftime"("%Y-%m-%d %H:%M:%S"),
+    "end_time": "end_time.strftime"("%Y-%m-%d %H:%M:%S"),
+    "location": "location",
+    "visibility": "visibility",
+    "recurring": "recurring",
+    "creator_id": "creator_id",
+    "participants": [
+      {
+      "id": "id",
+      "user_id": "user_id",
+      "username": "user.username"
+      if "user"
+      else "None",  # Add null check for user relationship
+      "event_id": "event_id",
+      "status": "status",
+      }
+    ],
+  }
+  ```
+- **Error Response:** `HTTP Status 404`
+  ```json
+  {
+    "errors": "No events found"
+  }
+  ```
+
+#### Create Event
+
+- **Purpose:** Creates a new event.
+- **Method:** `POST`
+- **URL:** `/api/calendar/add`
+- **Body:**
+  ```json
+  {
+    "title" = "title"
+    "start_time" = "start_time"
+    "end_time" = "end_time"
+    "location" ="location"
+    "visibility" ="visibility"
+  }
+  ```
+- **Successful Response:** `HTTP Status 201`
+  ```json
+  {"message": "Event added successfully!", "event": new_event.to_dict()}
+  ```
+- **Error Response:** `HTTP Status 400`
+  ```json
+  {
+    "errors": ["string"]
+  }
+  ```
+
+#### Edit Event
+
+- **Purpose:** Edits an existing event.
+- **Method:** `PUT`
+- **URL:** `/api/events/edit/:id`
+- **Body:**
+  ```json
+  {
+    "title" = "title"
+    "start_time" = "start_time"
+    "end_time" = "end_time"
+    "location" ="location"
+    "visibility" ="visibility"
+  }
+  ```
+- **Successful Response:** `HTTP Status 200`
+  ```json
+  {"message": "Event updated successfully!", "event": event.to_dict()}
+  ```
+- **Error Response:** `HTTP Status 400`
+  ```json
+  {
+    "errors": ["string"]
+  }
+  ```
+
+#### Delete Event
+
+- **Purpose:** Deletes an event.
+- **Method:** `DELETE`
+- **URL:** `/api/calendar/delete/<int:event_id>`
+- **Successful Response:** `HTTP Status 200`
+  ```json
+  { "message": "Event deleted successfully!" }
+  ```
+- **Error Response:** `HTTP Status 404`
+  ```json
+  { "error": "Event not found" }
+  ```
+
+## Future Implementation Goals
+
+- Enhanced event filters and search functionality.
+- Integration with additional third-party services.
+- Notifications for important events.
+- Advanced recurring event options.
+
+## Connect
+
+- [LinkedIn](https://www.linkedin.com/in/shanda-wang)
