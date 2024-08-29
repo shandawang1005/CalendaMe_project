@@ -1,4 +1,7 @@
 import os
+import boto3
+from werkzeug.utils import secure_filename
+
 from flask import Flask, render_template, request, session, redirect
 from flask_cors import CORS
 from flask_migrate import Migrate
@@ -15,7 +18,7 @@ from .api.invitation_routes import invitation_routes
 from .api.messages_routes import messages_routes
 from .seeds import seed_commands
 from .config import Config
-
+from .api.aws_routes import aws_routes
 app = Flask(__name__, static_folder="../react-vite/dist", static_url_path="/")
 
 # Setup login manager
@@ -28,7 +31,17 @@ def load_user(id):
     return User.query.get(int(id))
 
 
+# # Setup AWS
+# s3 = boto3.client(
+#     "s3",
+#     aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
+#     aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
+#     region_name=os.getenv("AWS_REGION"),
+# )
+
+
 # Setup WebSocket (Flask-SocketIO)
+
 
 socketio = SocketIO(
     app, cors_allowed_origins="*", async_mode="gevent", ping_interval=25
@@ -44,6 +57,8 @@ app.register_blueprint(friend_routes, url_prefix="/api/friends")
 app.register_blueprint(calendar_routes, url_prefix="/api/calendar")
 app.register_blueprint(invitation_routes, url_prefix="/api/invitation")
 app.register_blueprint(messages_routes, url_prefix="/api/messages")
+app.register_blueprint(aws_routes, url_prefix="/api/aws")
+
 print(f"DATABASE_URL: {os.getenv('DATABASE_URL')}")
 
 

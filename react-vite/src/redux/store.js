@@ -10,12 +10,14 @@ import friendsReducer from "./friends";
 import eventsReducer from "./event";
 import invitationReducer from "./invitation";
 import messagesReducer from "./messages";
+import fileReducer from "./aws";
 const rootReducer = combineReducers({
   session: sessionReducer,
   friends: friendsReducer,
   events: eventsReducer,
   invitations: invitationReducer,
   messages: messagesReducer,
+  file: fileReducer,
 });
 
 let enhancer;

@@ -1,5 +1,6 @@
 .chat-modal {
   display: flex;
+  flex-direction: column; /* Ensure the content stacks properly */
   background-color: var(--card-background-color);
   border-radius: 8px;
   padding: 10px;
@@ -45,6 +46,9 @@
 }
 
 .chat-heading {
+  display: flex;
+  justify-content: space-between; /* Ensure the heading and button are aligned */
+  align-items: center;
   padding: 10px;
   background-color: var(--background-color);
   color: var(--text-primary-color);
@@ -57,29 +61,28 @@
   padding: 10px;
   background-color: var(--card-background-color);
   border-radius: 8px;
-  max-height: 400px; /* Set a max height for better scrolling behavior */
-  white-space: normal; /* Ensure text wraps correctly */
-  word-wrap: break-word; /* Break long words and prevent horizontal scrolling */
-  overflow-wrap: break-word;
+  max-height: 400px;
+  word-wrap: break-word;
 }
 
-.chat-message-sent {
-  text-align: right;
-  background-color: var(--highlight-color);
+.chat-message-sent,
+.chat-message-received {
+  max-width: 75%; /* Ensure messages don't stretch too far across the screen */
   padding: 10px;
   border-radius: 10px;
   margin: 5px 0;
   color: white;
-  max-width: 100%; /* Ensure message does not take up full width */
-  word-wrap: break-word; /* Wrap long words */
+  word-wrap: break-word;
+}
+
+.chat-message-sent {
+  align-self: flex-end; /* Align sent messages to the right */
+  background-color: var(--highlight-color);
 }
 
 .chat-message-received {
-  text-align: left;
+  align-self: flex-start; /* Align received messages to the left */
   background-color: var(--button-background-color);
-  padding: 10px;
-  border-radius: 10px;
-  margin: 5px 0;
   color: var(--text-primary-color);
 }
 
@@ -88,7 +91,8 @@
   padding: 10px;
   border-top: 1px solid var(--border-color);
   background-color: var(--card-background-color);
-  align-items: center; /* Align input, emoji, and send buttons */
+  align-items: center;
+  gap: 10px; /* Add spacing between the input and buttons */
 }
 
 .chat-input-field {
@@ -100,18 +104,21 @@
   color: var(--text-primary-color);
 }
 
-.chat-emoji-button {
+.file-input-label {
+  display: inline-block;
   padding: 10px;
   background-color: var(--button-background-color);
-  border: none;
-  color: var(--button-text-color);
   border-radius: 10px;
-  margin-left: 10px;
   cursor: pointer;
+  color: white;
 }
 
-.chat-emoji-button:hover {
+.file-input-label:hover {
   background-color: var(--highlight-color);
+}
+
+.file-input {
+  display: none; /* Hide the actual file input */
 }
 
 .chat-send-button {
@@ -120,71 +127,125 @@
   border: none;
   color: var(--button-text-color);
   border-radius: 10px;
-  margin-left: 10px;
   cursor: pointer;
 }
 
 .chat-send-button:hover {
   background-color: var(--highlight-color);
 }
-
-/* Optional: Styling for the emoji picker */
-.emoji-picker-modal {
-  position: absolute;
-  bottom: 60px; /* Adjust this based on the emoji button placement */
-  left: 0; /* Align with the emoji button */
-  width: 350px;
-  height: 450px;
-  background-color: white;
-  border-radius: 12px;
-  z-index: 1000;
+.toggle-files-button {
+  margin-top: 10px;
   padding: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: var(--button-background-color);
+  border: none;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
 }
 
-.emoji-picker-overlay {
-  background-color: transparent;
+.toggle-files-button:hover {
+  background-color: var(--highlight-color);
 }
 /* Context Menu Styling */
 .context-menu {
   position: absolute;
   background-color: #ffffff;
-  /* border: 1px solid #ccc; */
   box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.2);
   z-index: 1000;
   list-style-type: none;
-  padding: 0px 0;
+  padding: 0;
   margin: 0;
   min-width: 150px;
   border-radius: 12px;
 }
 
-.context-menu li {
+.context-menu-item {
   padding: 8px 16px;
   cursor: pointer;
-  color: #ffe6e6; /* Red color similar to Log Out */
-  background-color: #ff4d4f;
+  color: #ff4d4f;
+  background-color: white;
   border-radius: 12px;
 }
 
-.context-menu li:hover {
-  background-color: #e03b3b; /* Light red background on hover */
-  border-radius: 12px;
+.context-menu-item:hover {
+  background-color: #e03b3b;
+  color: white;
 }
 
-/* Clear Chat History Button Styling */
 .clear-chat-button {
   padding: 8px 16px;
-  background-color: #ff4d4f; /* Red color */
+  background-color: #ff4d4f;
   border: none;
   color: white;
   border-radius: 10px;
   cursor: pointer;
-  margin-left: 10px; /* Add some spacing from other elements */
 }
 
 .clear-chat-button:hover {
-  background-color: #e03b3b; /* Darker red on hover */
+  background-color: #e03b3b;
 }
 
+/* Files Modal Styling */
+.files-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--card-background-color);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  width: 90%;
+  max-width: 500px;
+}
 
+.files-modal-content {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.close-files-modal-button {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: var(--button-background-color);
+  border: none;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.close-files-modal-button:hover {
+  background-color: var(--highlight-color);
+}
+.file-item-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 5px 0;
+  padding: 8px;
+  background-color: var(--background-color);
+  border-radius: 10px;
+}
+
+.file-item-link {
+  color: var(--text-primary-color);
+  text-decoration: none;
+}
+
+.file-item-link:hover {
+  text-decoration: underline;
+}
+.delete-file-button {
+  padding: 5px 10px;
+  background-color: #ff4d4f;
+  border: none;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.delete-file-button:hover {
+  background-color: #e03b3b;
+}

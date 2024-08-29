@@ -32,6 +32,7 @@ gevent = "==21.12.0"
 python-socketio = "==5.7.1"
 dnspython = "==2.2.0"
 email-validator = "*"
+boto3 = "*"
 
 [dev-packages]
 

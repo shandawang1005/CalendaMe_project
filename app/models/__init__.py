@@ -7,3 +7,4 @@ from .participants import Participant
 from .messages import Message
 from .notification import Notification
 from .invitations import Invitation
+from .sharefile import SharedFile

@@ -2,7 +2,8 @@ from .db import db, environment, SCHEMA, add_prefix_for_prod
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from .friends import Friend
-from .events import Event  # Import the Event model
+from .events import Event
+from .sharefile import SharedFile  # Ensure this is correctly imported
 
 
 class User(db.Model, UserMixin):
@@ -63,4 +64,20 @@ class User(db.Model, UserMixin):
     # Relationship for events the user has created
     events = db.relationship(
         "Event", back_populates="creator", cascade="all, delete-orphan"
+    )
+
+    # Relationship for files the user has created
+    owned_files = db.relationship(
+        "SharedFile",
+        back_populates="owner",
+        foreign_keys=[SharedFile.owner_id],  # Corrected reference
+        cascade="all, delete-orphan",
+    )
+
+    # Relationship for files shared with the user
+    friends_files = db.relationship(
+        "SharedFile",
+        back_populates="friend",
+        foreign_keys=[SharedFile.friend_id],  # Corrected reference
+        cascade="all, delete-orphan",
     )
