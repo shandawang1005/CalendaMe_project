@@ -55,41 +55,43 @@ def get_files():
 
 
 @aws_routes.route("/upload", methods=["POST"])
-@login_required
 def upload_file():
-    # Check if the request contains a file part
-    if "file" not in request.files:
-        return jsonify({"error": "No file provided"}), 400
-
-    file = request.files["file"]
-
-    # Check if a filename is empty
-    if file.filename == "":
-        return jsonify({"error": "No selected file"}), 400
-
-    # Secure the filename
-    filename = secure_filename(file.filename)
-
     try:
+        # Check if the request contains a file part
+        if "file" not in request.files:
+            print("No file part in the request")
+            return jsonify({"error": "No file provided"}), 400
+
+        file = request.files["file"]
+
+        # Check if a filename is empty
+        if file.filename == "":
+            print("No selected file")
+            return jsonify({"error": "No selected file"}), 400
+
+        # Secure the filename
+        filename = secure_filename(file.filename)
+        print(f"Uploading file: {filename}")
+
         # Upload the file to S3
         s3.upload_fileobj(
             file,
             os.getenv("AWS_S3_BUCKET_NAME"),
             filename,
-            ExtraArgs={
-                "ACL": "public-read"
-            },  # Set ACL as per your needs (e.g., public-read)
+            ExtraArgs={"ACL": "public-read"},
         )
 
         # Generate the file URL
-        file_url = f"https://{os.getenv('AWS_S3_BUCKET_NAME')}.s3.{os.getenv('AWS_REGION')}.amazonaws.com/{filename}"
+        file_url = (
+            f"https://{os.getenv('AWS_S3_BUCKET_NAME')}.s3.amazonaws.com/{filename}"
+        )
+        print(f"File uploaded successfully: {file_url}")
 
         return jsonify({"file_url": file_url}), 200
 
     except Exception as e:
-        # Log the error for debugging
-        print(f"Error in upload_file: {e}")
-        return jsonify({"error": "An error occurred while uploading the file."}), 500
+        print(f"Error in /upload route: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
 
 @aws_routes.route("/share", methods=["POST"])

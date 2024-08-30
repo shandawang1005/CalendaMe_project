@@ -2,9 +2,11 @@ from .db import db, SCHEMA, environment, add_prefix_for_prod
 
 
 class SharedFile(db.Model):
-    __tablename__ = add_prefix_for_prod("shared_files")
+    __tablename__ = "shared_files"
+
     if environment == "production":
         __table_args__ = {"schema": SCHEMA}
+
     id = db.Column(db.Integer, primary_key=True)
     file_url = db.Column(db.String, nullable=False)
     owner_id = db.Column(
@@ -15,5 +17,4 @@ class SharedFile(db.Model):
     )
 
     owner = db.relationship("User", foreign_keys=[owner_id])
-
     friend = db.relationship("User", foreign_keys=[friend_id])
