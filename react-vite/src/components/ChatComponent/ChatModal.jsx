@@ -180,7 +180,8 @@ const ChatModal = ({ currentUser, friend }) => {
   const handleClickOutsideFilesModal = (event) => {
     if (
       filesModalRef.current &&
-      !filesModalRef.current.contains(event.target)
+      !filesModalRef.current.contains(event.target) &&
+      !event.target.closest(".toggle-files-button")
     ) {
       setShowFilesModal(false);
     }
@@ -307,7 +308,13 @@ const ChatModal = ({ currentUser, friend }) => {
             )}
 
             {/* Toggleable File List Button */}
-            <button onClick={toggleFilesModal} className="toggle-files-button">
+            <button
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent the click event from propagating
+                toggleFilesModal();
+              }}
+              className="toggle-files-button"
+            >
               {showFilesModal ? "Hide Files" : "Show Files"}
             </button>
 
