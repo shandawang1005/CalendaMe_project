@@ -17,7 +17,7 @@ CalendaMe is built using Flask for the backend and React for the frontend, offer
 ## Screenshots
 
 - **Home Page**
-  ![Home Page](/images/Home.png)
+  ![Home Page](./react-vite/public/images/Home.png)
 - **Calendar View**
   ![Calendar View](/images/SingleDay.png)
 - **Chatting System**
