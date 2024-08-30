@@ -179,6 +179,8 @@ const ChatModal = ({ currentUser, friend }) => {
   // Close file modal when clicking outside of it
   const handleClickOutsideFilesModal = (event) => {
     if (
+
+      //this line is neccessary 
       filesModalRef.current &&
       !filesModalRef.current.contains(event.target) &&
       !event.target.closest(".toggle-files-button")
