@@ -26,7 +26,7 @@ def seed():
         db.session.commit()
         undo_invitations()
         undo_notifications()
-        
+
         undo_messages()
         undo_participants()
         undo_events()
@@ -36,7 +36,7 @@ def seed():
     seed_friends()
     seed_events()
     seed_participants()
-    
+
     seed_messages()
     seed_notifications()
     seed_invitations()
@@ -48,7 +48,7 @@ def seed():
 def undo():
     undo_invitations()
     undo_notifications()
-    
+
     undo_messages()
     undo_participants()
     undo_events()

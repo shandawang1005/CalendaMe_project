@@ -18,7 +18,7 @@ import {
   shareFileFailure,
 } from "../../redux/aws";
 import "./ChatModal.css";
-
+//hope it works
 const ChatModal = ({ currentUser, friend }) => {
   const dispatch = useDispatch();
   const chatHistory = useSelector((state) => state.messages.messages);

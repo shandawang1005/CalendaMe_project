@@ -1,20 +1,21 @@
 """empty message
 
-Revision ID: 86c0907e6060
+Revision ID: 835b5fc36919
 Revises:
-Create Date: 2024-08-29 17:51:32.535908
+Create Date: 2024-08-29 18:10:23.324698
 
 """
 
 from alembic import op
 import sqlalchemy as sa
-
 import os
 
 environment = os.getenv("FLASK_ENV")
 SCHEMA = os.environ.get("SCHEMA")
+
+
 # revision identifiers, used by Alembic.
-revision = "86c0907e6060"
+revision = "835b5fc36919"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -34,7 +35,6 @@ def upgrade():
     )
     if environment == "production":
         op.execute(f"ALTER TABLE users SET SCHEMA {SCHEMA};")
-
     op.create_table(
         "events",
         sa.Column("id", sa.Integer(), nullable=False),
@@ -53,7 +53,6 @@ def upgrade():
     )
     if environment == "production":
         op.execute(f"ALTER TABLE events SET SCHEMA {SCHEMA};")
-
     op.create_table(
         "friends",
         sa.Column("id", sa.Integer(), nullable=False),
@@ -72,7 +71,6 @@ def upgrade():
     )
     if environment == "production":
         op.execute(f"ALTER TABLE friends SET SCHEMA {SCHEMA};")
-
     op.create_table(
         "messages",
         sa.Column("id", sa.Integer(), nullable=False),
@@ -92,7 +90,6 @@ def upgrade():
     )
     if environment == "production":
         op.execute(f"ALTER TABLE messages SET SCHEMA {SCHEMA};")
-
     op.create_table(
         "notifications",
         sa.Column("id", sa.Integer(), nullable=False),
@@ -109,7 +106,6 @@ def upgrade():
     )
     if environment == "production":
         op.execute(f"ALTER TABLE notifications SET SCHEMA {SCHEMA};")
-
     op.create_table(
         "shared_files",
         sa.Column("id", sa.Integer(), nullable=False),
@@ -128,7 +124,6 @@ def upgrade():
     )
     if environment == "production":
         op.execute(f"ALTER TABLE shared_files SET SCHEMA {SCHEMA};")
-
     op.create_table(
         "invitations",
         sa.Column("id", sa.Integer(), nullable=False),
@@ -152,7 +147,6 @@ def upgrade():
     )
     if environment == "production":
         op.execute(f"ALTER TABLE invitations SET SCHEMA {SCHEMA};")
-
     op.create_table(
         "participants",
         sa.Column("id", sa.Integer(), nullable=False),
