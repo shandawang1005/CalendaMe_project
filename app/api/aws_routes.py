@@ -3,7 +3,7 @@ import boto3
 from werkzeug.utils import secure_filename
 from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
-from ..models import SharedFile, db  # Import db if not already imported
+from ..models import SharedFile, db
 
 # Initialize your S3 client
 s3 = boto3.client(
@@ -49,10 +49,13 @@ def get_files():
         return jsonify({"files": files}), 200
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        # Log the error for debugging
+        print(f"Error in get_files: {e}")
+        return jsonify({"error": "An error occurred while fetching files."}), 500
 
 
 @aws_routes.route("/upload", methods=["POST"])
+@login_required
 def upload_file():
     # Check if the request contains a file part
     if "file" not in request.files:
@@ -79,14 +82,14 @@ def upload_file():
         )
 
         # Generate the file URL
-        file_url = (
-            f"https://{os.getenv('AWS_S3_BUCKET_NAME')}.s3.amazonaws.com/{filename}"
-        )
+        file_url = f"https://{os.getenv('AWS_S3_BUCKET_NAME')}.s3.{os.getenv('AWS_REGION')}.amazonaws.com/{filename}"
 
         return jsonify({"file_url": file_url}), 200
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        # Log the error for debugging
+        print(f"Error in upload_file: {e}")
+        return jsonify({"error": "An error occurred while uploading the file."}), 500
 
 
 @aws_routes.route("/share", methods=["POST"])
@@ -113,7 +116,9 @@ def share_file():
         return jsonify({"message": "File shared successfully"}), 200
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        # Log the error for debugging
+        print(f"Error in share_file: {e}")
+        return jsonify({"error": "An error occurred while sharing the file."}), 500
 
 
 @aws_routes.route("/delete", methods=["DELETE"])
@@ -149,4 +154,6 @@ def delete_file():
         return jsonify({"message": "File deleted successfully"}), 200
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        # Log the error for debugging
+        print(f"Error in delete_file: {e}")
+        return jsonify({"error": "An error occurred while deleting the file."}), 500
