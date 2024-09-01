@@ -74,6 +74,10 @@ CalendaMe is built using Flask for the backend and React for the frontend, offer
 
 - Users can send and manage event invitations, allowing friends to join events.
 
+### File Sharing System(AWS)
+
+- Users can share files with their friends either select the file or drop the file in the chat box.
+
 ## Endpoints
 
 ### Auth Routes
@@ -392,6 +396,98 @@ CalendaMe is built using Flask for the backend and React for the frontend, offer
   ```json
   { "error": "Event not found" }
   ```
+
+### AWS File Sharing Routes
+
+#### Upload File
+
+- **Purpose:** Upload a file to AWS S3 and store the file URL in the database.
+- **Method:** `POST`
+- **URL:** `/api/files/upload`
+- **Request Body:**
+  - **file:** `multipart/form-data` (The file to be uploaded)
+- **Successful Response:** `HTTP Status 201`
+
+  ```json
+  {
+    "message": "File uploaded successfully",
+    "file_url": "string"
+  }
+  ```
+
+- **Error Responses:**
+  - `HTTP Status 400`
+    ```json
+    {
+      "error": "No file part in the request"
+    }
+    ```
+  - `HTTP Status 400`
+    ```json
+    {
+      "error": "No selected file"
+    }
+    ```
+  - `HTTP Status 500`
+    ```json
+    {
+      "error": "string"
+    }
+    ```
+
+#### Fetch Shared Files
+
+- **Purpose:** Retrieve the list of files shared with the current user.
+- **Method:** `GET`
+- **URL:** `/api/files/<int:user_id>/shared`
+- **Successful Response:** `HTTP Status 200`
+  ```json
+  {
+    "shared_files": [
+      {
+        "file_url": "string",
+        "sender_id": "integer"
+      }
+    ]
+  }
+  ```
+- **Error Response:** `HTTP Status 404`
+  ```json
+  {
+    "message": "No files found"
+  }
+  ```
+
+#### Delete File
+
+- **Purpose:** Delete a file from AWS S3 and remove its reference from the database.
+- **Method:** `DELETE`
+- **URL:** `/api/files/delete`
+- **Request Body:**
+  ```json
+  {
+    "file_url": "string"
+  }
+  ```
+- **Successful Response:** `HTTP Status 200`
+  ```json
+  {
+    "message": "File deleted successfully"
+  }
+  ```
+- **Error Responses:**
+  - `HTTP Status 400`
+    ```json
+    {
+      "error": "File URL is required"
+    }
+    ```
+  - `HTTP Status 500`
+    ```json
+    {
+      "error": "string"
+    }
+    ```
 
 ## Future Implementation Goals
 

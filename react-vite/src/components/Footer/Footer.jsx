@@ -16,7 +16,10 @@ function Footer() {
           >
             <FaLinkedin />
           </a>
-          <a href="https://github.com/shandawang1005" className="footer-icon">
+          <a
+            href="https://portifolio-rpiy.onrender.com"
+            className="footer-icon"
+          >
             <FaDesktop />
           </a>
         </div>
