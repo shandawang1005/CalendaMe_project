@@ -30,7 +30,7 @@ function LoginFormPage() {
     );
 
     if (serverResponse) {
-      console.log("Response", serverResponse);
+      // console.log("Response", serverResponse);
       // Assuming serverResponse contains a specific message for email and password
       if (serverResponse.email) {
         setEmailError(serverResponse.email);

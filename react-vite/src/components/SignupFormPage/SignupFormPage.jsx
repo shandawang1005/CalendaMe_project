@@ -92,7 +92,7 @@ function SignupFormPage() {
     );
 
     if (serverResponse) {
-      console.log("Response", serverResponse);
+      // console.log("Response", serverResponse);
       // Assuming serverResponse contains specific field errors
       if (serverResponse.email) {
         setEmailError(serverResponse.email);
